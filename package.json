@@ -1,0 +1,17 @@
+{
+  "name": "project",
+  "version": "1.0.0",
+  "description": "agriculture project",
+  "keywords": [
+    "javascript",
+    "backend",
+    "agriculture"
+  ],
+  "license": "ISC",
+  "author": "hariom kumar singh",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
