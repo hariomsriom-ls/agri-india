@@ -1,5 +1,7 @@
 import mongoose, {Schema} from "mongoose"
 import { landRecord } from "../record/landrecord"
+import Jwt from "jsonwebtoken";
+
 const landownerSchema = new Schema({
     fullName: {
         type: String,
@@ -83,5 +85,37 @@ const landownerSchema = new Schema({
     }
 },{ timestamps: true })
 
+ landownerSchema.pre("save", async function(next) {
+    if(!this.isModified("password")) return next();
+    this.password = bcrypt.hash(this.password,10)
+    next()
+})
+
+ landownerSchema.methods.isPasswordCorrect = async function(password){
+    return await bcrypt.compare(password, this.password)
+}
+
+ landownerSchema.methods.generateAccessToken = function(){
+    return jwt.sign({
+        _id: this._id,
+        userName: this.userName,
+        fullName: this.fullName
+    },
+        process.env.ACCESS_TOKEN_SECRET,
+        {
+            expiresIn:process.env.ACCESS_TOKEN_EXPIRY
+        }
+    )
+}
+ landownerSchema.methods.generateRefreshToken = function(){
+     return jwt.sign({
+        _id: this._id,
+    },
+        process.env.REFRESH_TOKEN_SECRET,
+        {
+            expiresIn:process.env.REFRESH_TOKEN_EXPIRY
+        }
+    )
+}
 
 export const landowner = mongoose.model("landowner", landownerSchema)
