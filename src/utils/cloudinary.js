@@ -6,3 +6,20 @@ import fs from "fs"
         api_key: process.env.CLOUDINARY_API_KEY, 
         api_secret: process.env.CLOUDINARY_API_SECRET
     });
+
+
+    const uploadOnCloudinary = async (localfilepath) => {
+        try{
+            if(!localfilepath) return null
+            const response = await cloudinary.uploader.upload(localfilepath,{
+                resource_type: "image"
+            })
+            console.log("file uploaded on cloudinary", response.url);
+            return response;
+        } catch(error){
+            fs.unlinkSync(localfilepath)
+            return null;
+        }
+    }
+
+    export {uploadOnCloudinary}
