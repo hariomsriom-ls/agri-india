@@ -42,7 +42,7 @@ const landownerSchema = new Schema({
         type: String,
         required: true
     },
-    governmentid: {
+    governmentId: {
         type: String,
         required: true
     },
@@ -60,19 +60,19 @@ const landownerSchema = new Schema({
         ref: "landRecord",
     }
 ],
-    landarea: {
+    landArea: {
         type: Number,
         required: true
     },
-    landdocuments: {
+    landDocuments: {
         type: String,
         required: true
     },
-     landrentpayments: {
+     landRentPayments: {
         type: Number,
         required: true
     },
-    landleaseagreements: {
+    landLeaseAgreements: {
         type: String,
         required: true
     },
