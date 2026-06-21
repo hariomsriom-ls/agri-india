@@ -1,5 +1,5 @@
 import mongoose, {Schema} from "mongoose"
-import { landRecord } from "../record/landrecord"
+import { landRecord } from "../record/landrecord.js"
 import Jwt from "jsonwebtoken";
 
 const landownerSchema = new Schema({
@@ -11,7 +11,6 @@ const landownerSchema = new Schema({
     },
     address: {
         type: String,
-        required: true,
 
     },
     email: {
@@ -40,19 +39,15 @@ const landownerSchema = new Schema({
     },
     image: {
         type: String,
-        required: true
     },
     governmentId: {
         type: String,
-        required: true
     },
     bankaccount: {
         type: Number,
-        required: true
     },
     IFSCcode: {
         type: String,
-          required: true
     },
     landID: [
         {
@@ -62,23 +57,18 @@ const landownerSchema = new Schema({
 ],
     landArea: {
         type: Number,
-        required: true
     },
     landDocuments: {
         type: String,
-        required: true
     },
      landRentPayments: {
         type: Number,
-        required: true
     },
     landLeaseAgreements: {
         type: String,
-        required: true
     },
     cultivationPeriod:{
         type: Number,
-        required: true
     },
     refreshToken: {
         type: String
@@ -87,7 +77,7 @@ const landownerSchema = new Schema({
 
  landownerSchema.pre("save", async function(next) {
     if(!this.isModified("password")) return next();
-    this.password = bcrypt.hash(this.password,10)
+    this.password = await bcrypt.hash(this.password,10)
     next()
 })
 
