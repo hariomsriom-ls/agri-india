@@ -1,21 +1,12 @@
 import { Router } from "express";
-import { registerLandOwner } from "../../controllers/user.controller/landowner.controller.js";
+import { loginLandOwner, logoutLandOwner, registerLandOwner } from "../../controllers/user.controller/landowner.controller.js";
 import { upload } from "../../middlewares/multer.middleware.js";
 
 
 const router = Router()
 
-router.route("/registerlandowner").post(
-    upload.fields([
-       {
-        name: "image",
-        maxCount: 1
-       },
-       {
-        name: "governmentId",
-        maxCount: 1
-       } 
-    ]),
-    registerLandOwner)
+router.route("/registerlandowner").post(registerLandOwner)
+router.route("/loginlandowner").post(loginLandOwner)
+router.route("/logout").post(verifyJwt, logoutLandOwner)
 
 export default router
