@@ -1,6 +1,7 @@
 import mongoose, {Schema} from "mongoose"
 import { landRecord } from "../record/landrecord.js"
-import Jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt"
 
 const landownerSchema = new Schema({
     fullName: {
@@ -76,9 +77,8 @@ const landownerSchema = new Schema({
 },{ timestamps: true })
 
  landownerSchema.pre("save", async function(next) {
-    if(!this.isModified("password")) return next();
+    if(!this.isModified("password")) return ;
     this.password = await bcrypt.hash(this.password,10)
-    next()
 })
 
  landownerSchema.methods.isPasswordCorrect = async function(password){

@@ -7,6 +7,7 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 const generateAccessAndRefreshToken = async(landownerId) => {
     try {
         const landOwner = await landowner.findById(landownerId)
+        
         const accessToken = landOwner.generateAccessToken()
         const refreshToken = landOwner.generateRefreshToken()
 
@@ -15,6 +16,7 @@ const generateAccessAndRefreshToken = async(landownerId) => {
         return {accessToken, refreshToken}
         
     } catch (error) {
+        console.log("REAL TOKEN ERROR:", error);
         throw new ApiError(500, " something went wrong while generating access and refresh token")  
     }
 }
@@ -34,25 +36,18 @@ const registerLandOwner = asyncHandler(async(req, res) => {
      const {fullName, mobileNumber, email, userName, password}= req.body
      console.log("email:", email);
 
-     landownerValidations.fieldNotEmpty(req.body);
-     landownerValidations.validateEmailId(req.body.email);
-     landownerValidations.validateMobileNumber(req.body.mobileNumber);
+     registrationValidations.fieldNotEmpty(req.body);
+     registrationValidations.validateEmailId(req.body.email);
+     registrationValidations.validateMobileNumber(req.body.mobileNumber);
 
-     const existedUserName = landowner.findOne({
-        $or: [{userName}]
+     const existedUser = await landowner.findOne({
+        $or: [{userName},{email}]
      })
-     if(existedUserName){
-        throw new ApiError(409, "usernamealready exists")
+     if(existedUser){
+        throw new ApiError(409, "user already exists")
      }
 
-     const existedUseremail = landowner.findOne({
-        $or: [{userName}]
-     })
-     if(existedUseremail){
-        throw new ApiError(409, "email already exists")
-     }
-
-     const landowner = await landowner.create({
+     const landOwner = await landowner.create({
         fullName, 
         email,
         userName,
@@ -60,15 +55,15 @@ const registerLandOwner = asyncHandler(async(req, res) => {
         mobileNumber
      })
 
-     const createdlandowner = await landowner.findById(landowner._id).select(
+     const createdlandOwner = await landowner.findById(landOwner._id).select(
         "-password -refreshToken"
      )
-     if(!createdlandowner){
+     if(!createdlandOwner){
         throw new ApiError(500, "user not registered try again later")
      }
 
      return res.status(201).json(
-        new ApiResponse(200, createdlandowner, "landowner registered successfully")
+        new ApiResponse(200, createdlandOwner, "landowner registered successfully")
      )
 
     })
@@ -84,8 +79,11 @@ const loginLandOwner = asyncHandler(async(req, res) => {
     at logout destroy access and refresh token*/
     const {email, userName, mobileNumber, password} = req.body
 
-    if(!userName || !email || !mobileNumber){
-        throw new ApiError(400, "username and password is required in landowner login")
+    if(!userName && !email && !mobileNumber){
+        throw new ApiError(400, "username required in landowner login")
+    }
+    if(!password){
+        throw new ApiError(400, "password required in landowner login")
     }
 
     const landOwner = await landowner.findOne({
@@ -113,7 +111,7 @@ const loginLandOwner = asyncHandler(async(req, res) => {
     return res.status(200).cookie("acessToken", accessToken, options).cookie("refreshToken", refreshToken, options)
     .json(
         new ApiResponse(200,
-            {landowner: loggedInlandOwner, accessToken, refrehToken}, 
+            {landowner: loggedInlandOwner, accessToken, refreshToken}, 
             "landowner logged in successfully"
     )
     )
