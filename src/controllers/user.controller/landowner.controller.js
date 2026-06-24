@@ -3,6 +3,7 @@ import { ApiError } from "../../utils/ApiError.js";
 import registrationValidations from "../../validations/registration.validations.js";
 import { landowner } from "../../models/users/landowner.js"; 
 import { ApiResponse } from "../../utils/ApiResponse.js";
+import jwt from "jsonwebtoken"
 
 const generateAccessAndRefreshToken = async(landownerId) => {
     try {
@@ -131,8 +132,65 @@ const logoutLandOwner = asyncHandler(async(req, res) => {
     .json(new ApiResponse(200, {}, "user logged out"))
 
 })
+
+const refreshAccessToken = asyncHandler(async (req, res)=>{
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
+
+    if(!incomingRefreshToken){
+        throw new ApiError(401, "Unauthorized request")
+    }
+    try {
+        const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET)
+    
+        const landOwner = await landowner.findById(decodedToken?._id)
+    
+        if(!landOwner){
+            throw new ApiError(401," Invalid refresh token")
+        }
+        if(incomingRefreshToken !== landOwner?.refreshToken){
+            throw new ApiError (401," refresh token is expired or used")
+        }
+    
+        const options = {
+            httpOnly: true,
+            secure: true
+        }
+    
+       const {accessToken, newrefreshToken} = await generateAccessAndRefreshToken(landOwner._id)
+    
+       return res.status(200).cookie("accessToken",accessToken, options).cookie("newrefreshToken", refreshToken, options)
+       .json(
+        new ApiResponse(
+            200,
+            {accessToken, refreshToken: newrefreshToken},
+            "Access token refreshed"
+        )
+       )
+    } catch (error) {
+        throw new ApiError(401, error?.message || "Invalid refresh token")
+        console.log(error)
+    }
+
+
+})
+
+const changeCurrentPassword = asyncHandler(async(req,res) => {
+    const {oldPassword, newPassword} = req.body
+    const landOwner = await landowner.findById(req.landOwner?._id)
+    const isPasswordCorrect = await landOwner.isPasswordCorrect(oldPassword)
+
+    if(!isPasswordCorrect){
+        throw new ApiError(400, "Invalid old password")
+    }
+    landOwner.password = newPassword
+    await landOwner.save({validateBeforeSave: false})
+
+    return res.status(200).json(new ApiResponse(200, {}, "Password changed successfully"))
+})
 export {
      registerLandOwner,
      loginLandOwner,
-     logoutLandOwner
+     logoutLandOwner,
+     refreshAccessToken,
+     changeCurrentPassword
      }
