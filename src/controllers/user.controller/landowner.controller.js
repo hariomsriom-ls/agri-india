@@ -4,6 +4,8 @@ import registrationValidations from "../../validations/registration.validations.
 import { landowner } from "../../models/users/landowner.js"; 
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
+import { uploadOnCloudinary } from "../../utils/cloudinary.js";
+import { upload } from "../../middlewares/multer.middleware.js";
 
 const generateAccessAndRefreshToken = async(landownerId) => {
     try {
@@ -35,37 +37,24 @@ const registerLandOwner = asyncHandler(async(req, res) => {
     return response*/
 
      const {fullName, mobileNumber, email, userName, password}= req.body
-     console.log("email:", email);
 
      registrationValidations.fieldNotEmpty(req.body);
      registrationValidations.validateEmailId(req.body.email);
      registrationValidations.validateMobileNumber(req.body.mobileNumber);
 
-     const existedUser = await landowner.findOne({
-        $or: [{userName},{email}]
-     })
+     const existedUser = await landowner.findOne({ $or: [{userName},{email}]  })
      if(existedUser){
         throw new ApiError(409, "user already exists")
      }
 
-     const landOwner = await landowner.create({
-        fullName, 
-        email,
-        userName,
-        password,
-        mobileNumber
-     })
+     const landOwner = await landowner.create({fullName,  email, userName, password, mobileNumber})
 
-     const createdlandOwner = await landowner.findById(landOwner._id).select(
-        "-password -refreshToken"
-     )
+     const createdlandOwner = await landowner.findById(landOwner._id).select("-password -refreshToken" )
      if(!createdlandOwner){
         throw new ApiError(500, "user not registered try again later")
      }
 
-     return res.status(201).json(
-        new ApiResponse(200, createdlandOwner, "landowner registered successfully")
-     )
+     return res.status(201).json( new ApiResponse(200, createdlandOwner, "landowner registered successfully") )
 
     })
 
@@ -174,6 +163,45 @@ const refreshAccessToken = asyncHandler(async (req, res)=>{
 
 })
 
+const profileCompleteLandOwner = asyncHandler(async(req, res) => {
+    const {address, bankaccount, IFSCcode, city, state } = req.body
+    if(
+        [address, bankaccount, IFSCcode, city, state].some((fields) => field?.trim() === "")
+    ){
+        throw new ApiError(400, "all fields required")
+    }
+    const imageLocalPath = req.files?.image[0]?.path;
+    const governmentIdLocalPath = req.files?.governmentId[0]?.path;
+
+    const image = await uploadOnCloudinary(imageLocalPath)
+    const governmentId = await uploadOnCloudinary(governmentIdLocalPath)
+
+    const landOwnerId = req.landOwner?._id
+    const updateProfilelandOwner = await landowner.findByIdAndUpdate(landOwnerId,
+        {
+            $set: {
+                address, bankaccount, IFSCcode, city, state,
+                 image: image?.url || "",
+                 governmentId: governmentId.url || ""
+            },
+        },
+        {
+            new: true,
+            runValidators: true
+        }
+    ).select("-password -refreshToken");
+
+
+    if(!updateProfilelandOwner){
+        throw new ApiError(404,"landowner not found" )
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, updateProfilelandOwner, "details added successfully")
+    )
+
+})
+
 const changeCurrentPassword = asyncHandler(async(req,res) => {
     const {oldPassword, newPassword} = req.body
     const landOwner = await landowner.findById(req.landOwner?._id)
@@ -192,5 +220,6 @@ export {
      loginLandOwner,
      logoutLandOwner,
      refreshAccessToken,
-     changeCurrentPassword
+     profileCompleteLandOwner,
+     changeCurrentPassword,
      }

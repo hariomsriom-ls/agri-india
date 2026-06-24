@@ -12,7 +12,12 @@ const landownerSchema = new Schema({
     },
     address: {
         type: String,
-
+    },
+    city: {
+        type: String,
+    },
+    state: {
+        type: String,
     },
     email: {
         type: String,
@@ -62,7 +67,7 @@ const landownerSchema = new Schema({
     landDocuments: {
         type: String,
     },
-     landRentPayments: {
+    landRentPayments: {
         type: Number,
     },
     landLeaseAgreements: {
