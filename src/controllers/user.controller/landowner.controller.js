@@ -187,7 +187,7 @@ const profileCompleteLandOwner = asyncHandler(async(req, res) => {
         },
         {
             new: true,
-            runValidators: true
+            runValidators: false
         }
     ).select("-password -refreshToken");
 
@@ -215,6 +215,44 @@ const changeCurrentPassword = asyncHandler(async(req,res) => {
 
     return res.status(200).json(new ApiResponse(200, {}, "Password changed successfully"))
 })
+
+const addLandDetails = asyncHandler(async(req,res) => {
+    const {landArea, landCity, landLocation, } = req.body
+     if(
+        [landArea, landCity, landLocation].some((fields) => field?.trim() === "")
+    ){
+        throw new ApiError(400, "all fields required")
+    }
+    const landDocumentsLocalPath = req.files?.landDocuments[0]?.path;
+     if (!landDocumentsLocalPath) {
+    throw new ApiError(400, "land Documents file is required");
+  }
+
+    const landDocuments = await uploadOnCloudinary(landDocumentsLocalPath)
+    const landOwnerId = req.landOwner?._id
+
+     const newLandOflandOwner = await landowner.findByIdAndUpdate(landOwnerId,
+        {
+            $set: {
+                 landArea, landCity, landLocation,
+                 landDocuments: landDocuments?.url || "",
+                 
+            },
+        },
+        {
+            new: true,
+            runValidators: false
+        }
+    ).select("-password -refreshToken");
+    if(!newLandOflandOwner){
+        throw new ApiError(404,"landowner not found" )
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, newLandOflandOwner, "details added successfully")
+    )
+
+})
 export {
      registerLandOwner,
      loginLandOwner,
@@ -222,4 +260,5 @@ export {
      refreshAccessToken,
      profileCompleteLandOwner,
      changeCurrentPassword,
+     addLandDetails
      }

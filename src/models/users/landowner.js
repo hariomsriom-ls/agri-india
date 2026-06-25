@@ -64,6 +64,12 @@ const landownerSchema = new Schema({
     landArea: {
         type: Number,
     },
+    landCity: {
+        type: String,
+    },
+    landLocation: {
+        type: String,
+    },
     landDocuments: {
         type: String,
     },
