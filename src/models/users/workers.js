@@ -69,7 +69,8 @@ const workerSchema = new Schema({
     },
     refreshToken: {
         type: String
-    }
+    },
+
 },{timestamps: true})
 
 workerSchema.pre("save", async function(next) {

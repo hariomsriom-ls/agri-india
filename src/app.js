@@ -16,9 +16,10 @@ app.use(cookieparser())
 
 // routesimport
 import landOwnerRouter from './routes/user/landowner.routes.js'
-
+import pendingRegistrationRouter from './routes/user/pendingregistration.routes.js'
 
 //routes declaration
 app.use("/api/v1/user/landowner", landOwnerRouter)
+app.use("/api/v1/user/pending-registration", pendingRegistrationRouter)
 
 export {app};

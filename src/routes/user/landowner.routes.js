@@ -22,7 +22,10 @@ router.route("/landowner").post(registerLandOwner).patch(
 router.route("/loginlandowner").post(loginLandOwner)
 router.route("/logout").post(verifyJwt, logoutLandOwner)
 router.route("/refresh-access-token").post(refreshAccessToken)
-router.route("/landDetails").post(addLandDetails)
+router.route("/landDetails").post(
+    verifyJwt,
+    upload.single("landDocuments"),
+    addLandDetails)
 
 
 export default router
