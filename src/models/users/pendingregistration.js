@@ -1,4 +1,5 @@
 import mongoose, {Schema} from "mongoose";
+import { address } from "../address";
 import Jwt from "jsonwebtoken";
 
 const pendingWorkerRegistrationSchema = new Schema({
@@ -8,10 +9,10 @@ const pendingWorkerRegistrationSchema = new Schema({
         trim: true,
         index: true
     },
-    address: {
+    address: [address],
+    workingZone: {
         type: String,
         required: true,
-
     },
     mobileNumber: {
         type: Number,
@@ -68,6 +69,28 @@ const pendingWorkerRegistrationSchema = new Schema({
  
   pendingWorkerRegistrationSchema.methods.isPasswordCorrect = async function(password){
      return await bcrypt.compare(password, this.password)
+ }
+ pendingWorkerRegistrationSchema.methods.generateAccessToken = function(){
+     return jwt.sign({
+         _id: this._id,
+         userName: this.userName,
+         fullName: this.fullName
+     },
+         process.env.ACCESS_TOKEN_SECRET,
+         {
+             expiresIn:process.env.ACCESS_TOKEN_EXPIRY
+         }
+     )
+ }
+pendingWorkerRegistration.methods.generateRefreshToken = function(){
+      return jwt.sign({
+         _id: this._id,
+     },
+         process.env.REFRESH_TOKEN_SECRET,
+         {
+             expiresIn:process.env.REFRESH_TOKEN_EXPIRY
+         }
+     )
  }
 
  export const pendingWorkerRegistration = mongoose.model("pendingWorkerRegistration", workerSchema)

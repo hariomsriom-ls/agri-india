@@ -1,4 +1,5 @@
 import mongoose, {Schema} from "mongoose"
+import { address} from "../address.js"
 import { landRecord } from "../record/landrecord.js"
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt"
@@ -10,15 +11,7 @@ const landownerSchema = new Schema({
         trim: true,
         index: true
     },
-    address: {
-        type: String,
-    },
-    city: {
-        type: String,
-    },
-    state: {
-        type: String,
-    },
+    address: [address],
     email: {
         type: String,
         required: true,

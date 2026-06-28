@@ -6,7 +6,8 @@ const organizationSchema = new Schema({
         type: Number,
         required: true
      },
-    address: {
+    address: [address],
+    workingZone: {
         type: String,
         required: true,
     },
@@ -102,4 +103,4 @@ organizationSchema.methods.generateRefreshToken = function(){
     )
 }
 
-export const organization = mongoose.model("organization", organizationSchema)
+export const organizationAuthority = mongoose.model("organization", organizationSchema)

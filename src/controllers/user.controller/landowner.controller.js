@@ -2,6 +2,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiError } from "../../utils/ApiError.js";
 import registrationValidations from "../../validations/registration.validations.js";
 import { landowner } from "../../models/users/landowner.js"; 
+import { address } from "../../models/address.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import { uploadOnCloudinary } from "../../utils/cloudinary.js";
@@ -164,7 +165,7 @@ const refreshAccessToken = asyncHandler(async (req, res)=>{
 })
 
 const profileCompleteLandOwner = asyncHandler(async(req, res) => {
-    const {address, bankaccount, IFSCcode, city, state } = req.body
+    const {address, bankaccount, IFSCcode } = req.body
     if(
         [address, bankaccount, IFSCcode, city, state].some((fields) => field?.trim() === "")
     ){
@@ -180,7 +181,7 @@ const profileCompleteLandOwner = asyncHandler(async(req, res) => {
     const updateProfilelandOwner = await landowner.findByIdAndUpdate(landOwnerId,
         {
             $set: {
-                address, bankaccount, IFSCcode, city, state,
+                address, bankaccount, IFSCcode,
                  image: image?.url || "",
                  governmentId: governmentId.url || ""
             },

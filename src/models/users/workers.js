@@ -9,10 +9,10 @@ const workerSchema = new Schema({
         trim: true,
         index: true
     },
-    address: {
+    address: [address],
+    workingZone: {
         type: String,
         required: true,
-
     },
     mobileNumber: {
         type: Number,
