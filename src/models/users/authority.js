@@ -1,7 +1,7 @@
 import mongoose, {Schema} from "mongoose"
 import { landRecord } from "../record/landrecord"
 
-const organizationSchema = new Schema({
+const authoritySchema = new Schema({
      authorityid:{
         type: Number,
         required: true
@@ -70,17 +70,17 @@ const organizationSchema = new Schema({
     }
 },{timestamps: true})
 
-organizationSchema.pre("save", async function(next) {
+authoritySchema.pre("save", async function(next) {
     if(!this.isModified("password")) return next();
     this.password = bcrypt.hash(this.password,10)
     next()
 })
 
-organizationSchema.methods.isPasswordCorrect = async function(password){
+authoritySchema.methods.isPasswordCorrect = async function(password){
     return await bcrypt.compare(password, this.password)
 }
 
-organizationSchema.methods.generateAccessToken = function(){
+authoritySchema.methods.generateAccessToken = function(){
     return jwt.sign({
         _id: this._id,
         userName: this.userName,
@@ -92,7 +92,7 @@ organizationSchema.methods.generateAccessToken = function(){
         }
     )
 }
-organizationSchema.methods.generateRefreshToken = function(){
+authoritySchema.methods.generateRefreshToken = function(){
      return jwt.sign({
         _id: this._id,
     },
@@ -103,4 +103,4 @@ organizationSchema.methods.generateRefreshToken = function(){
     )
 }
 
-export const organizationAuthority = mongoose.model("organization", organizationSchema)
+export const organizationAuthority = mongoose.model("authority", authoritySchema)
