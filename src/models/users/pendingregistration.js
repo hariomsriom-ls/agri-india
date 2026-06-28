@@ -47,14 +47,18 @@ const pendingWorkerRegistrationSchema = new Schema({
         type: String,
           required: true
     },
-    age: {
-        type: Number,
+    DOB: {
+        type: Date,
         required: true
     },
      status: {
         type: String,
         enum: ["PENDING", "APPROVED", "REJECTED"],
         default: "PENDING"
+    },
+    rejectionReason: {
+        type: String,
+        default: ""
     },
     submittedAt: {
         type: Date,

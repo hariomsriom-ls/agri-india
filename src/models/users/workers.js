@@ -47,25 +47,24 @@ const workerSchema = new Schema({
         type: String,
           required: true
     },
-    age: {
+    DOB: {
+        type: date,
+        required: true
+    },
+     workerSalary: {
         type: Number,
         required: true
     },
-     workersalary: {
-        type: Number,
-        required: true
-    },
-    workingtime: {
+    workingTime: {
         type: Number,
         required: true
     },
     bonus: {
         type: Number
     },
-    workingon: {
+    workingOn: {
         type: Schema.Types.ObjectId,
         ref: "project",
-        required: true
     },
     refreshToken: {
         type: String

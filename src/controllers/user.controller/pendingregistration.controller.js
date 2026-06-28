@@ -28,23 +28,23 @@ const generateAccessAndRefreshToken = async(pendingWorkerRegistrationId) => {
 const registerPendingWorker = asyncHandler(async(req, res) => {
 
     const {fullName, mobileNumber, email, userName, password,
-         address,workingZone, bankaccount, IFSCcode, age, submittedAt}= req.body
+         address,workingZone, bankaccount, IFSCcode, DOB, submittedAt}= req.body
     
     registrationValidations.fieldNotEmpty(req.body);
     registrationValidations.validateEmailId(req.body.email);
     registrationValidations.validateMobileNumber(req.body.mobileNumber);
 
     const imageLocalPath = req.files?.image[0]?.path;
-    const governmentIdLocalPath = req.files?.governmentId[0]?.path;
+    const governmentidLocalPath = req.files?.governmentid[0]?.path;
 
-    if(!imageLocalPath || !governmentIdLocalPath){
+    if(!imageLocalPath || !governmentidLocalPath){
         throw new ApiError(400, "image and government id are required")
     }
 
     const image = await uploadOnCloudinary(imageLocalPath)
-    const governmentId = await uploadOnCloudinary(governmentIdLocalPath)
+    const governmentid = await uploadOnCloudinary(governmentidLocalPath)
 
-    if(!image || !governmentId){
+    if(!image || !governmentid){
         throw new ApiError(405, "unable to upload on cloudinary please retry")
     }
 
@@ -54,9 +54,9 @@ const registerPendingWorker = asyncHandler(async(req, res) => {
          }
 
     const pendingRequest = await pendingWorkerRegistration.create({fullName, mobileNumber, email, userName, password,
-         address, bankaccount, IFSCcode, age, submittedAt,
+         address, bankaccount, IFSCcode, DOB, submittedAt,
         image: image.url,
-        governmentId: governmentId.url
+        governmentid: governmentid.url
     })
 
     const createdpendingRequest = await pendingWorkerRegistration.findById(pendingRequest._id)
@@ -72,35 +72,87 @@ const registerPendingWorker = asyncHandler(async(req, res) => {
  })
 
 const viewRequestStatus = asyncHandler(async(req,res) => {
-     const {email, userName, mobileNumber, password} = req.body
 
-    if(!userName && !email && !mobileNumber){
-        throw new ApiError(400, "username required to view status")
-    }
-    if(!password){
-        throw new ApiError(400, "password required to view status")
-    }
-
-    const pendingRequest = await pendingWorkerRegistration.findOne({
-            $or: [{userName}, {email}, {mobileNumber}]
-        })
+    const pendingRequest = await pendingWorkerRegistration.findById(pendingWorker._id)
     if(!pendingRequest){
         throw new ApiError(404, "request not registered")
     }
-    const isPasswordValid = await pendingRequest.isPasswordCorrect(password)
-    
-    if(!isPasswordValid){
-       throw new ApiError(401, "Invalid landowner credentials")
-    }
-
-    const pendingRequest = await pendingWorkerRegistration.findById(req.pendingRequest?._id)
     const Status = pendingRequest.status
 
     return res.status(200).json(200, Status);
 
 })
 
+const loginpendingWorker = asyncHandler(async(req, res) => {
+
+    const {email, userName, mobileNumber, password} = req.body
+
+    if(!userName && !email && !mobileNumber){
+        throw new ApiError(400, "username required in pending worker login")
+    }
+    if(!password){
+        throw new ApiError(400, "password required in pending worker login")
+    }
+
+    const pendingWorker = await pendingworker.findOne({
+        $or: [{userName}, {email}, {mobileNumber}]
+    })
+    if(!pendingWorker){
+        throw new ApiError(404, "pendingWorker not registered")
+    }
+
+    const isPasswordValid = await pendingworker.isPasswordCorrect(password)
+
+    if(!isPasswordValid){
+        throw new ApiError(401, "Invalid pending worker credentials")
+    }
+
+    const {accessToken, refreshToken} = await generateAccessAndRefreshToken(pendingWorker._id)
+
+    const loggedInpendingWorker = await pendingworker.findById(pendingWorker._id).select(" -password -refreshToken")
+
+    const options ={
+        httpOnly: true,
+        secure: true
+    }
+
+    return res.status(200).cookie("acessToken", accessToken, options).cookie("refreshToken", refreshToken, options)
+    .json(
+        new ApiResponse(200,
+            {pendingWorker: loggedInpendingWorker, accessToken, refreshToken}, 
+            "pendingWorker logged in successfully"
+    )
+    )
+})
+
+const logoutpendingWorker = asyncHandler(async(req, res) => {
+    await pendingWorkerRegistration.findByIdAndUpdate(
+        req.pendingWorker._id,
+        {$set: {refreshToken: undefined}},
+        {new: true}
+    )
+    const options ={
+        httpOnly: true,
+        secure: true
+    }
+    return res.status(200).clearCookie("accessToken", options).clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "user logged out"))
+
+})
+
+const changeWorkingZone = asyncHandler(async(req,res) => {
+    const {newWorkingZone} = req.body
+    await pendingWorkerRegistration.findByIdAndUpdate(
+        req.pendingWorker._id,
+        {$set: {workingZone: newWorkingZone}},
+        {new: true})
+
+})
+
 export{
     registerPendingWorker,
-    viewRequestStatus
+    viewRequestStatus,
+    loginpendingWorker,
+    logoutpendingWorker,
+    changeWorkingZone
 }

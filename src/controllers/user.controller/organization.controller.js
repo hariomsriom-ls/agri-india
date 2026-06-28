@@ -33,12 +33,78 @@ const showPendingWorkerList = asyncHandler(async (req,res) =>{
             }
         }
     ])
+    return res.status(202).json(new ApiResponse(202, pendingWorkerRequests, "pending workers list created successfully"))
 
+})
+
+const acceptWorker = asyncHandler(async(req,res) => {
+    const {pendingWorkerId} = req.params;
+
+    const pendingWorker = pendingWorkerRegistration.findById(pendingWorkerId)
+
+    if(!pendingWorker){
+        throw new ApiError(400," worker request not found")
+    }
+    if(pendingWorker.status !== "PENDING"){
+        throw new ApiError(401," request already processed")
+    }
+
+    const existingWorker = await worker.findOne({
+        $and: [{email: pendingWorker.email},{mobileNumber: pendingWorker.mobileNumber},{fullName: pendingWorker.fullName}]
+    })
+    if(existingWorker){
+        throw new ApiError(400, "request processed and worker already registered successfully")
+    }
+    pendingWorker.status = "APPROVED"
+    await pendingWorker.save({validateBeforeSave: false})
+
+    const {workerSalary, workingTime} = req.body;
+    
+    const Worker = await worker.create({
+        fullName: pendingWorker.fullName,
+        email: pendingWorker.email,
+        mobileNumber: pendingWorker.mobileNumber,
+        userName: pendingWorker.userName,
+        password: pendingWorker.password,
+        address: pendingWorker.address,
+        workingZone: pendingWorker.workingZone, 
+        bankaccount: pendingWorker.bankaccount,
+        IFSCcode: pendingWorker.IFSCcode,
+        DOB: pendingWorker.DOB,
+        image: pendingWorker.image,
+        governmentid: pendingWorker.governmentid,
+        workerSalary: workerSalary,
+        workingTime: workingTime,
+        verifiedAt: new Date(),
+        verifiedBy: req.organizationAuthority?._id, 
+    })
+
+    await pendingWorker.findByIdAndDelete(pendingWorkerId);
+    return res.status(200).json(new ApiResponse(200, {}, " worker accepted and created successfully"))
+})
+
+const rejectWorker = asyncHandler(async(req, res) => {
+    const { pendingWorkerRegistrationId} = req.params;
+    const { reason } = req.body;
+    const pendingWorker = await pendingWorkerRegistration.findById(pendingWorkerRegistrationId)
+
+    if(!pendingWorker){
+        throw new ApiError(401, "worker registration not found")
+    }
+    if(pendingWorker.status !== "PENDING"){
+        throw new ApiError(400, " request already processed")
+    }
+
+    pendingWorker.status = "REJECTED";
+    pendingWorker.rejectionreason = reason;
+    await pendingWorker.save();
+    return res.status(200).json( new ApiResponse(200, {}, "worker rejected successfully"))
 })
 
 
 
-
 export {
-
+    acceptWorker,
+    rejectWorker,
+    showPendingWorkerList
 }
