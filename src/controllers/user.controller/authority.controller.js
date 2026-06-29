@@ -49,7 +49,64 @@ const createdAuthority = await organizationauthority.findById(organizationAuthor
 
      return res.status(201).json( new ApiResponse(200, createdAuthority, "authority registered successfully") )
 
- })  
+ })
+ 
+ const loginorganizationAuthority = asyncHandler(async(req, res) => {
+    const {email, userName, contactNumber, authorityid, password} = req.body
+
+    if(!userName && !email && !contactNumber && !authorityid){
+        throw new ApiError(400, "username required in authority login")
+    }
+    if(!password){
+        throw new ApiError(400, "password required in authority login")
+    }
+
+    constorganizationAuthority = await organizationauthority.findOne({
+        $or: [{userName}, {email}, {contactNumber}, {authorityid}]
+    })
+    if(!organizationAuthority){
+        throw new ApiError(404, "authority not registered")
+    }
+
+    const isPasswordValid = await organizationAuthority.isPasswordCorrect(password)
+
+    if(!isPasswordValid){
+        throw new ApiError(401, "Invalid organizationauthority credentials")
+    }
+
+    const {accessToken, refreshToken} = await generateAccessAndRefreshToken(organizationAuthority._id)
+
+    const loggedInorganizationAuthority = await organizationauthority.findById(organizationAuthority._id)
+    .select(" -password -refreshToken")
+
+    const options ={
+        httpOnly: true,
+        secure: true
+    }
+
+    return res.status(200).cookie("acessToken", accessToken, options).cookie("refreshToken", refreshToken, options)
+    .json(
+        new ApiResponse(200,
+            {organizationauthority: loggedInorganizationAuthority, accessToken, refreshToken}, 
+            "authority logged in successfully"
+    )
+    )
+})
+
+const logoutorganizationAuthority = asyncHandler(async(req, res) => {
+    await organizationauthority.findByIdAndUpdate(
+        req.organizationAuthority._id,
+        {$set: {refreshToken: undefined}},
+        {new: true}
+    )
+    const options ={
+        httpOnly: true,
+        secure: true
+    }
+    return res.status(200).clearCookie("accessToken", options).clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "user logged out"))
+
+})
     
 const showPendingWorkerList = asyncHandler(async (req,res) =>{
     const pendingWorkerRequests = await pendingWorkerRegistration.aggregate([
@@ -145,6 +202,8 @@ const rejectWorker = asyncHandler(async(req, res) => {
 
 export {
     registerAuthority,
+    loginorganizationAuthority,
+    logoutorganizationAuthority,
     acceptWorker,
     rejectWorker,
     showPendingWorkerList
