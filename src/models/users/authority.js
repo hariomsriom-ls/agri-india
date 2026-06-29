@@ -103,4 +103,4 @@ authoritySchema.methods.generateRefreshToken = function(){
     )
 }
 
-export const organizationAuthority = mongoose.model("authority", authoritySchema)
+export const organizationauthority = mongoose.model("authority", authoritySchema)

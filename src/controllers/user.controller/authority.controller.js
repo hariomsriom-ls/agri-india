@@ -7,8 +7,50 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import { uploadOnCloudinary } from "../../utils/cloudinary.js";
 import { upload } from "../../middlewares/multer.middleware.js";
-import { organizationAuthority } from "../../models/users/organization.js";
+import { organizationauthority } from "../../models/users/organization.js";
+import allowedauthorites from "../../models/record/allowedauthoritesrecord.js";
 
+const registerAuthority = asyncHandler(async(req,res) => {
+    const {email, contactNumber, authorityid} = req.body;
+       registrationValidations.fieldNotEmpty(req.body);
+       registrationValidations.validateEmailId(req.body.email);
+       registrationValidations.validateMobileNumber(req.body.contactNumber);  
+       const normalizedEmail = email.tolowerCase()
+    const allowedUser = await allowedauthorites.findOne({
+    email: normalizedEmail,
+    phoneNumber: contactNumber,
+    authorityId: authorityid
+  });
+  if(!allowedUser){
+    throw new ApiError(400, "unauthorized authority registeration")
+  }
+   const existingUser = await organizationauthority.findOne({
+    $or: [
+        { email: normalizedEmail }, 
+        { contactNumber },
+        { authorityid }
+    ],
+  });
+  if(existingUser){
+    throw new ApiError(401, "authority already registered")
+  }
+  const {address, workingZone, userName, password, bankaccount, IFSCcode} = req.body;
+    
+  const organizationAuthority  = await organizationauthority
+    .create({fullName, normalizedEmail, userName, password, contactNumber,
+        address, workingZone, bankaccount, IFSCcode})  
+    
+const createdAuthority = await organizationauthority.findById(organizationAuthority._id)
+    .select("-password -refreshToken" )
+     
+    if(!createdAuthority){
+        throw new ApiError(500, "authority not registered try again later")
+     }
+
+     return res.status(201).json( new ApiResponse(200, createdAuthority, "authority registered successfully") )
+
+ })  
+    
 const showPendingWorkerList = asyncHandler(async (req,res) =>{
     const pendingWorkerRequests = await pendingWorkerRegistration.aggregate([
         {
@@ -101,9 +143,8 @@ const rejectWorker = asyncHandler(async(req, res) => {
     return res.status(200).json( new ApiResponse(200, {}, "worker rejected successfully"))
 })
 
-
-
 export {
+    registerAuthority,
     acceptWorker,
     rejectWorker,
     showPendingWorkerList
