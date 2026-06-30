@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken"
 import { uploadOnCloudinary } from "../../utils/cloudinary.js";
 import { upload } from "../../middlewares/multer.middleware.js";
 
-const generateAccessAndRefreshToken = async(landownerId) => {
+export const generateAccessAndRefreshToken = async(landownerId) => {
     try {
         const landOwner = await landowner.findById(landownerId)
         

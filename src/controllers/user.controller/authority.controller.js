@@ -9,7 +9,24 @@ import { uploadOnCloudinary } from "../../utils/cloudinary.js";
 import { upload } from "../../middlewares/multer.middleware.js";
 import { organizationauthority } from "../../models/users/organization.js";
 import allowedauthorites from "../../models/record/allowedauthoritesrecord.js";
+import jwt from "jsonwebtoken";
 
+const generateAccessAndRefreshToken = async(organizationAuthorityId) => {
+    try {
+        const organizationAuthority = await organizationauthority.findById(organizationAuthorityId)
+        
+        const accessToken = organizationAuthority.generateAccessToken()
+        const refreshToken = organizationAuthority.generateRefreshToken()
+
+        organizationAuthority.refreshToken = refreshToken
+        organizationAuthority.save({ validateBeforeSave: false})
+        return {accessToken, refreshToken}
+        
+    } catch (error) {
+        console.log("REAL TOKEN ERROR:", error);
+        throw new ApiError(500, " something went wrong while generating access and refresh token")  
+    }
+}
 const registerAuthority = asyncHandler(async(req,res) => {
     const {email, contactNumber, authorityid} = req.body;
        registrationValidations.fieldNotEmpty(req.body);
@@ -105,6 +122,47 @@ const logoutorganizationAuthority = asyncHandler(async(req, res) => {
     }
     return res.status(200).clearCookie("accessToken", options).clearCookie("refreshToken", options)
     .json(new ApiResponse(200, {}, "user logged out"))
+
+})
+
+const refreshAccessToken = asyncHandler(async (req, res)=>{
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
+
+    if(!incomingRefreshToken){
+        throw new ApiError(401, "Unauthorized request")
+    }
+    try {
+        const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET)
+    
+        const organizationAuthority = await organizationauthority.findById(decodedToken?._id)
+    
+        if(!organizationAuthority){
+            throw new ApiError(401," Invalid refresh token")
+        }
+        if(incomingRefreshToken !== organizationAuthority?.refreshToken){
+            throw new ApiError (401," refresh token is expired or used")
+        }
+    
+        const options = {
+            httpOnly: true,
+            secure: true
+        }
+    
+       const {accessToken, newrefreshToken} = await generateAccessAndRefreshToken(organizationAuthority._id)
+    
+       return res.status(200).cookie("accessToken",accessToken, options).cookie("newrefreshToken", refreshToken, options)
+       .json(
+        new ApiResponse(
+            200,
+            {accessToken, refreshToken: newrefreshToken},
+            "Access token refreshed"
+        )
+       )
+    } catch (error) {
+        throw new ApiError(401, error?.message || "Invalid refresh token")
+        console.log(error)
+    }
+
 
 })
     
@@ -206,5 +264,6 @@ export {
     logoutorganizationAuthority,
     acceptWorker,
     rejectWorker,
-    showPendingWorkerList
+    showPendingWorkerList,
+    refreshAccessToken
 }

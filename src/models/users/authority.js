@@ -1,5 +1,6 @@
 import mongoose, {Schema} from "mongoose"
-import { landRecord } from "../record/landrecord"
+import { landRecord } from "../record/landrecord.js"
+import {address} from "../address.js"
 
 const authoritySchema = new Schema({
      authorityid:{

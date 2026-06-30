@@ -140,6 +140,47 @@ const logoutpendingWorker = asyncHandler(async(req, res) => {
 
 })
 
+const refreshAccessToken = asyncHandler(async (req, res)=>{
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
+
+    if(!incomingRefreshToken){
+        throw new ApiError(401, "Unauthorized request")
+    }
+    try {
+        const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET)
+    
+        const pendingWorker = await pendingWorkerRegistration.findById(decodedToken?._id)
+    
+        if(!pendingWorker){
+            throw new ApiError(401," Invalid refresh token")
+        }
+        if(incomingRefreshToken !== pendingWorker?.refreshToken){
+            throw new ApiError (401," refresh token is expired or used")
+        }
+    
+        const options = {
+            httpOnly: true,
+            secure: true
+        }
+    
+       const {accessToken, newrefreshToken} = await generateAccessAndRefreshToken(pendingWorker._id)
+    
+       return res.status(200).cookie("accessToken",accessToken, options).cookie("newrefreshToken", refreshToken, options)
+       .json(
+        new ApiResponse(
+            200,
+            {accessToken, refreshToken: newrefreshToken},
+            "Access token refreshed"
+        )
+       )
+    } catch (error) {
+        throw new ApiError(401, error?.message || "Invalid refresh token")
+        console.log(error)
+    }
+
+
+})
+
 const changeWorkingZone = asyncHandler(async(req,res) => {
     const {newWorkingZone} = req.body
     await pendingWorkerRegistration.findByIdAndUpdate(
@@ -154,5 +195,6 @@ export{
     viewRequestStatus,
     loginpendingWorker,
     logoutpendingWorker,
-    changeWorkingZone
+    changeWorkingZone,
+    refreshAccessToken
 }
