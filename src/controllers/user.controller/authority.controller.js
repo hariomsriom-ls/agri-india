@@ -7,9 +7,9 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import { uploadOnCloudinary } from "../../utils/cloudinary.js";
 import { upload } from "../../middlewares/multer.middleware.js";
-import { organizationauthority } from "../../models/users/organization.js";
+import { organizationauthority } from "../../models/users/authority.js";
 import allowedauthorites from "../../models/record/allowedauthoritesrecord.js";
-import jwt from "jsonwebtoken";
+
 
 const generateAccessAndRefreshToken = async(organizationAuthorityId) => {
     try {

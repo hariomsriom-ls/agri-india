@@ -1,6 +1,7 @@
 import mongoose, {Schema} from "mongoose";
 import Jwt from "jsonwebtoken";
-import {address} from "../address.js"
+import { addressSchema } from "../address.js"
+
 const workerSchema = new Schema({
     _id: String,
     fullName: {
@@ -9,7 +10,7 @@ const workerSchema = new Schema({
         trim: true,
         index: true
     },
-    address: [address],
+    address: [addressSchema],
     workingZone: {
         type: String,
         required: true,
@@ -48,7 +49,7 @@ const workerSchema = new Schema({
           required: true
     },
     DOB: {
-        type: date,
+        type: Date,
         required: true
     },
      workerSalary: {

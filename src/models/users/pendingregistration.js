@@ -1,5 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import { address } from "../address";
+import { addressSchema } from "../address.js";
 import Jwt from "jsonwebtoken";
 
 const pendingWorkerRegistrationSchema = new Schema({
@@ -9,7 +9,7 @@ const pendingWorkerRegistrationSchema = new Schema({
         trim: true,
         index: true
     },
-    address: [address],
+    address: [addressSchema],
     workingZone: {
         type: String,
         required: true,
@@ -86,7 +86,7 @@ const pendingWorkerRegistrationSchema = new Schema({
          }
      )
  }
-pendingWorkerRegistration.methods.generateRefreshToken = function(){
+pendingWorkerRegistrationSchema.methods.generateRefreshToken = function(){
       return jwt.sign({
          _id: this._id,
      },
@@ -97,4 +97,4 @@ pendingWorkerRegistration.methods.generateRefreshToken = function(){
      )
  }
 
- export const pendingWorkerRegistration = mongoose.model("pendingWorkerRegistration", workerSchema)
+ export const pendingWorkerRegistration = mongoose.model("pendingWorkerRegistration", pendingWorkerRegistrationSchema)

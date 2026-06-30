@@ -2,7 +2,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiError } from "../../utils/ApiError.js";
 import registrationValidations from "../../validations/registration.validations.js";
 import { landowner } from "../../models/users/landowner.js"; 
-import { address } from "../../models/address.js";
+import address from "../../models/address.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import { uploadOnCloudinary } from "../../utils/cloudinary.js";
