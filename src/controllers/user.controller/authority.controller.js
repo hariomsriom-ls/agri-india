@@ -1,6 +1,7 @@
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiError } from "../../utils/ApiError.js";
 import registrationValidations from "../../validations/registration.validations.js";
+import { createAddress } from "../address.controller.js";
 import { pendingWorkerRegistration } from "../../models/users/pendingregistration.js";
 import { worker } from "../../models/users/workers.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
@@ -52,10 +53,13 @@ const registerAuthority = asyncHandler(async(req,res) => {
     throw new ApiError(401, "authority already registered")
   }
   const {address, workingZone, userName, password, bankaccount, IFSCcode} = req.body;
+
+  const UserAddress = createAddress(address)
+
     
   const organizationAuthority  = await organizationauthority
     .create({fullName, normalizedEmail, userName, password, contactNumber,
-        address, workingZone, bankaccount, IFSCcode})  
+        address: UserAddress._id, workingZone, bankaccount, IFSCcode})  
     
 const createdAuthority = await organizationauthority.findById(organizationAuthority._id)
     .select("-password -refreshToken" )

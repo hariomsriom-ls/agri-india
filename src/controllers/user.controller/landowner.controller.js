@@ -2,7 +2,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiError } from "../../utils/ApiError.js";
 import registrationValidations from "../../validations/registration.validations.js";
 import { landowner } from "../../models/users/landowner.js"; 
-import address from "../../models/address.js";
+import {Address} from "../../models/address.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import { uploadOnCloudinary } from "../../utils/cloudinary.js";
@@ -110,7 +110,7 @@ const loginLandOwner = asyncHandler(async(req, res) => {
 
 const logoutLandOwner = asyncHandler(async(req, res) => {
     await landowner.findByIdAndUpdate(
-        req.landOwner._id,
+        req.user?._id,
         {$set: {refreshToken: undefined}},
         {new: true}
     )
@@ -205,7 +205,13 @@ const profileCompleteLandOwner = asyncHandler(async(req, res) => {
 
 const changeCurrentPassword = asyncHandler(async(req,res) => {
     const {oldPassword, newPassword} = req.body
-    const landOwner = await landowner.findById(req.landOwner?._id)
+    if(!oldPassword || !newPassword){
+        throw new ApiError(401, "both passowrds are required")
+    }
+    const landOwner = await landowner.findById(req.user?._id)
+    if(!landOwner){
+        throw new ApiError(401, "landowner not exist")
+    }
     const isPasswordCorrect = await landOwner.isPasswordCorrect(oldPassword)
 
     if(!isPasswordCorrect){

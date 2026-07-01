@@ -1,13 +1,16 @@
 import mongoose, {Schema} from "mongoose"
 import { landRecord } from "../record/landrecord.js"
-import { addressSchema } from "../address.js"
+import { Address } from "../address.js"
 
 const authoritySchema = new Schema({
      authorityid:{
         type: Number,
         required: true
      },
-    address: [addressSchema],
+    address: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Address"
+    },
     workingZone: {
         type: String,
         required: true,

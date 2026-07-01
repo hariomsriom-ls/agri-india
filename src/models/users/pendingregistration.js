@@ -1,5 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import { addressSchema } from "../address.js";
+import { Address } from "../address.js";
 import Jwt from "jsonwebtoken";
 
 const pendingWorkerRegistrationSchema = new Schema({
@@ -9,7 +9,10 @@ const pendingWorkerRegistrationSchema = new Schema({
         trim: true,
         index: true
     },
-    address: [addressSchema],
+    address: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Address"
+        },
     workingZone: {
         type: String,
         required: true,

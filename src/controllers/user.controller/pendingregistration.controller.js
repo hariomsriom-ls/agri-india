@@ -4,7 +4,7 @@ import registrationValidations from "../../validations/registration.validations.
 import { pendingWorkerRegistration } from "../../models/users/pendingregistration.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
-import  address  from "../../models/address.js";
+import  {Address}  from "../../models/address.js";
 import { uploadOnCloudinary } from "../../utils/cloudinary.js";
 import { upload } from "../../middlewares/multer.middleware.js";
 

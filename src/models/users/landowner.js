@@ -1,5 +1,5 @@
 import mongoose, {Schema} from "mongoose"
-import { addressSchema} from "../address.js"
+import { Address} from "../address.js"
 import { landRecord } from "../record/landrecord.js"
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt"
@@ -11,7 +11,10 @@ const landownerSchema = new Schema({
         trim: true,
         index: true
     },
-    address: [addressSchema],
+    address: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Address"
+        },
     email: {
         type: String,
         required: true,
@@ -95,9 +98,9 @@ const landownerSchema = new Schema({
         userName: this.userName,
         fullName: this.fullName
     },
-        process.env.ACCESS_TOKEN_SECRET,
+     process.env.ACCESS_TOKEN_SECRET,
         {
-            expiresIn:process.env.ACCESS_TOKEN_EXPIRY
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRY
         }
     )
 }
