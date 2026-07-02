@@ -125,6 +125,8 @@ const logoutLandOwner = asyncHandler(async(req, res) => {
 
 const refreshAccessToken = asyncHandler(async (req, res)=>{
     const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
+    console.log("Cookies:", req.cookies.refreshToken);
+    console.log("Token:", incomingRefreshToken);
 
     if(!incomingRefreshToken){
         throw new ApiError(401, "Unauthorized request")
@@ -137,6 +139,7 @@ const refreshAccessToken = asyncHandler(async (req, res)=>{
         if(!landOwner){
             throw new ApiError(401," Invalid refresh token")
         }
+        console.log("landownerRefreshToken:",landOwner.refreshToken);
         if(incomingRefreshToken !== landOwner?.refreshToken){
             throw new ApiError (401," refresh token is expired or used")
         }
@@ -148,7 +151,7 @@ const refreshAccessToken = asyncHandler(async (req, res)=>{
     
        const {accessToken, newrefreshToken} = await generateAccessAndRefreshToken(landOwner._id)
     
-       return res.status(200).cookie("accessToken",accessToken, options).cookie("newrefreshToken", refreshToken, options)
+       return res.status(200).cookie("accessToken",accessToken, options).cookie("newrefreshToken", newrefreshToken, options)
        .json(
         new ApiResponse(
             200,
