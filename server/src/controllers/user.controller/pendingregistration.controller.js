@@ -187,6 +187,49 @@ const changeWorkingZone = asyncHandler(async(req,res) => {
         req.pendingWorker._id,
         {$set: {workingZone: newWorkingZone}},
         {new: true})
+    return res.status(200).json(
+        new ApiResponse(200, {}, "working zone changed successfully")
+    )
+
+})
+
+const changeFields = asyncHandler(async(req,res) =>{
+     const {newfullName, newMobileNumber, newUserName, newBankAccount, newIfscCode} = req.body;
+     const pendingWorker = await pendingWorkerRegistration.findById(req.pendingWorker?._id)
+     if(newfullName === pendingWorker.fullName){
+        throw new ApiError(400, "new full name is same as previous one")
+     }
+     if(newfullName){
+    pendingWorker.fullName = newfullName
+    await pendingWorker.save({validateBeforeSave: false})        
+     }
+     if(newMobileNumber === pendingWorker.mobileNumber){  
+         throw new ApiError(400, "mobile number already recorded")
+     }
+     if(newMobileNumber){
+    pendingWorker.mobileNumber = newMobileNumber
+    await pendingWorker.save({validateBeforeSave: false})        
+     }  
+     if(newUserName === pendingWorker.userName){  
+     throw new ApiError(400, "please give different username")
+     }   
+     if(newUserName){
+    pendingWorker.userName = newUserName
+    await pendingWorker.save({validateBeforeSave: false})        
+     }
+     if(newBankAccount === pendingWorker.bankaccount){  
+         throw new ApiError(400, "bank account already recorded")
+     }
+     if(newBankAccount){
+    pendingWorker.bankaccount = newBankAccount
+    await pendingWorker.save({validateBeforeSave: false})        
+     }
+      if(newIfscCode){
+    pendingWorker.IFSCcode = newIfscCode
+    await pendingWorker.save({validateBeforeSave: false})        
+     } 
+    
+     return res.status(200).json(200, {}, " field updated successfully")
 
 })
 
@@ -196,5 +239,5 @@ export{
     loginpendingWorker,
     logoutpendingWorker,
     changeWorkingZone,
-    refreshAccessToken
-}
+    refreshAccessToken,
+    changeFields}
