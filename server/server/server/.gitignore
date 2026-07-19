@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Created by https://www.toptal.com/developers/gitignore/api/node
 # Edit at https://www.toptal.com/developers/gitignore?templates=node
 
@@ -143,24 +142,3 @@ dist
 .svelte-kit
 
 # End of https://www.toptal.com/developers/gitignore/api/node
-=======
-# Node modules
-client/node_modules/
-server/node_modules/
-
-# Environment files
-.env
-client/.env
-server/.env
-
-# Next.js
-client/.next/
-client/out/
-
-# Logs
-*.log
-
-# OS files
-.DS_Store
-Thumbs.db
->>>>>>> 1650da1c7bda7d36d7843111e69a8a4e79ea1292

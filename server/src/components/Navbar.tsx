@@ -7,7 +7,7 @@ export function Navbar() {
     return(
         <nav className = "bg-gray-100">
             <div className = "max-w-7xl mx-auto flex rounded-lg justify-between bg-white">
-                <div className="flex-1 flex items-center justify-center bg-gray-150 hover:bg-black hover:text-white rounded-md">
+                <div className="flex-1 flex items-center justify-center bg-gray-150 hover:bg-black hover:text-white rounded-lg">
                     Myapp</div>
                 <Menu>
                     <MenuItem
