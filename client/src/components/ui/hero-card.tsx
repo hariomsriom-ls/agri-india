@@ -13,23 +13,20 @@ export function HeroCard({
     slogan,
 }: HeroCardProps) {
     return (
-        <div className="glass-card">
-                <div className="absolute inset-y-0 right-0 flex items-center justify-end ">
+        <div className="absolute px-5 inset-y-0 right-0 flex items-center w-4/10 justify-end ">
 
-        <div className="w-85/100 h-9/10 rounded-3xl p-10 bg-white/10 backdrop-blur-xl border border-white/30 rounded-3xl shadow-2xl">
-            <h1 className="text-5xl font-bold text-white">
+        <div className=" h-9/10 rounded-3xl p-5 bg-linear-to-r from-cyan-200/30 to-lime-200/30 backdrop-blur-xl border border-white/30 rounded-3xl shadow-2xl">
+            <h1 className="text-5xl font-bold text-black">
                 {title}
             </h1>
-            <h1 className="text-4xl font-bold text-white">
+            <h1 className="text-4xl font-bold text-black">
                 {slogan}
             </h1>
 
-           <p className="mt-6 text-xl text-white/80">
+           <p className="mt-6 text-xl text-black">
                 {description}
             </p>
         </div>
     </div>
-
-        </div>
     );
 }
