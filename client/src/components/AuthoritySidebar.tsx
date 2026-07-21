@@ -5,7 +5,7 @@ import { MdDashboardCustomize , MdPendingActions, FaRegUserCircle, RiPassPending
      VscLayersActive, MdOutlineSyncProblem, IoDocumentsSharp, MdNotifications, MdOutlineChat, MdReviews,
       GrProjects, TbReport, GoReport, GrAnalytics, MdOutlinePolicy } from "./ui/icons";
 
-export function LandownersideBar() {
+export function AuthoritySideBar() {
     const [active, setActive] = useState("");
     return(
         <div className = "bg-gray-100">
@@ -121,4 +121,4 @@ export function LandownersideBar() {
     )
 }
 
-export default LandownersideBar
+export default AuthoritySideBar
