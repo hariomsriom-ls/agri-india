@@ -9,7 +9,7 @@ interface SideMenuProps {
 }
 export function SideMenu({ children }: SideMenuProps){
    return(
-    <div className="flex-col scrollbar-thumb-slate-900 scrollbar-track-gray-200 w-full h-9/10  justify-items-center overflow-y-auto gap-2 rounded-xl" >
+    <div className="flex-col scrollbar-thumb-slate-900 scrollbar-track-gray-200 w-full h-full  justify-items-center overflow-y-auto gap-2 rounded-xl" >
         {children}
         </div>
    );

@@ -6,7 +6,7 @@ export default function WorkerDashboard() {
   return (
     <>
     <body className="overscroll-none">
-    <div className="w-2/9 h-screen overscroll-none justify-start items-center">
+    <div className="w-25/90 h-screen overscroll-none justify-start items-center">
      <WorkersideBar />
         </div>
         </body> 

@@ -8,8 +8,7 @@ import { MdDashboardCustomize , MdPendingActions, FaRegUserCircle, RiPassPending
 export function AuthoritySideBar() {
     const [active, setActive] = useState("");
     return(
-        <div className = "bg-gray-100">
-            <div className = "max-w-7xl mx-auto flex rounded-lg justify-between bg-white">
+        <div className = "max-w-xl mx-auto flex-col  w-full h-full overflow-hidden justify-items-start items-center bg-[#065035]">
                 <SideMenu>
 
                     <SideMenuItem
@@ -32,7 +31,7 @@ export function AuthoritySideBar() {
 
                      <SideMenuItem
                      icon={<RiPassPendingFill />}
-                    item ="Pending Worker Verifications"
+                    item ="Pending Workers"
                     active={active}
                     setActive={setActive}/>
 
@@ -117,7 +116,6 @@ export function AuthoritySideBar() {
                 </SideMenu>
 
             </div>
-        </div>
     )
 }
 
