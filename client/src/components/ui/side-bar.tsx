@@ -3,28 +3,30 @@
 import React from "react";
 import { ReactNode } from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
-import Image from "next/image";
 
 interface SideMenuProps {
   children: ReactNode;
 }
 export function SideMenu({ children }: SideMenuProps){
    return(
-    <div className="flex-8 flex gap-10 bg-olive-900" >
+    <div className="flex-col scrollbar-thumb-slate-900 scrollbar-track-gray-200 w-full h-9/10  justify-items-center overflow-y-auto gap-2 rounded-xl" >
         {children}
         </div>
    );
 }
 interface SideMenuItemProps {
+    icon: React.ReactNode;
   item: string;
   active: string;
   setActive: React.Dispatch<React.SetStateAction<string>>;
 }
-export function SideMenuItem({ item, active, setActive } : SideMenuItemProps){
-    return(<div className="flex w-full h-full justify-center items-evenly ">
-        <button className =" flex py-1 px-4 items-center justify-center  text-rose-900 rounded-lg 
-        hover:bg-olive-300 hover:text-rose-300">
+export function SideMenuItem({ icon, item, active, setActive } : SideMenuItemProps){
+    return(<div className="flex w-full h-13 justify-start overflow-y-auto overflow-hidden items-evenly rounded-lg">
+         <span className="flex items-center justify-end px-3 w-16 h-12 text-3xl text-white">
+    {icon}
+  </span>
+        <button className =" py-1 px-5 flex w-4/5 items-center justify-start text-gray-300 hover:text-white rounded-lg 
+        hover:bg-emerald-700">
             {item}
             {active === item && (
                 <motion.div  
