@@ -1,3 +1,4 @@
+import UserNavbar from "@/components/UserNavbar";
 import WorkersideBar from "@/components/Workersidebar";
 import { ReactNode } from "react";
 
@@ -10,10 +11,11 @@ export default function Layout({children}: LayoutProps){
     <>
         
         <div className="flex w-full h-full">
-       <aside className="w-2/9">
+       <aside className="w-1/5">
         <WorkersideBar />
       </aside>
-        <main className="flex-1  h-screen overscroll-none justify-start items-centeroverflow-y-auto">
+        <main className="flex-1  h-screen overscroll-none bg-gray-200 justify-start items-centeroverflow-y-auto">
+          <UserNavbar />
         {children}
         </main>
          </div>
