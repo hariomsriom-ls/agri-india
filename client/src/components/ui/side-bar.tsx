@@ -26,7 +26,7 @@ export function SideMenuItem({ icon, item, active, setActive } : SideMenuItemPro
     {icon}
   </span>
         <button className =" py-1 px-5 flex w-4/5 items-center justify-start text-gray-300 hover:text-white rounded-lg 
-        hover:bg-emerald-700">
+        hover:bg-emerald-700 whitespace-nowrap">
             {item}
             {active === item && (
                 <motion.div  

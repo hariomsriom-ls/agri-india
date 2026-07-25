@@ -31,7 +31,7 @@ export function AuthoritySideBar() {
 
                      <SideMenuItem
                      icon={<RiPassPendingFill />}
-                    item ="Pending Workers"
+                    item ="Pending Workers Verifications"
                     active={active}
                     setActive={setActive}/>
 
