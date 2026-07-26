@@ -3,7 +3,7 @@ import React from "react";
 import Card from "../../ui/customizable-cards";
 import{useState} from "react"
 
-export function Authoritytaskassignedcard() {
+export function LandownerTotalPlotcard() {
     const [active, setActive] = useState("");
     return(
         <Card className=" flex-1 aspect-2 ">
@@ -15,7 +15,7 @@ export function Authoritytaskassignedcard() {
         </Card>
     )}
 
-    export function Authoritytaskcompletioncard() {
+    export function LandownerActivePlotcard() {
     const [active, setActive] = useState("");
     return(
         <Card className=" flex-1 aspect-2 ">
@@ -27,7 +27,7 @@ export function Authoritytaskassignedcard() {
         </Card>
     )}
 
-    export function Authorityattendancecard() {
+    export function LandownerTotalIncomecard() {
     const [active, setActive] = useState("");
     return(
         <Card className=" flex-1 aspect-2 ">
@@ -39,7 +39,7 @@ export function Authoritytaskassignedcard() {
         </Card>
     )}
 
-    export function Authorityleavescard() {
+    export function LandownerStatscard() {
     const [active, setActive] = useState("");
     return(
         <Card className=" flex-1 aspect-2 ">
@@ -51,7 +51,7 @@ export function Authoritytaskassignedcard() {
         </Card>
     )}
 
-    export function AuthorityPerformancecard() {
+    export function LandownerActiveServicecard() {
     const [active, setActive] = useState("");
     return(
         <Card className=" flex-1">
@@ -63,7 +63,7 @@ export function Authoritytaskassignedcard() {
         </Card>
     )}
 
-    export function AuthorityExpensescard() {
+    export function LandownerPaymentDuecard() {
     const [active, setActive] = useState("");
     return(
         <Card className=" flex-1">

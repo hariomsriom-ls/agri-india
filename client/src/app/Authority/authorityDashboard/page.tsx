@@ -1,7 +1,7 @@
 "use client";
 import { Authoritytaskassignedcard, Authoritytaskcompletioncard, Authorityattendancecard, Authorityleavescard
 , AuthorityPerformancecard, AuthorityExpensescard} from "@/components/cards/authority/Authority-dashboard";
-import {AuthorityteamTab} from "@/components/Tabs/Authoritytab"
+import {AuthorityteamTab} from "@/components/Tabs/Authority/Authoritytab"
 
 export default function AuthorityDashboard() {
   return (

@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import {Menu, MenuItem} from "./ui/navbar-menu";
+import {Menu, MenuItem} from "../ui/navbar-menu";
 
 export function Navbar() {
     const [active, setActive] = useState("");

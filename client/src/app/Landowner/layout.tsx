@@ -1,6 +1,6 @@
-import LandOwnerSideBar from "@/components/LandOwnerSidebar";
+import LandOwnerSideBar from "@/components/sidebar/LandOwnerSidebar";
 import { ReactNode } from "react";
-import UserNavbar from "@/components/UserNavbar"
+import UserNavbar from "@/components/navbar/UserNavbar"
 
 interface LayoutProps {
   children: ReactNode;

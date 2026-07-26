@@ -1,22 +1,24 @@
 "use client";
 import { useState } from "react";
-import {SideMenu, SideMenuItem} from "./ui/side-bar";
-import { MdDashboardCustomize , MdPendingActions, FaRegUserCircle, RiPassPendingFill, GrDocumentVerified, FaUserCheck,
-     VscLayersActive, MdOutlineSyncProblem, IoDocumentsSharp, MdNotifications, MdOutlineChat, MdReviews,
-      GrProjects, TbReport, GoReport, GrAnalytics, MdOutlinePolicy } from "./ui/icons";
+import {SideMenu, SideMenuItem} from "../ui/side-bar";
+import { MdDashboardCustomize , LuLandPlot, FaRegUserCircle, MdOutlineAdd, GiPayMoney, MdOutlineRequestPage,
+     VscLayersActive, ImHistory, IoDocumentsSharp, MdNotifications, MdOutlineChat, MdReviews,
+      GoReport } from "../ui/icons";
 
-export function AuthoritySideBar() {
+
+
+export function LandOwnerSideBar() {
     const [active, setActive] = useState("");
     return(
-        <div className = "max-w-xl mx-auto flex-col  w-full h-full overflow-hidden justify-items-start items-center bg-[#065035]">
+            <div className = "max-w-xl mx-auto flex-col  w-full h-full overflow-hidden justify-items-start items-center bg-[#065035]">
                 <SideMenu>
 
-                    <SideMenuItem
-                    icon={<FaRegUserCircle />}
+                      <SideMenuItem
+                    icon={<FaRegUserCircle/>}
                     item ="Profile"
                     active={active}
                     setActive={setActive}/>
-
+            
                     <SideMenuItem
                     icon={<MdDashboardCustomize />}
                     item ="Dashboard"
@@ -24,49 +26,43 @@ export function AuthoritySideBar() {
                     setActive={setActive}/>
 
                      <SideMenuItem
-                     icon={<MdPendingActions/>}
-                    item ="Pending Land Verifications"
+                     icon={<MdOutlineAdd />}
+                    item ="Add New Land"
                     active={active}
                     setActive={setActive}/>
 
                      <SideMenuItem
-                     icon={<RiPassPendingFill />}
-                    item ="Pending Workers Verifications"
+                     icon={<LuLandPlot />}
+                    item ="My Lands"
                     active={active}
                     setActive={setActive}/>
 
                      <SideMenuItem
-                     icon={<GrDocumentVerified />}
-                    item ="Verified Landowners"
+                     icon={<GiPayMoney />}
+                    item ="Earnings"
                     active={active}
                     setActive={setActive}/>
 
                      <SideMenuItem
-                     icon={<FaUserCheck />}
-                    item ="Verified Workers"
+                     icon={<MdOutlineRequestPage />}
+                    item ="Rental Requests"
                     active={active}
                     setActive={setActive}/>
 
                      <SideMenuItem
-                     icon={<VscLayersActive />}
+                     icon={<VscLayersActive/>}
                     item ="Active Rentals"
                     active={active}
                     setActive={setActive}/>
                     
                     <SideMenuItem
-                    icon={<MdOutlineSyncProblem />}
-                    item ="complaints & Disputes"
+                    icon={<ImHistory />}
+                    item ="Rental History"
                     active={active}
                     setActive={setActive}/>
 
                     <SideMenuItem
-                    icon={<GrProjects/>}
-                    item ="Projects"
-                    active={active}
-                    setActive={setActive}/>
-
-                    <SideMenuItem
-                    icon={<IoDocumentsSharp  />}
+                    icon={<IoDocumentsSharp />}
                     item ="Lease Documents"
                     active={active}
                     setActive={setActive}/>
@@ -74,12 +70,6 @@ export function AuthoritySideBar() {
                     <SideMenuItem
                     icon={<MdNotifications />}
                     item ="Notifications"
-                    active={active}
-                    setActive={setActive}/>
-
-                    <SideMenuItem
-                    icon={<TbReport  />}
-                    item ="Project Reports"
                     active={active}
                     setActive={setActive}/>
 
@@ -100,23 +90,10 @@ export function AuthoritySideBar() {
                     item ="Register Complaint"
                     active={active}
                     setActive={setActive}/>
-
-                    <SideMenuItem
-                    icon={<GrAnalytics />}
-                    item ="Analytics"
-                    active={active}
-                    setActive={setActive}/>
-                
-                <SideMenuItem
-                icon={<MdOutlinePolicy />}
-                    item ="Govenment Schemes"
-                    active={active}
-                    setActive={setActive}/>
-
                 </SideMenu>
 
             </div>
     )
 }
 
-export default AuthoritySideBar
+export default LandOwnerSideBar

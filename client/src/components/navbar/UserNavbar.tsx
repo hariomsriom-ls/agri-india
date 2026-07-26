@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import ProfileCard from "./ui/profile-card";
-import { IoHomeOutline } from "./ui/icons"
-import  SearchBar from "./ui/searchbar"
+import ProfileCard from "../ui/profile-card";
+import { IoHomeOutline } from "../ui/icons"
+import  SearchBar from "../ui/searchbar"
 
 export function UserNavbar() {
     const [active, setActive] = useState("");

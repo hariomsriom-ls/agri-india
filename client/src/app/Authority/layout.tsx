@@ -1,6 +1,6 @@
-import AuthoritySideBar from "@/components/AuthoritySidebar";
+import AuthoritySideBar from "@/components/sidebar/AuthoritySidebar";
 import { ReactNode } from "react";
-import UserNavbar from "@/components/UserNavbar"
+import UserNavbar from "@/components/navbar/UserNavbar"
 
 interface LayoutProps {
   children: ReactNode;
