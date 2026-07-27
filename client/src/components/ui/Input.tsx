@@ -1,0 +1,49 @@
+"use client";
+import React from "react";
+import { ReactNode } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import Image from "next/image";
+
+interface InputFieldProps {
+  label: string;
+  name: string;
+  type?: string;
+  required?: boolean;
+  placeholder?: string;
+  className?: string;
+}
+
+export function InputField({
+  label,
+  name,
+  type = "text",
+  required = false,
+  placeholder = "",
+  className,
+}: InputFieldProps) {
+  return (
+    <div className="flex flex-col gap-2 w-full">
+      <label
+        htmlFor={name}
+        className="text-base font-semibold text-gray-900"
+      >
+        {label}
+        {required && (
+          <span className="text-red-500 ml-1">*</span>
+        )}
+      </label>
+
+      <input
+        id={name}
+        name={name}
+        type={type}
+        placeholder={placeholder}
+        className={`w-full rounded-xl border border-gray-300 px-2 py-2 hover:bg-gray-100
+                   outline-none transition 
+                   focus:border-green-600 focus:bg-gray-200
+                   focus:ring-1 focus:ring-green-200 ${className}`}
+      />
+    </div>
+  );
+}
