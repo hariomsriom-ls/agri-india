@@ -3,6 +3,7 @@
 import React from "react";
 import { ReactNode } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 interface SideMenuProps {
   children: ReactNode;
@@ -18,10 +19,12 @@ interface SideMenuItemProps {
     icon: React.ReactNode;
   item: string;
   active: string;
+  href: string;
   setActive: React.Dispatch<React.SetStateAction<string>>;
 }
-export function SideMenuItem({ icon, item, active, setActive } : SideMenuItemProps){
-    return(<div className="flex w-full h-13 justify-start overflow-y-auto overflow-hidden items-evenly rounded-lg">
+export function SideMenuItem({ icon, item, active, setActive, href} : SideMenuItemProps){
+    return(<Link href={href}>
+    <div className="flex w-full h-13 justify-start overflow-y-auto overflow-hidden items-evenly rounded-lg">
          <span className="flex items-center justify-end px-3 w-16 h-12 text-3xl text-white">
     {icon}
   </span>
@@ -37,5 +40,6 @@ export function SideMenuItem({ icon, item, active, setActive } : SideMenuItemPro
             )}
         </button>
         </div>
+        </Link>
     )
 }

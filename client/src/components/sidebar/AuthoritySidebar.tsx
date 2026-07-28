@@ -15,103 +15,100 @@ export function AuthoritySideBar() {
                     icon={<FaRegUserCircle />}
                     item ="Profile"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Authority/authorityProfile"
+                    />
 
                     <SideMenuItem
                     icon={<MdDashboardCustomize />}
                     item ="Dashboard"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Authority/authorityDashboard"/>
 
                      <SideMenuItem
                      icon={<MdPendingActions/>}
                     item ="Pending Land Verifications"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Authority/authorityPendingLandVerification"/>
 
                      <SideMenuItem
                      icon={<RiPassPendingFill />}
                     item ="Pending Workers Verifications"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Authority/authorityPendingWorkerVerification"/>
 
                      <SideMenuItem
                      icon={<GrDocumentVerified />}
                     item ="Verified Landowners"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Authority/authorityVerifiedLandowners"/>
 
                      <SideMenuItem
                      icon={<FaUserCheck />}
                     item ="Verified Workers"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Authority/authorityVerifiedWorkers"/>
 
                      <SideMenuItem
                      icon={<VscLayersActive />}
                     item ="Active Rentals"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Authority/authorityActiveRentals"/>
                     
                     <SideMenuItem
                     icon={<MdOutlineSyncProblem />}
                     item ="complaints & Disputes"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Authority/authorityComplaints"/>
 
                     <SideMenuItem
                     icon={<GrProjects/>}
                     item ="Projects"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Authority/authorityProjects"/>
 
                     <SideMenuItem
                     icon={<IoDocumentsSharp  />}
                     item ="Lease Documents"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Authority/authorityLeaseDocuments"/>
 
                     <SideMenuItem
                     icon={<MdNotifications />}
                     item ="Notifications"
                     active={active}
-                    setActive={setActive}/>
-
-                    <SideMenuItem
-                    icon={<TbReport  />}
-                    item ="Project Reports"
-                    active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Authority/authorityNotifications"/>
 
                     <SideMenuItem
                     icon={<MdOutlineChat />}
                     item ="Chat"
                     active={active}
-                    setActive={setActive}/>
-                
-                <SideMenuItem
-                icon={<MdReviews />}
-                    item ="Reviews"
-                    active={active}
-                    setActive={setActive}/>
-
-                <SideMenuItem
-                icon={<GoReport />}
-                    item ="Register Complaint"
-                    active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Authority/authorityChat"/>
 
                     <SideMenuItem
                     icon={<GrAnalytics />}
                     item ="Analytics"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Authority/authorityAnalytics"/>
                 
                 <SideMenuItem
                 icon={<MdOutlinePolicy />}
                     item ="Govenment Schemes"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Authority/authorityGovernmentSchemes"/>
 
                 </SideMenu>
 

@@ -17,79 +17,85 @@ export function LandOwnerSideBar() {
                     icon={<FaRegUserCircle/>}
                     item ="Profile"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Landowner/LandownerProfile"/>
             
                     <SideMenuItem
                     icon={<MdDashboardCustomize />}
                     item ="Dashboard"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Landowner/LandownerDashboard"/>
 
                      <SideMenuItem
                      icon={<MdOutlineAdd />}
                     item ="Add New Land"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Landowner/LandownerAddNewLand"/>
 
                      <SideMenuItem
                      icon={<LuLandPlot />}
                     item ="My Lands"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Landowner/LandownerMyLands"/>
 
                      <SideMenuItem
                      icon={<GiPayMoney />}
                     item ="Earnings"
                     active={active}
-                    setActive={setActive}/>
-
-                     <SideMenuItem
-                     icon={<MdOutlineRequestPage />}
-                    item ="Rental Requests"
-                    active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Landowner/LandownerEarnings"/>
 
                      <SideMenuItem
                      icon={<VscLayersActive/>}
                     item ="Active Rentals"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Landowner/LandownerActiveRentals"/>
                     
                     <SideMenuItem
                     icon={<ImHistory />}
-                    item ="Rental History"
+                    item ="Rental Request/History"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Landowner/LandownerRentalPlots"/>
 
                     <SideMenuItem
                     icon={<IoDocumentsSharp />}
                     item ="Lease Documents"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Landowner/LandownerLeaseDocuments"/>
 
                     <SideMenuItem
                     icon={<MdNotifications />}
                     item ="Notifications"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Landowner/LandownerNotifications"/>
 
                     <SideMenuItem
                     icon={<MdOutlineChat />}
                     item ="Chat"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Landowner/LandownerChat"/>
                 
                 <SideMenuItem
                 icon={<MdReviews />}
                     item ="Reviews"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Landowner/LandownerReviews"/>
 
                 <SideMenuItem
                 icon={<GoReport />}
                     item ="Register Complaint"
                     active={active}
-                    setActive={setActive}/>
+                    setActive={setActive}
+                    href="/Landowner/LandownerRegisterComplaint"/>
                 </SideMenu>
 
             </div>
