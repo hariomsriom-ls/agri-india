@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import {SideMenu, SideMenuItem} from "./ui/side-bar";
+import {SideMenu, SideMenuItem} from "../ui/side-bar";
 import { MdDashboardCustomize , GrProjects, FaRegUserCircle, MdOutlineMessage, FcViewDetails, 
     MdOutlineRequestPage, RiExchangeBoxFill, ImHistory, IoDocumentsSharp, MdNotifications, 
-    MdOutlineChat, MdReviews, GoReport } from "./ui/icons";
+    MdOutlineChat, MdReviews, GoReport } from "../ui/icons";
 
 export function WorkersideBar() {
     const [active, setActive] = useState("");

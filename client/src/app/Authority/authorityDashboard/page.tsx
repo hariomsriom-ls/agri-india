@@ -6,7 +6,7 @@ import {AuthorityteamTab} from "@/components/Tabs/Authority/Authoritytab"
 export default function AuthorityDashboard() {
   return (
     <>
-   <div className=" overscroll-none">
+   <div>
      <div className="flex flex-1 gap-4 pt-4 pl-3">
          <Authoritytaskassignedcard />
          <Authoritytaskcompletioncard />
@@ -21,7 +21,6 @@ export default function AuthorityDashboard() {
             <AuthorityExpensescard />
             </div>
           </div>
-
       </div>
    </div>
     </>

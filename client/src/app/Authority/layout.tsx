@@ -10,11 +10,11 @@ export default function Layout({children}: LayoutProps){
   return (
     <>
         
-        <div className="flex w-full h-full overscroll-none">
-       <aside className="w-11/50  h-dvh overflow-hidden">
+       <div className="grid h-screen grid-cols-[auto_1fr]">
+       <aside className="h-dvh overflow-hidden ">
         <AuthoritySideBar />
       </aside>
-        <main className="flex-1  overscroll-none bg-gray-200 justify-start items-center overflow-hidden overflow-y-auto">
+        <main className=" bg-gray-200 overflow-y-auto ">
           <UserNavbar />
         {children}
         </main>
