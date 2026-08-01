@@ -24,6 +24,8 @@ export const generateAccessAndRefreshToken = async(landownerId) => {
         throw new ApiError(500, " something went wrong while generating access and refresh token")  
     }
 }
+
+
 const registerLandOwner = asyncHandler(async(req, res) => {
  
     /*  get user details
@@ -170,7 +172,7 @@ const refreshAccessToken = asyncHandler(async (req, res)=>{
 const profileCompleteLandOwner = asyncHandler(async(req, res) => {
     const {address, bankaccount, IFSCcode } = req.body
     if(
-        [address, bankaccount, IFSCcode, city, state].some((fields) => field?.trim() === "")
+        [address, bankaccount, IFSCcode].some((fields) => field?.trim() === "")
     ){
         throw new ApiError(400, "all fields required")
     }

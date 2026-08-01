@@ -6,7 +6,7 @@ import{useState} from "react"
 export function LandownerTotalPlotcard() {
     const [active, setActive] = useState("");
     return(
-        <Card className=" flex-1 aspect-2 ">
+        <Card className=" flex-1 aspect-2 bg-white">
             <div className="flex w-2/3 flex-col">
             <h1 className="text-gray-600">Total Plots</h1>
             <h1 className="text-black font-semibold">Number</h1>
@@ -18,7 +18,7 @@ export function LandownerTotalPlotcard() {
     export function LandownerActivePlotcard() {
     const [active, setActive] = useState("");
     return(
-        <Card className=" flex-1 aspect-2 ">
+        <Card className=" flex-1 aspect-2 bg-white">
             <div className="flex w-2/3 flex-col">
             <h1 className="text-gray-600">Active Used Plots</h1>
             <h1 className="text-black font-semibold">Numbers</h1>
@@ -30,7 +30,7 @@ export function LandownerTotalPlotcard() {
     export function LandownerTotalIncomecard() {
     const [active, setActive] = useState("");
     return(
-        <Card className=" flex-1 aspect-2 ">
+        <Card className=" flex-1 aspect-2 bg-white">
             <div className="flex w-2/3 flex-col">
             <h1 className="text-gray-600">Total Income</h1>
             <h1 className="text-black font-semibold">Number</h1>
@@ -42,7 +42,7 @@ export function LandownerTotalPlotcard() {
     export function LandownerStatscard() {
     const [active, setActive] = useState("");
     return(
-        <Card className=" flex-1 aspect-2 ">
+        <Card className=" flex-1 aspect-2 bg-white ">
             <div className="flex w-2/3 flex-col">
             <h1 className="text-gray-600">Stats Card %</h1>
             <h1 className="text-black font-semibold">Graph</h1>
@@ -54,7 +54,7 @@ export function LandownerTotalPlotcard() {
     export function LandownerActiveServicecard() {
     const [active, setActive] = useState("");
     return(
-        <Card className=" flex-1">
+        <Card className=" flex-1 bg-white">
             <div className="flex w-2/3 flex-col">
             <h1 className="text-gray-600">Active Services</h1>
             <h1 className="text-black font-semibold">Numbers</h1>
@@ -66,7 +66,7 @@ export function LandownerTotalPlotcard() {
     export function LandownerPaymentDuecard() {
     const [active, setActive] = useState("");
     return(
-        <Card className=" flex-1">
+        <Card className=" flex-1 bg-white">
             <div className="flex w-2/3 flex-col">
             <h1 className="text-gray-600">Duue Payments</h1>
             <h1 className="text-black font-semibold">Numbers</h1>
@@ -78,7 +78,7 @@ export function LandownerTotalPlotcard() {
     export function LandownerPendingPaymentcard() {
     const [active, setActive] = useState("");
     return(
-        <Card className=" flex-1">
+        <Card className=" flex-1 bg-white">
             <div className="flex w-2/3 flex-col">
             <h1 className="text-gray-600">Pending Payment</h1>
             <h1 className="text-black font-semibold">Numbers</h1>

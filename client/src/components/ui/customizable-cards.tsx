@@ -14,9 +14,8 @@ const Card = ({children,className}:CardProps) => {
             className={`
                 rounded-xl
                 shadow-md
-                bg-white
                 p-5
-                ${className}
+                ${className}   
             `}
         >
             {children}

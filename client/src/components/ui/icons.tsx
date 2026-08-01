@@ -13,14 +13,17 @@ import { FcViewDetails } from "react-icons/fc";
 import { RiExchangeBoxFill, RiPassPendingFill } from "react-icons/ri";
 import { TbReport } from "react-icons/tb";
 import { GoReport } from "react-icons/go";
+import { VscOrganization } from "react-icons/vsc";
+import { GrUserWorker } from "react-icons/gr";
+
 
 
 
 
 export {
-    MdDashboardCustomize,LuLandPlot,MdOutlineAdd,GiPayMoney,
+    MdDashboardCustomize,LuLandPlot,MdOutlineAdd,GiPayMoney, GrUserWorker,
     MdOutlineRequestPage,VscLayersActive,ImHistory,IoDocumentsSharp, MdNotifications,
-    MdOutlineChat, MdReviews, FaRegUserCircle,GrProjects,MdOutlineSearch,
+    MdOutlineChat, MdReviews, FaRegUserCircle,GrProjects,MdOutlineSearch, VscOrganization,
     MdOutlineMessage,FcViewDetails,RiExchangeBoxFill,MdPendingActions,RiPassPendingFill,GrDocumentVerified,
     FaUserCheck,MdOutlineSyncProblem,TbReport, GoReport, GrAnalytics, MdOutlinePolicy,IoHomeOutline
 

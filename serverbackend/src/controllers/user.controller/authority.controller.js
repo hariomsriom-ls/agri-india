@@ -28,6 +28,8 @@ const generateAccessAndRefreshToken = async(organizationAuthorityId) => {
         throw new ApiError(500, " something went wrong while generating access and refresh token")  
     }
 }
+
+
 const registerAuthority = asyncHandler(async(req,res) => {
     const {email, contactNumber, authorityid} = req.body;
        registrationValidations.fieldNotEmpty(req.body);
@@ -71,6 +73,7 @@ const createdAuthority = await organizationauthority.findById(organizationAuthor
      return res.status(201).json( new ApiResponse(200, createdAuthority, "authority registered successfully") )
 
  })
+
  
  const loginorganizationAuthority = asyncHandler(async(req, res) => {
     const {email, userName, contactNumber, authorityid, password} = req.body
@@ -114,6 +117,7 @@ const createdAuthority = await organizationauthority.findById(organizationAuthor
     )
 })
 
+
 const logoutorganizationAuthority = asyncHandler(async(req, res) => {
     await organizationauthority.findByIdAndUpdate(
         req.organizationAuthority._id,
@@ -128,6 +132,7 @@ const logoutorganizationAuthority = asyncHandler(async(req, res) => {
     .json(new ApiResponse(200, {}, "user logged out"))
 
 })
+
 
 const refreshAccessToken = asyncHandler(async (req, res)=>{
     const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
@@ -169,7 +174,8 @@ const refreshAccessToken = asyncHandler(async (req, res)=>{
 
 
 })
-    
+  
+
 const showPendingWorkerList = asyncHandler(async (req,res) =>{
     const pendingWorkerRequests = await pendingWorkerRegistration.aggregate([
         {
@@ -197,6 +203,7 @@ const showPendingWorkerList = asyncHandler(async (req,res) =>{
     return res.status(202).json(new ApiResponse(202, pendingWorkerRequests, "pending workers list created successfully"))
 
 })
+
 
 const acceptWorker = asyncHandler(async(req,res) => {
     const {pendingWorkerId} = req.params;
@@ -244,6 +251,7 @@ const acceptWorker = asyncHandler(async(req,res) => {
     return res.status(200).json(new ApiResponse(200, {}, " worker accepted and created successfully"))
 })
 
+
 const rejectWorker = asyncHandler(async(req, res) => {
     const { pendingWorkerRegistrationId} = req.params;
     const { reason } = req.body;
@@ -261,6 +269,7 @@ const rejectWorker = asyncHandler(async(req, res) => {
     await pendingWorker.save();
     return res.status(200).json( new ApiResponse(200, {}, "worker rejected successfully"))
 })
+
 
 export {
     registerAuthority,

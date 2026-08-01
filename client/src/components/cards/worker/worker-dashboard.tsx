@@ -6,7 +6,7 @@ import{useState} from "react"
 export function Workertaskassignedcard() {
     const [active, setActive] = useState("");
     return(
-        <Card className=" flex-1 aspect-2 ">
+        <Card className=" flex-1 aspect-2 bg-white">
             <div className="flex w-2/3 flex-col">
             <h1 className="text-gray-600">Task Assigned</h1>
             <h1 className="text-black font-semibold">Number</h1>
@@ -18,7 +18,7 @@ export function Workertaskassignedcard() {
     export function Workertaskcompletioncard() {
     const [active, setActive] = useState("");
     return(
-        <Card className=" flex-1 aspect-2 ">
+        <Card className=" flex-1 aspect-2 bg-white">
             <div className="flex w-2/3 flex-col">
             <h1 className="text-gray-600">Task Completion</h1>
             <h1 className="text-black font-semibold">percentage</h1>
@@ -30,7 +30,7 @@ export function Workertaskassignedcard() {
     export function Workerattendancecard() {
     const [active, setActive] = useState("");
     return(
-        <Card className=" flex-1 aspect-2 ">
+        <Card className=" flex-1 aspect-2 bg-white">
             <div className="flex w-2/3 flex-col">
             <h1 className="text-gray-600">Attendance</h1>
             <h1 className="text-black font-semibold">percentage</h1>
@@ -42,7 +42,7 @@ export function Workertaskassignedcard() {
     export function Workerleavescard() {
     const [active, setActive] = useState("");
     return(
-        <Card className=" flex-1 aspect-2 ">
+        <Card className=" flex-1 aspect-2 bg-white">
             <div className="flex w-2/3 flex-col">
             <h1 className="text-gray-600">Leaves %</h1>
             <h1 className="text-black font-semibold">percentage</h1>

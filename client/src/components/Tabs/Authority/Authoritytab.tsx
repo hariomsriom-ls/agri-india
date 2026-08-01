@@ -3,7 +3,8 @@
 import React from "react";
 import{useState} from "react"
 import Card from "../../ui/customizable-cards";
-import { AuthorityPerformanceTable } from "./Authoritytable"
+import { AuthorityPerformanceTable, AuthorityPendingTable } from "./Authoritytable"
+import { SearchBar } from "@/components/ui/searchbar";
 
 
 export function AuthorityteamTab() {
@@ -22,7 +23,28 @@ export function AuthorityteamTab() {
             </div>
             <div className=" p-2 rounded-lg">
                 <AuthorityPerformanceTable/>
+            </div> 
+        </Card>
+    )}
+
+
+export function AuthorityPendingTab() {
+    const [active, setActive] = useState("");
+    return(
+       
+        <Card className=" bg-white flex flex-col w-full aspect-3/2">
+            <div className="flex flex-col h-1/7  border border-2 pt-2 border-white border-b-gray-300 ">
+            <div className="flex items-start pt-2 w-2/3 justify-start">
+            <SearchBar name="auPenWork"
+                placeholder="Search by name, request id, mobile number"
+                />
             </div>
-            
+            <div className="flex gap-6 items-center justify-end">
+                <button className="text-black hover:text-emerald-600  bg-gray-300 hover:bg-gray-500 rounded-2xl h-14 px-2">Filters</button>
+            </div>
+            </div>
+            <div className=" p-2 rounded-lg">
+                <AuthorityPendingTable/>
+            </div> 
         </Card>
     )}

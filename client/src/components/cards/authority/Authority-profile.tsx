@@ -9,7 +9,7 @@ import { InputField } from "@/components/ui/Input";
 export function AuthorityPersonalInformationcard() {
     const [active, setActive] = useState("");
     return(
-        <Card className=" flex-1 aspect-2 ">
+        <Card className=" flex-1 aspect-2 bg-white">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <InputField
                 label="Full Name"
@@ -48,7 +48,7 @@ export function AuthorityPersonalInformationcard() {
 export function AuthorityAddresscard() {
     const [active, setActive] = useState("");
     return(
-        <Card className=" flex-1 aspect-2 ">
+        <Card className=" flex-1 aspect-2 bg-white">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <InputField
                 label="House No/Flat no/ Road no"
@@ -75,7 +75,7 @@ export function AuthorityAddresscard() {
 export function AuthorityBankingcard() {
     const [active, setActive] = useState("");
     return(
-        <Card className=" flex-1 aspect-2 ">
+        <Card className=" flex-1 aspect-2 bg-white">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <InputField
                 label="Bank"
@@ -107,7 +107,7 @@ export function AuthorityBankingcard() {
 export function AuthorityDocumentscard() {
     const [active, setActive] = useState("");
     return(
-        <Card className=" flex-1 aspect-2 ">
+        <Card className=" flex-1 aspect-2 bg-white">
             <div className="flex w-2/3 flex-col">
                 <InputField
                 label="Account Number"

@@ -1,6 +1,6 @@
 "use client";
 import { AuthorityPersonalInformationcard, AuthorityAddresscard, AuthorityBankingcard, AuthorityDocumentscard
- } from "@/components/cards/authority/Aythority-profile";
+ } from "@/components/cards/authority/Authority-profile";
 export default function AuthorityProfile() {
   return (
     <>
