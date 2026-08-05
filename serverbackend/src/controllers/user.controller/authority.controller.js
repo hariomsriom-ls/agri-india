@@ -31,7 +31,7 @@ const generateAccessAndRefreshToken = async(organizationAuthorityId) => {
 
 
 const registerAuthority = asyncHandler(async(req,res) => {
-    const {email, contactNumber, authorityid} = req.body;
+    const {email, contactNumber, authorityid, Department} = req.body;
        registrationValidations.fieldNotEmpty(req.body);
        registrationValidations.validateEmailId(req.body.email);
        registrationValidations.validateMobileNumber(req.body.contactNumber);  
@@ -60,7 +60,7 @@ const registerAuthority = asyncHandler(async(req,res) => {
 
     
   const organizationAuthority  = await organizationauthority
-    .create({fullName, normalizedEmail, userName, password, contactNumber,
+    .create({fullName, normalizedEmail, userName, password, contactNumber, Department,
         address: UserAddress._id, workingZone, bankaccount, IFSCcode})  
     
 const createdAuthority = await organizationauthority.findById(organizationAuthority._id)

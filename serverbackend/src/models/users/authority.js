@@ -15,6 +15,10 @@ const authoritySchema = new Schema({
         type: String,
         required: true,
     },
+        Department: {
+        type: String,
+        required: true,
+    },
     email: {
         type: String,
         required: true,

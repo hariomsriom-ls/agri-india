@@ -2,13 +2,17 @@
 import React from "react";
 import Card from "@/components/ui/customizable-cards";
 import { Roleselectioncard } from "@/components/cards/registrationlogin/registration"
+import { useState } from "react";
 
 export default function Registration() {
+    const [selectedRole, setSelectedRole] = useState("");
     return(
         <>
         <main className="overscroll-none">
               <div className="h-screen flex items-center justify-center bg-[url('/images/registration.png')] bg-cover bg-center">
-                <Roleselectioncard />
+                <Roleselectioncard
+                 selectedRole={selectedRole}
+        setSelectedRole={setSelectedRole} />
                </div>
               </main>
         </>

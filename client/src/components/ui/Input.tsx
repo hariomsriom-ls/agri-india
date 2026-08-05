@@ -7,6 +7,7 @@ import Image from "next/image";
 
 interface InputFieldProps {
   label: string;
+  labelclassName?: string;
   name: string;
   type?: string;
   required?: boolean;
@@ -16,6 +17,7 @@ interface InputFieldProps {
 
 export function InputField({
   label,
+  labelclassName,
   name,
   type = "text",
   required = false,
@@ -26,7 +28,7 @@ export function InputField({
     <div className="flex flex-col gap-2 w-full">
       <label
         htmlFor={name}
-        className="text-base font-semibold text-gray-900"
+        className={`text-base font-semibold text-gray-900 ${labelclassName}`}
       >
         {label}
         {required && (
