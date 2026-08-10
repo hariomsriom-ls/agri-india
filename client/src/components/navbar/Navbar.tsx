@@ -1,9 +1,11 @@
 "use client";
 import { useState } from "react";
 import {Menu, MenuItem} from "../ui/navbar-menu";
+import { useRouter } from "next/navigation";
 
 export function Navbar() {
     const [active, setActive] = useState("");
+    const router= useRouter();
     return(
         <nav className = "bg-gray-100">
             <div className = "max-w-7xl mx-auto flex rounded-lg justify-between bg-white">
@@ -41,7 +43,8 @@ export function Navbar() {
                         login
                     </button>
     
-                    <button className=" rounded-lg px-4 border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
+                    <button onClick={() => router.push("/registration")} 
+                    className=" rounded-lg px-4 border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
                         sign up
                     </button>
                 </div>

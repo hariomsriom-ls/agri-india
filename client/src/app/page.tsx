@@ -3,7 +3,9 @@ import Navbar from "@/components/navbar/Navbar";
 import Herosection from "@/components/Herosection"
 
 
+
 export default function Home() {
+
   return (
     <>
     <header>

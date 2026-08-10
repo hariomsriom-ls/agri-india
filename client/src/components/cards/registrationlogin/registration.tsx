@@ -3,6 +3,7 @@ import React from "react";
 import Card from "../../ui/customizable-cards";
 import{useState} from "react"
 import {FaRegUserCircle, VscOrganization, GrUserWorker } from "@/components/ui/icons"
+import {  useworkerRegistration } from "@/contexts/registration/workerProvider";
 
 
 const roles = [
@@ -33,7 +34,7 @@ export function Roleselectioncard({
     selectedRole,
     setSelectedRole,
 }: Props) {
-
+    const {WorkerformData, UpdateWorkerformdata} = useworkerRegistration();
     return(    
         <div>    
          <div>
@@ -60,6 +61,8 @@ export function Roleselectioncard({
                         return (
                              <button
                                 key={role.id}
+                                value={WorkerformData.role}
+                                onChange={()=>UpdateWorkerformdata({role: role.title})}
                                 onClick={() => setSelectedRole(role.id)}
                                 className={`rounded-2xl border p-8 transition-all duration-300
                                 ${selectedRole === role.id
@@ -80,6 +83,8 @@ export function Roleselectioncard({
                      
         </div>  
         
-    )}
+    )
+
+    }
 
 

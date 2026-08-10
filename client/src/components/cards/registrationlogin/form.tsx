@@ -1,17 +1,41 @@
 "use client";
 import React from "react";
 import { InputField } from "@/components/ui/Input";
+import { useworkerRegistration } from "@/contexts/registration/workerProvider";
+import { useAuthorityRegistration } from "@/contexts/registration/authorityProvider";
+import { forwardRef, useImperativeHandle, useState } from "react";
+import { steps } from "framer-motion";
 
-export function WorkerPersonalInfoForm() {
+export interface WorkerPersonalInfoFormRef { saveData: () => void;}
+export const WorkerPersonalInfoForm = forwardRef<WorkerPersonalInfoFormRef>((props, ref) => {
+    const { UpdateWorkerformdata,} = useworkerRegistration();
+    const [stepData, setStepData] = useState({
+         name: "", email: "", mobile: "", dob: "", username: "", password: "",
+});
+     useImperativeHandle(ref, ()=>({
+        saveData: () => {
+            UpdateWorkerformdata({
+                fullName: stepData.name,
+                mobilenumber: stepData.mobile,
+                email: stepData.email, 
+                DOB: stepData.dob,
+                password: stepData.password,
+                username: stepData.username, 
+            });
+        },
+     }));
     return (
         <>
-            <h1 className="text-4xl text-white">
+            <h1 className="text-4xl text-white absolute top-5 right-30">
                 Worker Information
             </h1>
             <div className="grid grid-cols-2 gap-5 mt-8">
-               <InputField
+               
+              <InputField
                  label="Full Name"
                  labelclassName="text-white"
+                value={stepData.name}
+                 onChange={(e) => {setStepData({ ...stepData, name: e.target.value }) }}
                  name="WorkerName"
                  placeholder="Enter Full Name"
                  className="text-white hover:text-black"
@@ -23,6 +47,9 @@ export function WorkerPersonalInfoForm() {
                  name="WorkerEmail"
                  placeholder="Enter Registered Email"
                  className="text-white hover:text-black"
+                value={stepData.email}
+                 onChange={(e) => { setStepData({ ...stepData, email: e.target.value })}}
+
                   />
                             
              <InputField
@@ -31,6 +58,18 @@ export function WorkerPersonalInfoForm() {
                  name="WorkerNumber"
                  placeholder="Enter Contact Number"
                  className="text-white hover:text-black"
+                value={stepData.mobile}
+                 onChange={(e) => {setStepData({ ...stepData, mobile: e.target.value })}}
+                 required />
+
+            <InputField
+                 label="Date of Birth"
+                 labelclassName="text-white"
+                 name="WorkerDob"
+                 placeholder="Enter Contact Number"
+                 className="text-white hover:text-black"
+                 value={stepData.dob}
+                 onChange={(e) => {setStepData({ ...stepData, dob: e.target.value })  }}
                  required />
             
               <InputField
@@ -39,6 +78,8 @@ export function WorkerPersonalInfoForm() {
                 name="WorkerUsername"
                 placeholder="Enter Username"
                 className="text-white hover:text-black"
+               value={stepData.username}
+                 onChange={(e) => {setStepData({ ...stepData, username: e.target.value }) }}
                  required />
             
              <InputField
@@ -47,18 +88,39 @@ export function WorkerPersonalInfoForm() {
                  name="WorkerPassword"
                  placeholder="Enter strong password"
                  className="text-white hover:text-black"
+                 value={stepData.password}
+                 onChange={(e) => {setStepData({ ...stepData, password: e.target.value }) }}
                   required />
             </div>
         </>
     );
-}
+});
 
-export function WorkerAddressForm() {
+export interface WorkerAddressFormRef {saveData: () => void;}
+export const WorkerAddressForm = forwardRef<WorkerAddressFormRef>((props, ref)=> {
+    const { UpdateWorkerformdata} = useworkerRegistration();
+    const [stepData, setStepData] = useState({
+        houseno: "", landmark: "", country: "", city: "", district: "", state: "", pincode: ""
+
+    })
+    useImperativeHandle(ref,()=>({
+        saveData: ()=>{
+            UpdateWorkerformdata({
+                houseno: stepData.houseno,
+                landmark: stepData.landmark,
+                country: stepData.country,
+                city: stepData.city,
+                district: stepData.district,
+                state: stepData.state,
+                pincode: stepData.pincode
+            })
+        }
+    }))
     return (
         <>
-            <h1 className="text-4xl text-white">
+            <h1 className="text-4xl text-white absolute top-5 right-30">
                 Worker Information
-            </h1>
+            </h1> 
             <div className="grid grid-cols-2 gap-5 mt-8">
                <InputField
                   label="House No/Flat no/ Road no"
@@ -66,6 +128,8 @@ export function WorkerAddressForm() {
                   name="woHouseno"
                   placeholder="Enter House no"
                   className="text-white hover:text-black"
+                  value={stepData.houseno}
+                 onChange={(e)=> setStepData({ ...stepData, houseno: e.target.value })}
                    />
                
                  <InputField
@@ -74,6 +138,8 @@ export function WorkerAddressForm() {
                   name="wolandmark"
                  placeholder="Enter nearby landmark"
                  className="text-white hover:text-black"
+                 value={stepData.landmark}
+                 onChange={(e)=> setStepData({ ...stepData, landmark: e.target.value })}
                  />
                
                   <InputField
@@ -82,6 +148,8 @@ export function WorkerAddressForm() {
                  name="wocountry"
                  placeholder="Enter House no"
                  className="text-white hover:text-black"
+                 value={stepData.country}
+                 onChange={(e)=> setStepData({ ...stepData, country: e.target.value })}
                  required />
             
               <InputField
@@ -90,6 +158,8 @@ export function WorkerAddressForm() {
                 name="Workercity"
                 placeholder="Enter city"
                 className="text-white hover:text-black"
+                value={stepData.city}
+                 onChange={(e)=> setStepData({ ...stepData, city: e.target.value })}
                  required />
             
              <InputField
@@ -98,6 +168,8 @@ export function WorkerAddressForm() {
                  name="Workerdistrict"
                  placeholder="district"
                  className="text-white hover:text-black"
+                 value={stepData.district}
+                 onChange={(e)=> setStepData({ ...stepData, district: e.target.value })}
                   required />
 
             <InputField
@@ -106,6 +178,8 @@ export function WorkerAddressForm() {
                 name="Workerstate"
                 placeholder="Enter state"
                 className="text-white hover:text-black"
+                value={stepData.state}
+                 onChange={(e)=> setStepData({ ...stepData, state: e.target.value })}
                  required />
             
              <InputField
@@ -114,17 +188,34 @@ export function WorkerAddressForm() {
                  name="Workerpincode"
                  placeholder="pincode"
                  className="text-white hover:text-black"
+                 value={stepData.pincode}
+                 onChange={(e)=> setStepData({ ...stepData, pincode: e.target.value })}
                   required />
 
             </div>
         </>
     );
-}
+});
 
-export function WorkerBankForm() {
+
+export interface WorkerBankFormRef{ saveData: ()=> void;}
+export const WorkerBankForm = forwardRef<WorkerBankFormRef>((props, ref)=>{
+    const{ UpdateWorkerformdata}= useworkerRegistration();
+    const[stepData, setStepData] = useState({
+        bankAccount: "", IfscCode: "", Workingzone: ""
+    })
+    useImperativeHandle(ref, ()=>({
+        saveData: ()=>{
+            UpdateWorkerformdata({
+                bankaccount: stepData.bankAccount,
+                IFSCcode: stepData.IfscCode,
+                workingZone: stepData.Workingzone
+            })
+        }
+    }))
     return (
         <>
-            <h1 className="text-4xl text-white">
+            <h1 className="text-4xl text-white absolute top-5 right-30">
                 Worker Information
             </h1>
             <div className="grid grid-cols-2 gap-5 mt-8">
@@ -134,6 +225,8 @@ export function WorkerBankForm() {
                  name="Workeraccount"
                  placeholder="Enter ank Account"
                  className="text-white hover:text-black"
+                 value={stepData.bankAccount}
+                 onChange={(e)=>setStepData({...stepData, bankAccount: e.target.value})}
                   required />
                             
              <InputField
@@ -142,6 +235,8 @@ export function WorkerBankForm() {
                  name="WorkerIfscCode"
                  placeholder="Enter ifsc code"
                  className="text-white hover:text-black"
+                 value={stepData.IfscCode}
+                 onChange={(e)=> setStepData({...stepData, IfscCode: e.target.value})}
                   required />
 
             <InputField
@@ -150,17 +245,38 @@ export function WorkerBankForm() {
                  name="Workerworkingzone"
                  placeholder="workingzone"
                  className="text-white hover:text-black"
+                 value={stepData.Workingzone}
+                 onChange={(e)=> setStepData({...stepData, Workingzone : e.target.value})}
                   required />
                             
             </div>
         </>
     );
-}
+});
 
-export function AuthorityPersonalInfoForm() {
+
+export interface AuthorityPersonalInfoFormRef{ saveData: ()=> void;}
+export const AuthorityPersonalInfoForm= forwardRef<AuthorityPersonalInfoFormRef>((props, ref)=>{
+     const{ UpdateAuthorityformdata}= useAuthorityRegistration();
+    const[stepData, setStepData] = useState({
+          name: "", email: "", mobile: "", authorityid: "", username: "", password: "", department: ""
+    });
+    useImperativeHandle(ref, ()=>({
+        saveData: ()=>{
+            UpdateAuthorityformdata({
+                fullName: stepData.name,
+                mobilenumber: stepData.mobile,
+                email: stepData.email, 
+                authorityId: stepData.authorityid,
+                department: stepData.department,
+                password: stepData.password,
+                username: stepData.username,
+            });
+        }}
+    ));
     return (
         <>
-            <h1 className="text-4xl text-white">
+            <h1 className="text-4xl text-white absolute top-5 right-30">
                 Authority Information
             </h1>
             <div className="grid grid-cols-2 gap-5 mt-8">
@@ -170,6 +286,8 @@ export function AuthorityPersonalInfoForm() {
                  name="auName"
                  placeholder="Enter Full Name"
                  className="text-white hover:text-black"
+                 value={stepData.name}
+                 onChange={(e) => {setStepData({ ...stepData, name: e.target.value }) }}
                   required />
                             
              <InputField
@@ -178,6 +296,8 @@ export function AuthorityPersonalInfoForm() {
                  name="auEmail"
                  placeholder="Enter Registered Email"
                  className="text-white hover:text-black"
+                 value={stepData.email}
+                 onChange={(e) => {setStepData({ ...stepData,email : e.target.value }) }}
                   required />
                             
              <InputField
@@ -186,6 +306,8 @@ export function AuthorityPersonalInfoForm() {
                  name="auNumber"
                  placeholder="Enter Contact Number"
                  className="text-white hover:text-black"
+                 value={stepData.mobile}
+                 onChange={(e) => {setStepData({ ...stepData, mobile: e.target.value }) }}
                  required />
             
               <InputField
@@ -194,6 +316,8 @@ export function AuthorityPersonalInfoForm() {
                 name="auUsername"
                 placeholder="Enter Username"
                 className="text-white hover:text-black"
+                value={stepData.username}
+                 onChange={(e) => {setStepData({ ...stepData, username: e.target.value }) }}
                  required />
             
              <InputField
@@ -202,6 +326,8 @@ export function AuthorityPersonalInfoForm() {
                  name="auPassword"
                  placeholder="Enter strong password"
                  className="text-white hover:text-black"
+                 value={stepData.password}
+                 onChange={(e) => {setStepData({ ...stepData, password: e.target.value }) }}
                   required />
 
             <InputField
@@ -210,6 +336,8 @@ export function AuthorityPersonalInfoForm() {
                  name="audepartment"
                  placeholder="Enter your department"
                  className="text-white hover:text-black"
+                 value={stepData.department}
+                 onChange={(e) => {setStepData({ ...stepData, department: e.target.value }) }}
                   required />
             
             <InputField
@@ -218,16 +346,38 @@ export function AuthorityPersonalInfoForm() {
                  name="auid"
                  placeholder="Enter your id"
                  className="text-white hover:text-black"
+                 value={stepData.authorityid}
+                 onChange={(e) => {setStepData({ ...stepData,authorityid : e.target.value }) }}
                   required />
             </div>
         </>
     );
-}
+});
 
-export function AuthorityAddressForm() {
+
+export interface AuthorityAddressFormRef{ saveData: ()=> void;}
+export const AuthorityAddressForm = forwardRef<AuthorityAddressFormRef>((props, ref)=>  {
+        const { UpdateAuthorityformdata} = useAuthorityRegistration();
+    const [stepData, setStepData] = useState({
+        houseno: "", landmark: "", country: "", city: "", district: "", state: "", pincode: ""
+
+    })
+    useImperativeHandle(ref,()=>({
+        saveData: ()=>{
+            UpdateAuthorityformdata({
+                houseno: stepData.houseno,
+                landmark: stepData.landmark,
+                country: stepData.country,
+                city: stepData.city,
+                district: stepData.district,
+                state: stepData.state,
+                pincode: stepData.pincode
+            })
+        }
+    }))
     return (
         <>
-            <h1 className="text-4xl text-white">
+            <h1 className="text-4xl text-white absolute top-5 right-30">
                 Authority Information
             </h1>
             <div className="grid grid-cols-2 gap-5 mt-8">
@@ -290,12 +440,27 @@ export function AuthorityAddressForm() {
             </div>
         </>
     );
-}
+});
 
-export function AuthorityBankForm() {
+
+export interface AuthorityBankFormRef{ saveData: ()=> void;}
+export const AuthorityBankForm = forwardRef<AuthorityBankFormRef>((props, ref)=>{
+    const{ UpdateAuthorityformdata}= useAuthorityRegistration();
+    const[stepData, setStepData] = useState({
+        bankAccount: "", IfscCode: "", Workingzone: ""
+    })
+    useImperativeHandle(ref, ()=>({
+        saveData: ()=>{
+            UpdateAuthorityformdata({
+                bankaccount: stepData.bankAccount,
+                IFSCcode: stepData.IfscCode,
+                workingZone: stepData.Workingzone
+            })
+        }
+    }))
     return (
         <>
-            <h1 className="text-4xl text-white">
+            <h1 className="text-4xl text-white absolute top-5 right-30">
                 Authority Information
             </h1>
             <div className="grid grid-cols-2 gap-5 mt-8">
@@ -326,12 +491,13 @@ export function AuthorityBankForm() {
             </div>
         </>
     );
-}
+});
+
 
 export function LandownerForm() {
     return (
         <>
-         <h1 className="text-4xl text-white">
+         <h1 className="text-4xl text-white absolute top-5 right-30">
             Landowner Information
          </h1>
             <div className="grid grid-cols-2 gap-5 mt-8">

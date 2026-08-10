@@ -1,9 +1,5 @@
 "use client";
-import React from "react";
-import { ReactNode } from "react";
-import { motion } from "framer-motion";
-import Link from "next/link";
-import Image from "next/image";
+import { ChangeEvent } from "react";
 
 interface InputFieldProps {
   label: string;
@@ -13,6 +9,8 @@ interface InputFieldProps {
   required?: boolean;
   placeholder?: string;
   className?: string;
+ value?: string;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 export function InputField({
@@ -23,6 +21,8 @@ export function InputField({
   required = false,
   placeholder = "",
   className,
+ value,
+  onChange
 }: InputFieldProps) {
   return (
     <div className="flex flex-col gap-2 w-full">
@@ -45,6 +45,8 @@ export function InputField({
                    outline-none transition 
                    focus:border-green-600 focus:bg-gray-200
                    focus:ring-1 focus:ring-green-200 ${className}`}
+       value={value}
+        onChange={onChange}
       />
     </div>
   );
