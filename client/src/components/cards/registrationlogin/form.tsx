@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { InputField } from "@/components/ui/Input";
 import { useworkerRegistration } from "@/contexts/registration/workerProvider";
 import { useAuthorityRegistration } from "@/contexts/registration/authorityProvider";
@@ -8,10 +8,21 @@ import { steps } from "framer-motion";
 
 export interface WorkerPersonalInfoFormRef { saveData: () => void;}
 export const WorkerPersonalInfoForm = forwardRef<WorkerPersonalInfoFormRef>((props, ref) => {
-    const { UpdateWorkerformdata,} = useworkerRegistration();
+    const { WorkerformData, UpdateWorkerformdata,} = useworkerRegistration();
     const [stepData, setStepData] = useState({
          name: "", email: "", mobile: "", dob: "", username: "", password: "",
 });
+    useEffect(() => {
+    setStepData({
+        name: WorkerformData.fullName || "",
+        email: WorkerformData.email || "",
+        mobile: WorkerformData.mobilenumber || "",
+        dob: WorkerformData.DOB || "",
+        username: WorkerformData.username || "",
+        password: WorkerformData.password || "",
+    });
+    }, [WorkerformData]);
+
      useImperativeHandle(ref, ()=>({
         saveData: () => {
             UpdateWorkerformdata({
@@ -23,7 +34,8 @@ export const WorkerPersonalInfoForm = forwardRef<WorkerPersonalInfoFormRef>((pro
                 username: stepData.username, 
             });
         },
-     }));
+     }),[stepData]);
+
     return (
         <>
             <h1 className="text-4xl text-white absolute top-5 right-30">
@@ -98,11 +110,23 @@ export const WorkerPersonalInfoForm = forwardRef<WorkerPersonalInfoFormRef>((pro
 
 export interface WorkerAddressFormRef {saveData: () => void;}
 export const WorkerAddressForm = forwardRef<WorkerAddressFormRef>((props, ref)=> {
-    const { UpdateWorkerformdata} = useworkerRegistration();
+    const { WorkerformData, UpdateWorkerformdata} = useworkerRegistration();
     const [stepData, setStepData] = useState({
         houseno: "", landmark: "", country: "", city: "", district: "", state: "", pincode: ""
 
     })
+     useEffect(() => {
+    setStepData({
+                houseno: WorkerformData.houseno  || "",
+                landmark: WorkerformData.landmark || "",
+                country: WorkerformData.country || "",
+                city: WorkerformData.city || "",
+                district: WorkerformData.district || "",
+                state: WorkerformData.state || "",
+                pincode: WorkerformData.pincode || ""
+    });
+    }, [WorkerformData]);
+
     useImperativeHandle(ref,()=>({
         saveData: ()=>{
             UpdateWorkerformdata({
@@ -115,7 +139,7 @@ export const WorkerAddressForm = forwardRef<WorkerAddressFormRef>((props, ref)=>
                 pincode: stepData.pincode
             })
         }
-    }))
+    }),[stepData])
     return (
         <>
             <h1 className="text-4xl text-white absolute top-5 right-30">
@@ -200,10 +224,18 @@ export const WorkerAddressForm = forwardRef<WorkerAddressFormRef>((props, ref)=>
 
 export interface WorkerBankFormRef{ saveData: ()=> void;}
 export const WorkerBankForm = forwardRef<WorkerBankFormRef>((props, ref)=>{
-    const{ UpdateWorkerformdata}= useworkerRegistration();
+    const{ WorkerformData, UpdateWorkerformdata}= useworkerRegistration();
     const[stepData, setStepData] = useState({
         bankAccount: "", IfscCode: "", Workingzone: ""
     })
+    useEffect(() => {
+    setStepData({
+                bankAccount: WorkerformData.bankaccount  || "",
+                IfscCode: WorkerformData.IFSCcode || "",
+                Workingzone: WorkerformData.workingZone || "",
+                
+    });
+    }, [WorkerformData]);
     useImperativeHandle(ref, ()=>({
         saveData: ()=>{
             UpdateWorkerformdata({
@@ -212,7 +244,7 @@ export const WorkerBankForm = forwardRef<WorkerBankFormRef>((props, ref)=>{
                 workingZone: stepData.Workingzone
             })
         }
-    }))
+    }),[stepData])
     return (
         <>
             <h1 className="text-4xl text-white absolute top-5 right-30">
@@ -257,10 +289,22 @@ export const WorkerBankForm = forwardRef<WorkerBankFormRef>((props, ref)=>{
 
 export interface AuthorityPersonalInfoFormRef{ saveData: ()=> void;}
 export const AuthorityPersonalInfoForm= forwardRef<AuthorityPersonalInfoFormRef>((props, ref)=>{
-     const{ UpdateAuthorityformdata}= useAuthorityRegistration();
+     const{AuthorityformData, UpdateAuthorityformdata}= useAuthorityRegistration();
     const[stepData, setStepData] = useState({
           name: "", email: "", mobile: "", authorityid: "", username: "", password: "", department: ""
     });
+     useEffect(() => {
+    setStepData({
+        name: AuthorityformData.fullName || "",
+        email: AuthorityformData.email || "",
+        mobile: AuthorityformData.mobilenumber || "",
+        authorityid: AuthorityformData.authorityId || "",
+        username: AuthorityformData.username || "",
+        password: AuthorityformData.password || "",
+        department: AuthorityformData.department || "",
+    });
+    }, [AuthorityformData]);
+
     useImperativeHandle(ref, ()=>({
         saveData: ()=>{
             UpdateAuthorityformdata({
@@ -273,7 +317,7 @@ export const AuthorityPersonalInfoForm= forwardRef<AuthorityPersonalInfoFormRef>
                 username: stepData.username,
             });
         }}
-    ));
+    ),[stepData]);
     return (
         <>
             <h1 className="text-4xl text-white absolute top-5 right-30">
@@ -357,11 +401,23 @@ export const AuthorityPersonalInfoForm= forwardRef<AuthorityPersonalInfoFormRef>
 
 export interface AuthorityAddressFormRef{ saveData: ()=> void;}
 export const AuthorityAddressForm = forwardRef<AuthorityAddressFormRef>((props, ref)=>  {
-        const { UpdateAuthorityformdata} = useAuthorityRegistration();
+        const {AuthorityformData, UpdateAuthorityformdata} = useAuthorityRegistration();
     const [stepData, setStepData] = useState({
         houseno: "", landmark: "", country: "", city: "", district: "", state: "", pincode: ""
 
     })
+     useEffect(() => {
+    setStepData({
+                houseno: AuthorityformData.houseno  || "",
+                landmark: AuthorityformData.landmark || "",
+                country: AuthorityformData.country || "",
+                city: AuthorityformData.city || "",
+                district: AuthorityformData.district || "",
+                state: AuthorityformData.state || "",
+                pincode: AuthorityformData.pincode || ""
+    });
+    }, [AuthorityformData]);
+
     useImperativeHandle(ref,()=>({
         saveData: ()=>{
             UpdateAuthorityformdata({
@@ -374,7 +430,7 @@ export const AuthorityAddressForm = forwardRef<AuthorityAddressFormRef>((props, 
                 pincode: stepData.pincode
             })
         }
-    }))
+    }),[stepData])
     return (
         <>
             <h1 className="text-4xl text-white absolute top-5 right-30">
@@ -387,6 +443,8 @@ export const AuthorityAddressForm = forwardRef<AuthorityAddressFormRef>((props, 
                   name="auHouseno"
                   placeholder="Enter House no"
                   className="text-white hover:text-black"
+                   value={stepData.houseno}
+                 onChange={(e) => {setStepData({ ...stepData,houseno : e.target.value }) }}
                    />
                
                  <InputField
@@ -395,6 +453,8 @@ export const AuthorityAddressForm = forwardRef<AuthorityAddressFormRef>((props, 
                   name="aulandmark"
                  placeholder="Enter nearby landmark"
                  className="text-white hover:text-black"
+                  value={stepData.landmark}
+                 onChange={(e) => {setStepData({ ...stepData, landmark: e.target.value }) }}
                   required />
                
                   <InputField
@@ -403,6 +463,8 @@ export const AuthorityAddressForm = forwardRef<AuthorityAddressFormRef>((props, 
                  name="aucountry"
                  placeholder="Enter House no"
                  className="text-white hover:text-black"
+                  value={stepData.country}
+                 onChange={(e) => {setStepData({ ...stepData, country: e.target.value }) }}
                  required />
             
               <InputField
@@ -411,6 +473,8 @@ export const AuthorityAddressForm = forwardRef<AuthorityAddressFormRef>((props, 
                 name="aucity"
                 placeholder="Enter city"
                 className="text-white hover:text-black"
+                 value={stepData.city}
+                 onChange={(e) => {setStepData({ ...stepData, city: e.target.value }) }}
                  required />
             
              <InputField
@@ -418,6 +482,8 @@ export const AuthorityAddressForm = forwardRef<AuthorityAddressFormRef>((props, 
                  labelclassName="text-white"
                  name="audistrict"
                  placeholder="district"
+                  value={stepData.district}
+                 onChange={(e) => {setStepData({ ...stepData, district: e.target.value }) }}
                  className="text-white hover:text-black"
                   required />
 
@@ -427,6 +493,8 @@ export const AuthorityAddressForm = forwardRef<AuthorityAddressFormRef>((props, 
                 name="austate"
                 placeholder="Enter state"
                 className="text-white hover:text-black"
+                 value={stepData.state}
+                 onChange={(e) => {setStepData({ ...stepData, state: e.target.value }) }}
                  required />
             
              <InputField
@@ -435,6 +503,8 @@ export const AuthorityAddressForm = forwardRef<AuthorityAddressFormRef>((props, 
                  name="aupincode"
                  placeholder="pincode"
                  className="text-white hover:text-black"
+                  value={stepData.pincode}
+                 onChange={(e) => {setStepData({ ...stepData, pincode: e.target.value }) }}
                   required />
 
             </div>
@@ -445,10 +515,18 @@ export const AuthorityAddressForm = forwardRef<AuthorityAddressFormRef>((props, 
 
 export interface AuthorityBankFormRef{ saveData: ()=> void;}
 export const AuthorityBankForm = forwardRef<AuthorityBankFormRef>((props, ref)=>{
-    const{ UpdateAuthorityformdata}= useAuthorityRegistration();
+    const{ AuthorityformData, UpdateAuthorityformdata}= useAuthorityRegistration();
     const[stepData, setStepData] = useState({
         bankAccount: "", IfscCode: "", Workingzone: ""
     })
+    useEffect(() => {
+    setStepData({
+                bankAccount: AuthorityformData.bankaccount  || "",
+                IfscCode: AuthorityformData.IFSCcode || "",
+                Workingzone: AuthorityformData.workingZone || "",
+                
+    });
+    }, [AuthorityformData]);
     useImperativeHandle(ref, ()=>({
         saveData: ()=>{
             UpdateAuthorityformdata({
@@ -457,7 +535,7 @@ export const AuthorityBankForm = forwardRef<AuthorityBankFormRef>((props, ref)=>
                 workingZone: stepData.Workingzone
             })
         }
-    }))
+    }),[stepData])
     return (
         <>
             <h1 className="text-4xl text-white absolute top-5 right-30">
@@ -470,6 +548,8 @@ export const AuthorityBankForm = forwardRef<AuthorityBankFormRef>((props, ref)=>
                  name="auaccount"
                  placeholder="Enter ank Account"
                  className="text-white hover:text-black"
+                  value={stepData.bankAccount}
+                 onChange={(e) => {setStepData({ ...stepData, bankAccount: e.target.value }) }}
                   required />
                             
              <InputField
@@ -478,6 +558,8 @@ export const AuthorityBankForm = forwardRef<AuthorityBankFormRef>((props, ref)=>
                  name="WorkerIfscCode"
                  placeholder="Enter ifsc code"
                  className="text-white hover:text-black"
+                  value={stepData.IfscCode}
+                 onChange={(e) => {setStepData({ ...stepData, IfscCode: e.target.value }) }}
                   required />
 
             <InputField
@@ -486,6 +568,8 @@ export const AuthorityBankForm = forwardRef<AuthorityBankFormRef>((props, ref)=>
                  name="auworkingzone"
                  placeholder="workingzone"
                  className="text-white hover:text-black"
+                  value={stepData.Workingzone}
+                 onChange={(e) => {setStepData({ ...stepData, Workingzone: e.target.value }) }}
                   required />
                             
             </div>

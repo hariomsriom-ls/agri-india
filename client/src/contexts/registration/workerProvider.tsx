@@ -20,7 +20,6 @@ interface WorkerRegistrationData {
   state:  string; 
   country: string;
   pincode: string;
-  isDefault: string;
 }
 
 interface WorkerRegistrationContextType {
@@ -33,7 +32,7 @@ export const WorkerRegistrationContext = createContext<WorkerRegistrationContext
 
 export const WorkerRegistrationProvider = ({ children } : {children: ReactNode; }) => {
   const [WorkerformData, setWorkerformData] = useState<WorkerRegistrationData>({
-    role: "",
+    role: "worker",
     fullName: "",
     email: "",
     mobilenumber: "",
@@ -51,7 +50,6 @@ export const WorkerRegistrationProvider = ({ children } : {children: ReactNode; 
     state: "", 
     country: "",
     pincode: "", 
-    isDefault: ""
   });
 
   const UpdateWorkerformdata = (data: Partial<WorkerRegistrationData>) => {
@@ -61,7 +59,7 @@ export const WorkerRegistrationProvider = ({ children } : {children: ReactNode; 
 
  const ResetWorkerformdata = () => {
     setWorkerformData({
-      role: "",
+      role: "worker",
    fullName: "",
     email: "",
     mobilenumber: "",
@@ -79,7 +77,6 @@ export const WorkerRegistrationProvider = ({ children } : {children: ReactNode; 
     state: "", 
     country: "",
     pincode: "", 
-    isDefault: ""
     })
   };
 

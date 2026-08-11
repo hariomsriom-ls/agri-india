@@ -34,7 +34,7 @@ export const AuthorityRegistrationContext = createContext<AuthorityRegistrationC
 
 export const AuthorityRegistrationProvider = ({ children } : {children: ReactNode; }) => {
   const [AuthorityformData, setAuthorityformData] = useState<AuthorityRegistrationData>({
-    role: "",
+    role: "authority",
     fullName: "",
     email: "",
     mobilenumber: "",
@@ -63,7 +63,7 @@ export const AuthorityRegistrationProvider = ({ children } : {children: ReactNod
 
  const ResetAuthorityformdata = () => {
     setAuthorityformData({
-      role: "",
+      role: "authority",
    fullName: "",
     email: "",
     mobilenumber: "",

@@ -11,17 +11,17 @@ AuthorityAddressFormRef, AuthorityBankFormRef
 } from "@/components/cards/registrationlogin/form"
 //import AuthorityReview from "../forms/authority/Review";
 import { useworkerRegistration } from "@/contexts/registration/workerProvider";
-
+import { useAuthorityRegistration } from "@/contexts/registration/authorityProvider";
 
 
 type Role = "authority" | "landowner" | "worker" | null;
 
 export default function Form() {
-
-    const {WorkerformData} = useworkerRegistration();
-    console.log("FORM DATA:", WorkerformData);
     const [selectedRole, setSelectedRole] = useState("");
     const [step, setStep] = useState(1);
+    const {ResetAuthorityformdata} = useAuthorityRegistration();
+    const {ResetWorkerformdata} = useworkerRegistration();
+
 
     const WorkerpersonalInfoRef = useRef<WorkerPersonalInfoFormRef>(null);
     const WorkerAddressFormRef = useRef<WorkerAddressFormRef>(null);
@@ -30,33 +30,26 @@ export default function Form() {
     const AuthorityAddressFormRef = useRef<AuthorityAddressFormRef>(null);
     const AuthorityBankFormRef = useRef<AuthorityBankFormRef>(null);
 
-
     const next = () => {   
     if (step === 2) {
         switch(selectedRole){
             case "worker" : 
                     WorkerpersonalInfoRef.current?.saveData();
-                    WorkerpersonalInfoRef.current?.saveData();
              case "authority" : 
-                    AuthoritypersonalInfoRef.current?.saveData();
                     AuthoritypersonalInfoRef.current?.saveData();
             } }
     if (step === 3) {
         switch(selectedRole){
             case "worker" :
                     WorkerAddressFormRef.current?.saveData();
-                    WorkerAddressFormRef.current?.saveData();
             case "authority" :
-                    AuthorityAddressFormRef.current?.saveData();
                     AuthorityAddressFormRef.current?.saveData();
             }}
     if (step === 4) {
         switch(selectedRole){
             case "worker" : 
                     WorkerBankFormRef.current?.saveData();
-                    WorkerBankFormRef.current?.saveData();
             case "authority" : 
-                    AuthorityBankFormRef.current?.saveData();
                     AuthorityBankFormRef.current?.saveData();
             }}
     
@@ -67,6 +60,14 @@ export default function Form() {
     const previous = () => {
         if (step > 1) {
             setStep((prev) => prev - 1);
+        }
+        if(step === 2) {
+            switch(selectedRole){
+               case "worker" : 
+                    ResetWorkerformdata();
+            case "authority" : 
+                    ResetAuthorityformdata(); 
+            }
         }
     };
 
@@ -83,11 +84,11 @@ export default function Form() {
        if (selectedRole === "authority") {
             switch (step) {
                 case 2:
-                    return <AuthorityPersonalInfoForm />;
+                    return <AuthorityPersonalInfoForm ref={AuthoritypersonalInfoRef} />;
                 case 3:
-                    return <AuthorityAddressForm/>;
+                    return <AuthorityAddressForm ref={AuthorityAddressFormRef}/>;
                 case 4:
-                    return <AuthorityBankForm />;
+                    return <AuthorityBankForm ref={AuthorityBankFormRef}/>;
                // case 5:
                   //  return <AuthorityReview />;
                 default:
@@ -107,7 +108,7 @@ export default function Form() {
             }
         }
 
-          if (selectedRole === "worker") {
+        if (selectedRole === "worker") {
             switch (step) {
                 case 2:{
                     return <WorkerPersonalInfoForm ref={WorkerpersonalInfoRef}/>;
@@ -115,7 +116,7 @@ export default function Form() {
                 case 3:
                     return <WorkerAddressForm ref={WorkerAddressFormRef}/>;
                 case 4: 
-                return <WorkerBankForm  ref={WorkerBankFormRef} />;
+                    return <WorkerBankForm  ref={WorkerBankFormRef} />;
                 //case 6:
                   //  return <WorkerReview />;
                 default:
