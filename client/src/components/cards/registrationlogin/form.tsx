@@ -210,7 +210,7 @@ export const WorkerAddressForm = forwardRef<WorkerAddressFormRef>((props, ref)=>
                  label="pincode"
                  labelclassName="text-white"
                  name="Workerpincode"
-                 placeholder="pincode"
+                 placeholder="Enter pincode"
                  className="text-white hover:text-black"
                  value={stepData.pincode}
                  onChange={(e)=> setStepData({ ...stepData, pincode: e.target.value })}
@@ -255,7 +255,7 @@ export const WorkerBankForm = forwardRef<WorkerBankFormRef>((props, ref)=>{
                  label="Bank Account"
                  labelclassName="text-white"
                  name="Workeraccount"
-                 placeholder="Enter ank Account"
+                 placeholder="Enter Bank Account Number"
                  className="text-white hover:text-black"
                  value={stepData.bankAccount}
                  onChange={(e)=>setStepData({...stepData, bankAccount: e.target.value})}
@@ -275,7 +275,7 @@ export const WorkerBankForm = forwardRef<WorkerBankFormRef>((props, ref)=>{
                  label="workingZone"
                  labelclassName="text-white"
                  name="Workerworkingzone"
-                 placeholder="workingzone"
+                 placeholder="Ente working zone"
                  className="text-white hover:text-black"
                  value={stepData.Workingzone}
                  onChange={(e)=> setStepData({...stepData, Workingzone : e.target.value})}
@@ -546,7 +546,7 @@ export const AuthorityBankForm = forwardRef<AuthorityBankFormRef>((props, ref)=>
                  label="Bank Account"
                  labelclassName="text-white"
                  name="auaccount"
-                 placeholder="Enter ank Account"
+                 placeholder="Enter Bank Account Number"
                  className="text-white hover:text-black"
                   value={stepData.bankAccount}
                  onChange={(e) => {setStepData({ ...stepData, bankAccount: e.target.value }) }}
@@ -566,7 +566,7 @@ export const AuthorityBankForm = forwardRef<AuthorityBankFormRef>((props, ref)=>
                  label="workingZone"
                  labelclassName="text-white"
                  name="auworkingzone"
-                 placeholder="workingzone"
+                 placeholder=" Enter working zone"
                  className="text-white hover:text-black"
                   value={stepData.Workingzone}
                  onChange={(e) => {setStepData({ ...stepData, Workingzone: e.target.value }) }}

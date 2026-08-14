@@ -9,7 +9,7 @@ import {AuthorityPersonalInfoForm, AuthorityAddressForm, AuthorityBankForm, Land
 ,WorkerAddressForm, WorkerBankForm, WorkerPersonalInfoFormRef, WorkerAddressFormRef, WorkerBankFormRef, AuthorityPersonalInfoFormRef,
 AuthorityAddressFormRef, AuthorityBankFormRef
 } from "@/components/cards/registrationlogin/form"
-//import AuthorityReview from "../forms/authority/Review";
+import {Reviewcard} from "@/components/cards/registrationlogin/registration";
 import { useworkerRegistration } from "@/contexts/registration/workerProvider";
 import { useAuthorityRegistration } from "@/contexts/registration/authorityProvider";
 
@@ -17,10 +17,13 @@ import { useAuthorityRegistration } from "@/contexts/registration/authorityProvi
 type Role = "authority" | "landowner" | "worker" | null;
 
 export default function Form() {
+   // const {WorkerformData} = useworkerRegistration();
+    //console.log(WorkerformData);
     const [selectedRole, setSelectedRole] = useState("");
     const [step, setStep] = useState(1);
     const {ResetAuthorityformdata} = useAuthorityRegistration();
     const {ResetWorkerformdata} = useworkerRegistration();
+    const [showReview, setShowReview] = useState(false);
 
 
     const WorkerpersonalInfoRef = useRef<WorkerPersonalInfoFormRef>(null);
@@ -35,29 +38,41 @@ export default function Form() {
         switch(selectedRole){
             case "worker" : 
                     WorkerpersonalInfoRef.current?.saveData();
+                    break;
              case "authority" : 
                     AuthoritypersonalInfoRef.current?.saveData();
+                    break;
+           
+
             } }
-    if (step === 3) {
+   else if (step === 3) {
         switch(selectedRole){
             case "worker" :
                     WorkerAddressFormRef.current?.saveData();
+                    break;
             case "authority" :
                     AuthorityAddressFormRef.current?.saveData();
+                    break;
             }}
-    if (step === 4) {
+   else if (step === 4) {
         switch(selectedRole){
             case "worker" : 
                     WorkerBankFormRef.current?.saveData();
+                     setShowReview(true);
+                    break;
             case "authority" : 
                     AuthorityBankFormRef.current?.saveData();
+                     setShowReview(true);
+                    break;
             }}
+
     
         setStep((prev) => prev + 1);
     };
 
 
     const previous = () => {
+        
         if (step > 1) {
             setStep((prev) => prev - 1);
         }
@@ -65,8 +80,10 @@ export default function Form() {
             switch(selectedRole){
                case "worker" : 
                     ResetWorkerformdata();
+                    break;
             case "authority" : 
                     ResetAuthorityformdata(); 
+                    break;
             }
         }
     };
@@ -88,50 +105,36 @@ export default function Form() {
                 case 3:
                     return <AuthorityAddressForm ref={AuthorityAddressFormRef}/>;
                 case 4:
-                    return <AuthorityBankForm ref={AuthorityBankFormRef}/>;
-               // case 5:
-                  //  return <AuthorityReview />;
-                default:
-                    return null;
+                    return <AuthorityBankForm ref={AuthorityBankFormRef}/>
             }
         }
 
        // Landowner
-        if (selectedRole === "landowner") {
+       else if (selectedRole === "landowner") {
             switch (step) {
                 case 2:
                     return <LandownerForm />;
-               // case 6:
-                  //  return <LandownerReview />;
-                default:
-                    return null;
             }
         }
 
-        if (selectedRole === "worker") {
+        else if (selectedRole === "worker") {
             switch (step) {
-                case 2:{
-                    return <WorkerPersonalInfoForm ref={WorkerpersonalInfoRef}/>;
-                }
+                case 2:
+                    return <WorkerPersonalInfoForm ref={WorkerpersonalInfoRef}/>;  
                 case 3:
                     return <WorkerAddressForm ref={WorkerAddressFormRef}/>;
                 case 4: 
                     return <WorkerBankForm  ref={WorkerBankFormRef} />;
-                //case 6:
-                  //  return <WorkerReview />;
-                default:
-                    return null;
             }
         }
-
-         return null;
+        
     };
 
 
     return(
         <>
-        <main className="overscroll-none">
-            <div className="h-screen flex items-center justify-center bg-[url('/images/registration.png')] bg-cover bg-center">
+        <main className="overscroll-none bg-[url('/images/registration.png')] bg-cover bg-center">
+            <div className="h-screen flex items-center justify-center ">
             <div className=" flex h-28/30 w-25/30 bg-linear-to-b from-black/30 to-black/50 justify-center items-center rounded-lg">
             <Card className="h-83/100 w-8/10 rounded-3xl shadow-2xl bg-linear-to-b from-black/50 to-black/80 relative">
             <div className="pb-2">
@@ -171,7 +174,10 @@ export default function Form() {
                     </button>
                     </div>
              </Card>
+             {showReview && ( <Reviewcard selectedRole={selectedRole} setSelectedRole={setSelectedRole}
+             onClose={() => setShowReview(false)} reduceStep={()=> setStep((prev)=>prev-1)} /> )}
             </div>  
+             
             </div>
          </main>
         </>

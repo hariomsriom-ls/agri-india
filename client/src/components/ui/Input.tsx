@@ -11,6 +11,7 @@ interface InputFieldProps {
   className?: string;
  value?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  readOnly?: boolean;
 }
 
 export function InputField({
@@ -22,7 +23,8 @@ export function InputField({
   placeholder = "",
   className,
  value,
-  onChange
+  onChange,
+  readOnly
 }: InputFieldProps) {
   return (
     <div className="flex flex-col gap-2 w-full">
@@ -47,6 +49,7 @@ export function InputField({
                    focus:ring-1 focus:ring-green-200 ${className}`}
        value={value}
         onChange={onChange}
+         readOnly={readOnly}
       />
     </div>
   );
