@@ -16,9 +16,9 @@ export const WorkerPersonalInfoForm = forwardRef<WorkerPersonalInfoFormRef>((pro
     setStepData({
         name: WorkerformData.fullName || "",
         email: WorkerformData.email || "",
-        mobile: WorkerformData.mobilenumber || "",
+        mobile: WorkerformData.mobileNumber || "",
         dob: WorkerformData.DOB || "",
-        username: WorkerformData.username || "",
+        username: WorkerformData.userName || "",
         password: WorkerformData.password || "",
     });
     }, [WorkerformData]);
@@ -27,11 +27,11 @@ export const WorkerPersonalInfoForm = forwardRef<WorkerPersonalInfoFormRef>((pro
         saveData: () => {
             UpdateWorkerformdata({
                 fullName: stepData.name,
-                mobilenumber: stepData.mobile,
+                mobileNumber: stepData.mobile,
                 email: stepData.email, 
                 DOB: stepData.dob,
                 password: stepData.password,
-                username: stepData.username, 
+                userName: stepData.username, 
             });
         },
      }),[stepData]);
@@ -112,12 +112,13 @@ export interface WorkerAddressFormRef {saveData: () => void;}
 export const WorkerAddressForm = forwardRef<WorkerAddressFormRef>((props, ref)=> {
     const { WorkerformData, UpdateWorkerformdata} = useworkerRegistration();
     const [stepData, setStepData] = useState({
-        houseno: "", landmark: "", country: "", city: "", district: "", state: "", pincode: ""
+        houseno: "", landmark: "", country: "", city: "", district: "", state: "", pincode: "", street: "",
 
     })
      useEffect(() => {
     setStepData({
                 houseno: WorkerformData.houseno  || "",
+                street: WorkerformData.street || "",
                 landmark: WorkerformData.landmark || "",
                 country: WorkerformData.country || "",
                 city: WorkerformData.city || "",
@@ -131,6 +132,7 @@ export const WorkerAddressForm = forwardRef<WorkerAddressFormRef>((props, ref)=>
         saveData: ()=>{
             UpdateWorkerformdata({
                 houseno: stepData.houseno,
+                street: stepData.street,
                 landmark: stepData.landmark,
                 country: stepData.country,
                 city: stepData.city,
@@ -154,7 +156,17 @@ export const WorkerAddressForm = forwardRef<WorkerAddressFormRef>((props, ref)=>
                   className="text-white hover:text-black"
                   value={stepData.houseno}
                  onChange={(e)=> setStepData({ ...stepData, houseno: e.target.value })}
+
                    />
+                   <InputField
+                 label="Street"
+                 labelclassName="text-white"
+                  name="wostreet"
+                 placeholder="Enter nearby landmark"
+                 className="text-white hover:text-black"
+                 value={stepData.street}
+                 onChange={(e)=> setStepData({ ...stepData, street: e.target.value })}
+                 />
                
                  <InputField
                  label="Land Mark"

@@ -4,7 +4,7 @@ import registrationValidations from "../../validations/registration.validations.
 import { pendingWorkerRegistration } from "../../models/users/pendingregistration.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
-import  {Address}  from "../../models/address.js";
+import  {Address}  from "../../models/address/address.js";
 import { uploadOnCloudinary } from "../../utils/cloudinary.js";
 import { upload } from "../../middlewares/multer.middleware.js";
 
@@ -29,6 +29,7 @@ const registerPendingWorker = asyncHandler(async(req, res) => {
 
     const {fullName, mobileNumber, email, userName, password,
          address,workingZone, bankaccount, IFSCcode, DOB, submittedAt}= req.body
+         console.log(req.body);
     
     registrationValidations.fieldNotEmpty(req.body);
     registrationValidations.validateEmailId(req.body.email);
@@ -48,7 +49,7 @@ const registerPendingWorker = asyncHandler(async(req, res) => {
         throw new ApiError(405, "unable to upload on cloudinary please retry")
     }
 
-    const existedRequest = await landowner.findOne({ $or: [{userName},{email},{mobileNumber}]  })
+    const existedRequest = await pendingWorkerRegistration.findOne({ $or: [{userName},{email},{mobileNumber}]  })
      if(existedRequest){
          throw new ApiError(409, "request already registered")
          }

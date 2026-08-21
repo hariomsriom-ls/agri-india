@@ -1,5 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import { Address } from "../address.js";
+import { Address } from "../address/address.js";
 import Jwt from "jsonwebtoken";
 
 const pendingWorkerRegistrationSchema = new Schema({

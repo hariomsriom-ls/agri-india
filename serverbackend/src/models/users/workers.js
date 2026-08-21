@@ -1,6 +1,6 @@
 import mongoose, {Schema} from "mongoose";
 import Jwt from "jsonwebtoken";
-import { Address} from "../address.js"
+import { Address} from "../address/address.js"
 
 const workerSchema = new Schema({
     _id: String,

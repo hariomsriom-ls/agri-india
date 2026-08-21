@@ -5,8 +5,8 @@ interface WorkerRegistrationData {
   role: string;
   fullName: string;
   email: string;
-  mobilenumber: string;
-  username: string; 
+  mobileNumber: string;
+  userName: string; 
   password:  string;
   workingZone:  string;
   bankaccount: string;
@@ -35,8 +35,8 @@ export const WorkerRegistrationProvider = ({ children } : {children: ReactNode; 
     role: "worker",
     fullName: "",
     email: "",
-    mobilenumber: "",
-    username: "",
+    mobileNumber: "",
+    userName: "",
     password: "",
     workingZone: "",
    bankaccount: "" ,
@@ -62,8 +62,8 @@ export const WorkerRegistrationProvider = ({ children } : {children: ReactNode; 
       role: "worker",
    fullName: "",
     email: "",
-    mobilenumber: "",
-    username: "",
+    mobileNumber: "",
+    userName: "",
     password: "",
     workingZone: "",
    bankaccount: "",

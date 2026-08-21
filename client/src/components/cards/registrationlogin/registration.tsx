@@ -2,7 +2,8 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import Card from "../../ui/customizable-cards";
-import{useState} from "react"
+import{useState} from "react";
+import api from "@/utils/services";
 import { InputField } from "@/components/ui/Input";
 import {FaRegUserCircle, VscOrganization, GrUserWorker } from "@/components/ui/icons"
 import { useworkerRegistration } from "@/contexts/registration/workerProvider";
@@ -124,6 +125,13 @@ const renderField = ()=>{
     }
 }
 
+const handleSubmit = async () => {
+  try {
+    const response = await api.post( "/pending-registration/pending-worker-request", WorkerformData );
+   // console.log(response.data);
+  } catch (error) {console.error(error); }
+};
+
 
 return createPortal(
     <Card className="bg-gray-200 h-95/100 w-85/100 fixed left-30 top-5 z-[9999] flex flex-col gap-5 overflow-y-auto">
@@ -167,7 +175,7 @@ return createPortal(
                                  name=""
                                  placeholder=""
                                  className="text-black"
-                                value={WorkerformData.mobilenumber || AuthorityformData.mobilenumber}
+                                value={WorkerformData.mobileNumber || AuthorityformData.mobilenumber}
                                 readOnly
                                   />
 
@@ -180,7 +188,7 @@ return createPortal(
                                  name=""
                                  placeholder=""
                                  className="text-black"
-                                value={WorkerformData.username || AuthorityformData.username}
+                                value={WorkerformData.userName || AuthorityformData.username}
                                 readOnly
                                   />
                             
@@ -319,7 +327,8 @@ return createPortal(
             </button>
             
             <button  
-                className="px-8 py-3 rounded-xl bg-purple-500 hover:bg-violet-700 text-white">
+                onClick={() => handleSubmit()}
+                className="px-8 py-3 rounded-xl bg-purple-500 hover:bg-violet-700 text-white clicked?bg-violet-700 : bg-blue-500">
                 <span className="pr-4">Submit</span>
             </button>
         </div>

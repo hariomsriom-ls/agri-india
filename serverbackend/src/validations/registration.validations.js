@@ -1,13 +1,13 @@
 import { ApiError } from "../utils/ApiError.js"
 
 
-const fieldNotEmpty = ({fullName, email, mobileNumber, userName, password}) => {
+const fieldNotEmpty = ({fullName, mobileNumber, email, userName, password}) => {
         if (
         [fullName, email, mobileNumber, userName, password].some((field) => !field || String(field).trim() === "")
     ){
         throw new ApiError(400, "All fields are required")
     }
-}
+}    
 
 const validateMobileNumber = (mobileNumber) => {
     if( !/^[6-9]\d{9}$/.test(mobileNumber) ){
