@@ -27,9 +27,8 @@ const generateAccessAndRefreshToken = async(pendingWorkerRegistrationId) => {
 
 const registerPendingWorker = asyncHandler(async(req, res) => {
 
-    const {fullName, mobileNumber, email, userName, password,
-         address,workingZone, bankaccount, IFSCcode, DOB, submittedAt}= req.body
-         console.log(req.body);
+    const {fullName, mobileNumber, email, userName, password, houseno, street, landmark,city,district, state,country,pincode,workingZone, bankaccount, IFSCcode, DOB, submittedAt}= req.body
+        // console.log(req.body);
     
     registrationValidations.fieldNotEmpty(req.body);
     registrationValidations.validateEmailId(req.body.email);
@@ -49,13 +48,33 @@ const registerPendingWorker = asyncHandler(async(req, res) => {
         throw new ApiError(405, "unable to upload on cloudinary please retry")
     }
 
+
     const existedRequest = await pendingWorkerRegistration.findOne({ $or: [{userName},{email},{mobileNumber}]  })
      if(existedRequest){
          throw new ApiError(409, "request already registered")
          }
 
+           let addressId = null;
+    if (address && typeof address === "object") {
+        const newAddress = await Address.create(address);
+        addressId = newAddress._id;
+    } else if (city || state || district || houseno) {
+        const newAddress = await Address.create({
+            houseNo: houseno || "",
+            street: street || "",
+            landmark: landmark || "",
+            city: city || "",
+            district: district || "",
+            state: state || "",
+            country: country || "India",
+            pincode: pincode || ""
+        });
+        addressId = newAddress._id;
+    }
+
+
     const pendingRequest = await pendingWorkerRegistration.create({fullName, mobileNumber, email, userName, password,
-         address, bankaccount, IFSCcode, DOB, submittedAt,
+         address: addressId, bankaccount, IFSCcode, DOB, submittedAt,
         image: image.url,
         governmentid: governmentid.url
     })

@@ -15,16 +15,17 @@ import { TbReport } from "react-icons/tb";
 import { GoReport } from "react-icons/go";
 import { VscOrganization } from "react-icons/vsc";
 import { GrUserWorker } from "react-icons/gr";
-
+import { FaCheckCircle } from "react-icons/fa";
+import { MdCancel } from "react-icons/md";
 
 
 
 
 export {
-    MdDashboardCustomize,LuLandPlot,MdOutlineAdd,GiPayMoney, GrUserWorker,
+    MdDashboardCustomize,LuLandPlot,MdOutlineAdd,GiPayMoney, GrUserWorker,MdCancel,
     MdOutlineRequestPage,VscLayersActive,ImHistory,IoDocumentsSharp, MdNotifications,
     MdOutlineChat, MdReviews, FaRegUserCircle,GrProjects,MdOutlineSearch, VscOrganization,
     MdOutlineMessage,FcViewDetails,RiExchangeBoxFill,MdPendingActions,RiPassPendingFill,GrDocumentVerified,
-    FaUserCheck,MdOutlineSyncProblem,TbReport, GoReport, GrAnalytics, MdOutlinePolicy,IoHomeOutline
+    FaUserCheck,MdOutlineSyncProblem,TbReport, GoReport, GrAnalytics, MdOutlinePolicy,IoHomeOutline,FaCheckCircle,
 
 };

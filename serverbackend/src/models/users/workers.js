@@ -1,6 +1,7 @@
 import mongoose, {Schema} from "mongoose";
 import Jwt from "jsonwebtoken";
 import { Address} from "../address/address.js"
+import bcrypt from "bcrypt";
 
 const workerSchema = new Schema({
     _id: String,

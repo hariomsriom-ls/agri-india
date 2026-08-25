@@ -27,39 +27,37 @@ export const generateAccessAndRefreshToken = async(landownerId) => {
 
 
 const registerLandOwner = asyncHandler(async(req, res) => {
- 
-    /*  get user details
-    validation - not empty
-    check if user is registered already
-    check for images if required
-    upload them on cloudinary
-    create user object
-    create entry in db
-    remove password and refresh token from response
-    check for user creation
-    return response*/
-
      const {fullName, mobileNumber, email, userName, password}= req.body
 
      registrationValidations.fieldNotEmpty(req.body);
      registrationValidations.validateEmailId(req.body.email);
      registrationValidations.validateMobileNumber(req.body.mobileNumber);
 
-     const existedUser = await landowner.findOne({ $or: [{userName},{email}]  })
-     if(existedUser){
-        throw new ApiError(409, "user already exists")
+     const normalizedEmail = email.toLowerCase().trim();
+     const cleanedMobile = Number(String(mobileNumber).replace(/\D/g, '').slice(-10));
+
+     const existedUser = await landowner.findOne({ 
+         $or: [{userName: String(userName).trim()}, {email: normalizedEmail}, {mobileNumber: cleanedMobile}]  
+     });
+     if (existedUser) {
+        throw new ApiError(409, "User with this username, email, or mobile number already exists");
      }
 
-     const landOwner = await landowner.create({fullName,  email, userName, password, mobileNumber})
+     const landOwner = await landowner.create({
+         fullName: String(fullName).trim(),  
+         email: normalizedEmail, 
+         userName: String(userName).trim(), 
+         password, 
+         mobileNumber: cleanedMobile
+     });
 
-     const createdlandOwner = await landowner.findById(landOwner._id).select("-password -refreshToken" )
-     if(!createdlandOwner){
-        throw new ApiError(500, "user not registered try again later")
+     const createdlandOwner = await landowner.findById(landOwner._id).select("-password -refreshToken" );
+     if (!createdlandOwner) {
+        throw new ApiError(500, "user not registered try again later");
      }
 
-     return res.status(201).json( new ApiResponse(200, createdlandOwner, "landowner registered successfully") )
-
-    })
+     return res.status(201).json( new ApiResponse(201, createdlandOwner, "landowner registered successfully") );
+})
 
 const loginLandOwner = asyncHandler(async(req, res) => {
     /* get data from req body
@@ -101,7 +99,7 @@ const loginLandOwner = asyncHandler(async(req, res) => {
         secure: true
     }
 
-    return res.status(200).cookie("acessToken", accessToken, options).cookie("refreshToken", refreshToken, options)
+    return res.status(200).cookie("accessToken", accessToken, options).cookie("refreshToken", refreshToken, options)
     .json(
         new ApiResponse(200,
             {landowner: loggedInlandOwner, accessToken, refreshToken}, 

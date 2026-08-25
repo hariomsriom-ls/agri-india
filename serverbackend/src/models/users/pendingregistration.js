@@ -1,6 +1,7 @@
 import mongoose, {Schema} from "mongoose";
 import { Address } from "../address/address.js";
 import Jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 const pendingWorkerRegistrationSchema = new Schema({
     fullName: {

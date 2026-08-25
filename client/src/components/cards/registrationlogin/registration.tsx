@@ -3,11 +3,14 @@ import React from "react";
 import { createPortal } from "react-dom";
 import Card from "../../ui/customizable-cards";
 import{useState} from "react";
-import api from "@/utils/services";
+import { useRouter } from "next/navigation";
 import { InputField } from "@/components/ui/Input";
 import {FaRegUserCircle, VscOrganization, GrUserWorker } from "@/components/ui/icons"
 import { useworkerRegistration } from "@/contexts/registration/workerProvider";
 import { useAuthorityRegistration } from "@/contexts/registration/authorityProvider";
+import { useLandownerRegistration } from "@/contexts/registration/landownerProvider";
+import{FaCheckCircle, MdCancel} from "@/components/ui/icons"
+import Registration from "@/app/registration/layout";
 
 const roles = [
     {
@@ -27,15 +30,13 @@ const roles = [
     },
 ];
 
-interface Props {
+interface RoleSelectionProps {
     selectedRole: string;
     setSelectedRole: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export function Roleselectioncard({
-    selectedRole,
-    setSelectedRole,
-}: Props) {
+const RoleselectionCard = ({ selectedRole, setSelectedRole}: RoleSelectionProps)=>{
+   
     return(    
         <div>    
          <div>
@@ -83,20 +84,23 @@ export function Roleselectioncard({
         </div>  
         
     )
-
     }
 
 
+// review card
 interface ReviewProps {
     selectedRole: string;
     setSelectedRole: React.Dispatch<React.SetStateAction<string>>;
     onClose: () => void;
     reduceStep: () => void;
+    onSubmit: () => void;
 }
-const Reviewcard = ({selectedRole, setSelectedRole, onClose, reduceStep}:ReviewProps)=>{
-//name: "", email: "", mobile: "", dob: "", username: "", password: "",
+
+const ReviewCard = ({selectedRole, setSelectedRole, onClose, reduceStep, onSubmit}:ReviewProps)=>{
 const {WorkerformData} = useworkerRegistration();
 const {AuthorityformData} = useAuthorityRegistration();
+const {LandownerformData} = useLandownerRegistration();
+
 const renderField = ()=>{
     if (selectedRole==="authority"){
         return(
@@ -123,36 +127,35 @@ const renderField = ()=>{
             />
         )
     }
+    return null;
 }
 
-const handleSubmit = async () => {
-  try {
-    const response = await api.post( "/pending-registration/pending-worker-request", WorkerformData );
-   // console.log(response.data);
-  } catch (error) {console.error(error); }
-};
-
+const fullName = selectedRole === "landowner" ? LandownerformData.fullName : (selectedRole === "authority" ? AuthorityformData.fullName : WorkerformData.fullName);
+const email = selectedRole === "landowner" ? LandownerformData.email : (selectedRole === "authority" ? AuthorityformData.email : WorkerformData.email);
+const mobile = selectedRole === "landowner" ? LandownerformData.mobileNumber : (selectedRole === "authority" ? AuthorityformData.mobilenumber : WorkerformData.mobileNumber);
+const username = selectedRole === "landowner" ? LandownerformData.userName : (selectedRole === "authority" ? AuthorityformData.username : WorkerformData.userName);
+const password = selectedRole === "landowner" ? LandownerformData.password : (selectedRole === "authority" ? AuthorityformData.password : WorkerformData.password);
 
 return createPortal(
-    <Card className="bg-gray-200 h-95/100 w-85/100 fixed left-30 top-5 z-[9999] flex flex-col gap-5 overflow-y-auto">
+    <Card className="bg-gray-200 h-95/100 w-6/10 fixed left-1/5 top-5 z-[9999] flex flex-col gap-5 overflow-y-auto">
         <div className="flex justify-between">
-             <h1 className=" pl-3 text-3xl flex w-99/100 justify-center">{selectedRole} Review Form</h1>
+             <h1 className=" pl-3 text-3xl flex w-99/100 justify-center capitalize">{selectedRole} Review Form</h1>
          <button className="px-3 py-3 pt-1 pb-1 rounded-sm hover:bg-red-700 "
          onClick={()=>{onClose();
                     reduceStep();
                 }}>
             ✕
           </button>
-        </div>
+        </div>      
         <Card className="bg-white">
-            <h2 className="text-xl">{selectedRole} Personal Information</h2>
+            <h2 className="text-xl ">{selectedRole} Personal Information</h2>
             <div>
                  <div className="grid grid-cols-2 gap-5 mt-8">
                                
                               <InputField
                                  label="Full Name"
                                  labelclassName="text-black"
-                                value={WorkerformData.fullName || AuthorityformData.fullName}
+                                value={fullName}
                                  readOnly
                                 name=""
                                  placeholder=""
@@ -165,7 +168,7 @@ return createPortal(
                                  name=""
                                  placeholder=""
                                  className="text-black"
-                                value={WorkerformData.email || AuthorityformData.email}
+                                value={email}
                                 readOnly
                                   />
 
@@ -175,7 +178,7 @@ return createPortal(
                                  name=""
                                  placeholder=""
                                  className="text-black"
-                                value={WorkerformData.mobileNumber || AuthorityformData.mobilenumber}
+                                value={mobile}
                                 readOnly
                                   />
 
@@ -188,134 +191,139 @@ return createPortal(
                                  name=""
                                  placeholder=""
                                  className="text-black"
-                                value={WorkerformData.userName || AuthorityformData.username}
+                                value={username}
                                 readOnly
                                   />
                             
                               <InputField
                                  label="Password"
                                  labelclassName="text-black"
+                                 type="password"
                                  name=""
                                  placeholder=""
                                  className="text-black"
-                                value={WorkerformData.password || AuthorityformData.password}
+                                value={password}
                                 readOnly
                                   />
                             </div>
             </div>
-        </Card>
-        <Card className="bg-white">
-            <h2 className="text-xl" >{selectedRole} Address Details</h2>
-            <div className="flex flex-col">
-                 <div className="grid grid-cols-2 gap-5 mt-8">
-                               
-                              <InputField
-                                 label="houseno/streetno/name"
-                                 labelclassName="text-black"
-                                value={WorkerformData.houseno || AuthorityformData.houseno}
-                                 name=""
-                                 placeholder=""
-                                 className="text-black"
-                                 readOnly />
-                                            
-                             <InputField
-                                 label="Landmark"
-                                 labelclassName="text-black"
-                                 name=""
-                                 placeholder=""
-                                 className="text-black"
-                                value={WorkerformData.landmark || AuthorityformData.landmark}
-                                readOnly
-                                  />
-
+        </Card>   
+        {selectedRole !== "landowner" && (
+            <>
+            <Card className="bg-white">
+                <h2 className="text-xl ">{selectedRole} Address Details</h2>
+                <div className="flex flex-col">
+                     <div className="grid grid-cols-2 gap-5 mt-8">
+                                   
                                   <InputField
-                                 label="Country"
-                                 labelclassName="text-black"
-                                 name=""
-                                 placeholder=""
-                                 className="text-black"
-                                value={WorkerformData.country || AuthorityformData.country}
-                                readOnly
-                                  />
-                                            
-                             <InputField
-                                 label="State"
-                                 labelclassName="text-black"
-                                 name=""
-                                 placeholder=""
-                                 className="text-black"
-                                value={WorkerformData.state || AuthorityformData.state}
-                                readOnly
-                                  />
-                
-                            <InputField
-                                 label="District"
-                                 labelclassName="text-black"
-                                 name=""
-                                 placeholder=""
-                                 className="text-black"
-                                value={WorkerformData.district || AuthorityformData.district}
-                                readOnly
-                                  />
-                            
-                              <InputField
-                                 label="City"
-                                 labelclassName="text-black"
-                                 name=""
-                                 placeholder=""
-                                 className="text-black"
-                                value={ WorkerformData.city  || AuthorityformData.city}
-                                readOnly
-                                  />
+                                     label="houseno/streetno/name"
+                                     labelclassName="text-black"
+                                    value={WorkerformData.houseno || AuthorityformData.houseno}
+                                     name=""
+                                     placeholder=""
+                                     className="text-black"
+                                     readOnly />
+                                                
+                                 <InputField
+                                     label="Landmark"
+                                     labelclassName="text-black"
+                                     name=""
+                                     placeholder=""
+                                     className="text-black"
+                                    value={WorkerformData.landmark || AuthorityformData.landmark}
+                                    readOnly
+                                       />
 
+                                       <InputField
+                                     label="Country"
+                                     labelclassName="text-black"
+                                     name=""
+                                     placeholder=""
+                                     className="text-black"
+                                    value={WorkerformData.country || AuthorityformData.country}
+                                    readOnly
+                                       />
+                                                
+                                 <InputField
+                                     label="State"
+                                     labelclassName="text-black"
+                                     name=""
+                                     placeholder=""
+                                     className="text-black"
+                                    value={WorkerformData.state || AuthorityformData.state}
+                                    readOnly
+                                       />
+                    
                                 <InputField
-                                 label="Pincode"
-                                 labelclassName="text-black"
-                                 name=""
-                                 placeholder=""
-                                 className="text-black"
-                                value={ WorkerformData.pincode || AuthorityformData.pincode}
-                                readOnly
-                                  />
-
-                                <InputField
-                                 label="Working Zone"
-                                 labelclassName="text-black"
-                                 name=""
-                                 placeholder=""
-                                 className="text-black"
-                                 readOnly
-                                value={ WorkerformData.workingZone || AuthorityformData.workingZone}
-                                  />
+                                     label="District"
+                                     labelclassName="text-black"
+                                     name=""
+                                     placeholder=""
+                                     className="text-black"
+                                    value={WorkerformData.district || AuthorityformData.district}
+                                    readOnly
+                                       />
                                 
-                            </div>
-            </div>
-        </Card>
-        <Card className="bg-white">
-            <h2 className="text-xl">{selectedRole} Bank Details</h2>
-             <div className="flex flex-col">
-                 <div className="grid grid-cols-2 gap-5 mt-8">
-                     <InputField
-                                 label="Bank Account/no"
-                                 labelclassName="text-black"
-                                value={WorkerformData.bankaccount || AuthorityformData.bankaccount}
-                                readOnly
-                                 name=""
-                                 placeholder=""
-                                 className="text-black" />
-                                            
-                             <InputField
-                                 label="IFSC Code"
-                                 labelclassName="text-black"
-                                 name=""
-                                 placeholder=""
-                                 className="text-black"
-                                value={WorkerformData.IFSCcode || AuthorityformData.IFSCcode}
-                                readOnly
-                                  />
-                 </div>
-            </div>
-        </Card>
+                                  <InputField
+                                     label="City"
+                                     labelclassName="text-black"
+                                     name=""
+                                     placeholder=""
+                                     className="text-black"
+                                    value={ WorkerformData.city  || AuthorityformData.city}
+                                    readOnly
+                                       />
+
+                                    <InputField
+                                     label="Pincode"
+                                     labelclassName="text-black"
+                                     name=""
+                                     placeholder=""
+                                     className="text-black"
+                                    value={ WorkerformData.pincode || AuthorityformData.pincode}
+                                    readOnly
+                                       />
+
+                                    <InputField
+                                     label="Working Zone"
+                                     labelclassName="text-black"
+                                     name=""
+                                     placeholder=""
+                                     className="text-black"
+                                     readOnly
+                                    value={ WorkerformData.workingZone || AuthorityformData.workingZone}
+                                       />
+                                    
+                                </div>
+                </div>
+            </Card>     
+            <Card className="bg-white">
+                <h2 className="text-xl ">{selectedRole} Bank Details</h2>
+                 <div className="flex flex-col">
+                     <div className="grid grid-cols-2 gap-5 mt-8">
+                         <InputField
+                                     label="Bank Account/no"
+                                     labelclassName="text-black"
+                                    value={WorkerformData.bankaccount || AuthorityformData.bankaccount}
+                                    readOnly
+                                     name=""
+                                     placeholder=""
+                                     className="text-black" />
+                                                
+                                 <InputField
+                                     label="IFSC Code"
+                                     labelclassName="text-black"
+                                     name=""
+                                     placeholder=""
+                                     className="text-black"
+                                    value={WorkerformData.IFSCcode || AuthorityformData.IFSCcode}
+                                    readOnly
+                                       />
+                     </div>
+                </div>
+            </Card>
+            </>
+        )}
          <div className="flex justify-between">
             <button  
                 onClick={()=>{onClose();
@@ -327,15 +335,93 @@ return createPortal(
             </button>
             
             <button  
-                onClick={() => handleSubmit()}
+                onClick={() => { onSubmit();}}
                 className="px-8 py-3 rounded-xl bg-purple-500 hover:bg-violet-700 text-white clicked?bg-violet-700 : bg-blue-500">
                 <span className="pr-4">Submit</span>
             </button>
-        </div>
+        </div>   
     </Card>,
     document.body
 );
 };
- export {
-    Reviewcard
+
+// response card
+interface ResponseProps {
+   loading?: boolean;
+   registrationSuccess: boolean;
+   message: string;
+   onClose?: () => void;
+}
+
+const ResponseCard = ({ loading = false, registrationSuccess, message, onClose }: ResponseProps) => {
+    const router = useRouter();
+
+    return createPortal(
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+            <Card className="flex flex-col w-[90%] max-w-md bg-white p-6 rounded-2xl shadow-2xl relative text-center">
+                {onClose && (
+                    <div className="absolute top-4 right-4">
+                        <button 
+                            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 text-gray-700 font-bold transition-colors"
+                            onClick={onClose}
+                        >
+                            ✕
+                        </button>
+                    </div>
+                )}
+                <div className="flex flex-col items-center justify-center py-6 gap-4">
+                    {loading ? (
+                        <>
+                            <div className="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+                            <h2 className="text-2xl font-bold text-gray-800">Processing Registration...</h2>
+                            <p className="text-sm text-gray-500">Please wait while we submit your details.</p>
+                        </>
+                    ) : registrationSuccess ? (
+                        <>
+                            <div className="flex justify-center text-green-500 text-6xl">
+                                <FaCheckCircle />
+                            </div>
+                            <h2 className="text-2xl font-bold text-gray-800">Registered Successfully!</h2>
+                            <p className="text-sm text-gray-600 px-4">{message || "Your registration request has been submitted."}</p>
+                            <button
+                                onClick={() => router.push("/login")}
+                                className="mt-4 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-md transition-all"
+                            >
+                                Go to Login
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <div className="flex justify-center text-red-500 text-6xl">
+                                <MdCancel />
+                            </div>
+                            <h2 className="text-2xl font-bold text-gray-800">Registration Failed</h2>
+                            <p className="text-sm text-red-600 px-4">{message || "Unable to complete registration. Please try again."}</p>
+                            <div className="flex gap-4 mt-4">
+                                {onClose && (
+                                    <button
+                                        onClick={onClose}
+                                        className="px-6 py-2.5 bg-gray-700 hover:bg-gray-800 text-white font-medium rounded-xl transition-all"
+                                    >
+                                        Edit Details
+                                    </button>
+                                )}
+                                <button
+                                    onClick={() => router.replace("/")}
+                                    className="px-6 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-xl transition-all"
+                                >
+                                    Home
+                                </button>
+                            </div>
+                        </>
+                    )}
+                </div>
+            </Card>
+        </div>,
+        document.body
+    );
+};
+
+export {
+    ReviewCard, RoleselectionCard, ResponseCard
 }

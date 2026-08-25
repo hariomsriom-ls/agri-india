@@ -3,10 +3,12 @@ import React, { useEffect } from "react";
 import { InputField } from "@/components/ui/Input";
 import { useworkerRegistration } from "@/contexts/registration/workerProvider";
 import { useAuthorityRegistration } from "@/contexts/registration/authorityProvider";
+import { useLandownerRegistration } from "@/contexts/registration/landownerProvider";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { steps } from "framer-motion";
 
-export interface WorkerPersonalInfoFormRef { saveData: () => void;}
+export interface WorkerPersonalInfoFormRef { saveData: () => void; }
+
 export const WorkerPersonalInfoForm = forwardRef<WorkerPersonalInfoFormRef>((props, ref) => {
     const { WorkerformData, UpdateWorkerformdata,} = useworkerRegistration();
     const [stepData, setStepData] = useState({
@@ -21,7 +23,7 @@ export const WorkerPersonalInfoForm = forwardRef<WorkerPersonalInfoFormRef>((pro
         username: WorkerformData.userName || "",
         password: WorkerformData.password || "",
     });
-    }, [WorkerformData]);
+    }, []);
 
      useImperativeHandle(ref, ()=>({
         saveData: () => {
@@ -77,9 +79,10 @@ export const WorkerPersonalInfoForm = forwardRef<WorkerPersonalInfoFormRef>((pro
             <InputField
                  label="Date of Birth"
                  labelclassName="text-white"
+                 type="date"
                  name="WorkerDob"
-                 placeholder="Enter Contact Number"
-                 className="text-white hover:text-black"
+                 placeholder="YYYY-MM-DD"
+                 className="text-white hover:text-black [color-scheme:dark]"
                  value={stepData.dob}
                  onChange={(e) => {setStepData({ ...stepData, dob: e.target.value })  }}
                  required />
@@ -126,7 +129,7 @@ export const WorkerAddressForm = forwardRef<WorkerAddressFormRef>((props, ref)=>
                 state: WorkerformData.state || "",
                 pincode: WorkerformData.pincode || ""
     });
-    }, [WorkerformData]);
+    }, []);
 
     useImperativeHandle(ref,()=>({
         saveData: ()=>{
@@ -247,7 +250,7 @@ export const WorkerBankForm = forwardRef<WorkerBankFormRef>((props, ref)=>{
                 Workingzone: WorkerformData.workingZone || "",
                 
     });
-    }, [WorkerformData]);
+    }, []);
     useImperativeHandle(ref, ()=>({
         saveData: ()=>{
             UpdateWorkerformdata({
@@ -315,7 +318,7 @@ export const AuthorityPersonalInfoForm= forwardRef<AuthorityPersonalInfoFormRef>
         password: AuthorityformData.password || "",
         department: AuthorityformData.department || "",
     });
-    }, [AuthorityformData]);
+    }, []);
 
     useImperativeHandle(ref, ()=>({
         saveData: ()=>{
@@ -428,7 +431,7 @@ export const AuthorityAddressForm = forwardRef<AuthorityAddressFormRef>((props, 
                 state: AuthorityformData.state || "",
                 pincode: AuthorityformData.pincode || ""
     });
-    }, [AuthorityformData]);
+    }, []);
 
     useImperativeHandle(ref,()=>({
         saveData: ()=>{
@@ -538,7 +541,7 @@ export const AuthorityBankForm = forwardRef<AuthorityBankFormRef>((props, ref)=>
                 Workingzone: AuthorityformData.workingZone || "",
                 
     });
-    }, [AuthorityformData]);
+    }, []);
     useImperativeHandle(ref, ()=>({
         saveData: ()=>{
             UpdateAuthorityformdata({
@@ -590,53 +593,101 @@ export const AuthorityBankForm = forwardRef<AuthorityBankFormRef>((props, ref)=>
 });
 
 
-export function LandownerForm() {
+export interface LandownerFormRef { saveData: () => void; }
+export const LandownerForm = forwardRef<LandownerFormRef>((props, ref) => {
+    const { LandownerformData, UpdateLandownerformdata } = useLandownerRegistration();
+    const [stepData, setStepData] = useState({
+        name: "",
+        email: "",
+        mobile: "",
+        username: "",
+        password: "",
+    });
+
+    useEffect(() => {
+        setStepData({
+            name: LandownerformData.fullName || "",
+            email: LandownerformData.email || "",
+            mobile: LandownerformData.mobileNumber || "",
+            username: LandownerformData.userName || "",
+            password: LandownerformData.password || "",
+        });
+    }, [LandownerformData]);
+
+    useImperativeHandle(ref, () => ({
+        saveData: () => {
+            UpdateLandownerformdata({
+                fullName: stepData.name,
+                email: stepData.email,
+                mobileNumber: stepData.mobile,
+                userName: stepData.username,
+                password: stepData.password,
+            });
+        },
+    }), [stepData, UpdateLandownerformdata]);
+
     return (
         <>
-         <h1 className="text-4xl text-white absolute top-5 right-30">
-            Landowner Information
-         </h1>
+            <h1 className="text-4xl text-white absolute top-5 right-30">
+                Landowner Information
+            </h1>
             <div className="grid grid-cols-2 gap-5 mt-8">
-             <InputField
-                 label="Full Name"
-                 labelclassName="text-white"
-                 name="authorityName"
-                 placeholder="Enter Full Name"
-                 className="text-white hover:text-black"
-                  required />
+                <InputField
+                    label="Full Name"
+                    labelclassName="text-white"
+                    name="landownerName"
+                    placeholder="Enter Full Name"
+                    className="text-white hover:text-black"
+                    value={stepData.name}
+                    onChange={(e) => setStepData({ ...stepData, name: e.target.value })}
+                    required 
+                />
                             
-             <InputField
-                 label="Email"
-                 labelclassName="text-white"
-                 name="authorityEmail"
-                 placeholder="Enter Registered Email"
-                 className="text-white hover:text-black"
-                  required />
+                <InputField
+                    label="Email"
+                    labelclassName="text-white"
+                    name="landownerEmail"
+                    placeholder="Enter Registered Email"
+                    className="text-white hover:text-black"
+                    value={stepData.email}
+                    onChange={(e) => setStepData({ ...stepData, email: e.target.value })}
+                    required 
+                />
                             
-             <InputField
-                 label="Contact Number"
-                 labelclassName="text-white"
-                 name="authorityNumber"
-                 placeholder="Enter Contact Number"
-                 className="text-white hover:text-black"
-                 required />
+                <InputField
+                    label="Contact Number"
+                    labelclassName="text-white"
+                    name="landownerNumber"
+                    placeholder="Enter Contact Number"
+                    className="text-white hover:text-black"
+                    value={stepData.mobile}
+                    onChange={(e) => setStepData({ ...stepData, mobile: e.target.value })}
+                    required 
+                />
             
-              <InputField
-                label="Username"
-                labelclassName="text-white"
-                name="authorityUsername"
-                placeholder="Enter Username"
-                className="text-white hover:text-black"
-                 required />
+                <InputField
+                    label="Username"
+                    labelclassName="text-white"
+                    name="landownerUsername"
+                    placeholder="Enter Username"
+                    className="text-white hover:text-black"
+                    value={stepData.username}
+                    onChange={(e) => setStepData({ ...stepData, username: e.target.value })}
+                    required 
+                />
             
-             <InputField
-                 label="Password"
-                 labelclassName="text-white"
-                 name="authorityNumber"
-                 placeholder="Enter strong password"
-                 className="text-white hover:text-black"
-                  required />
+                <InputField
+                    label="Password"
+                    labelclassName="text-white"
+                    type="password"
+                    name="landownerPassword"
+                    placeholder="Enter strong password"
+                    className="text-white hover:text-black"
+                    value={stepData.password}
+                    onChange={(e) => setStepData({ ...stepData, password: e.target.value })}
+                    required 
+                />
             </div>
         </>
     );
-}
+});

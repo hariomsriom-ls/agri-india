@@ -8,7 +8,7 @@ import { refreshAccessToken } from "../../controllers/user.controller/landowner.
 const router = Router()
 
 router.route("/registerlandowner").post(registerLandOwner).patch( 
-    verifyJwt,
+    verifyJwt(landowner),
     upload.fields([
         {
             name: "image",
@@ -25,7 +25,7 @@ router.route("/change-password").patch(verifyJwt(landowner), changeCurrentPasswo
 router.route("/logout").post(verifyJwt(landowner), logoutLandOwner)
 router.route("/refresh-access-token").post(refreshAccessToken)
 router.route("/landDetails").post(
-    verifyJwt,
+    verifyJwt(landowner),
     upload.single("landDocuments"),
     addLandDetails)
 

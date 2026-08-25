@@ -57,9 +57,10 @@ export const WorkerRegistrationProvider = ({ children } : {children: ReactNode; 
   );
 };
 
+
  const ResetWorkerformdata = () => {
     setWorkerformData({
-      role: "worker",
+      role: "",
    fullName: "",
     email: "",
     mobileNumber: "",

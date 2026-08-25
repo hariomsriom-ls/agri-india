@@ -1,12 +1,19 @@
 import mongoose, {Schema} from "mongoose"
 import { landRecord } from "../record/landrecord.js"
 import { Address } from "../address/address.js"
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 const authoritySchema = new Schema({
-     authorityid:{
-        type: Number,
+    authorityid:{
+        type: String,
         required: true
-     },
+    },
+    fullName: {
+        type: String,
+        required: true,
+        trim: true
+    },
     address: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Address"
@@ -15,7 +22,7 @@ const authoritySchema = new Schema({
         type: String,
         required: true,
     },
-        Department: {
+    Department: {
         type: String,
         required: true,
     },
@@ -49,23 +56,23 @@ const authoritySchema = new Schema({
     },
     IFSCcode: {
         type: String,
-          required: true
-    },
-     landpayments: {
-        type: Number,
         required: true
+    },
+    landpayments: {
+        type: Number,
+        default: 0
     },
     landleaseagreements: {
         type: String,
-        required: true
+        default: "NONE"
     },
     landleasePeriod:{
         type: Number,
-        required: true
+        default: 0
     },
     workersalaryPayments: {
         type: Number,
-        required: true
+        default: 0
     },
     projectAssigned: [
         {
@@ -78,10 +85,9 @@ const authoritySchema = new Schema({
     }
 },{timestamps: true})
 
-authoritySchema.pre("save", async function(next) {
-    if(!this.isModified("password")) return next();
-    this.password = bcrypt.hash(this.password,10)
-    next()
+authoritySchema.pre("save", async function() {
+    if(!this.isModified("password")) return;
+    this.password = await bcrypt.hash(this.password, 10);
 })
 
 authoritySchema.methods.isPasswordCorrect = async function(password){

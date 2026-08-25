@@ -28,4 +28,17 @@ app.use("/api/v1/user/pending-registration", pendingRegistrationRouter)
 app.use("/api/v1/user/authority", authorityRouter)
 app.use("/api/v1/user/worker", workerRouter)
 
+// global error handling middleware
+app.use((err, req, res, next) => {
+    const statusCode = err.statusCode || (err.name === "ValidationError" ? 400 : 500);
+    const message = err.message || "Internal Server Error";
+    
+    return res.status(statusCode).json({
+        statusCode,
+        message,
+        success: false,
+        errors: err.errors || []
+    });
+});
+
 export {app};

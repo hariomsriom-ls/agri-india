@@ -10,13 +10,13 @@ const fieldNotEmpty = ({fullName, mobileNumber, email, userName, password}) => {
 }    
 
 const validateMobileNumber = (mobileNumber) => {
-    if( !/^[6-9]\d{9}$/.test(mobileNumber) ){
+    if(!mobileNumber || !/^[6-9]\d{9}$/.test(mobileNumber) ){
         throw new ApiError(400, "Invalid Mobile Number")
     }
 }
 
 const validateEmailId = (email) => {
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).trim()) ){
         throw new ApiError(400, "Invalid Email Id")
     }
 }
