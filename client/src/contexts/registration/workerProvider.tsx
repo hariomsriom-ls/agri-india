@@ -20,6 +20,8 @@ interface WorkerRegistrationData {
   state:  string; 
   country: string;
   pincode: string;
+  image: File | null;
+  governmentid: File | null;
 }
 
 interface WorkerRegistrationContextType {
@@ -50,6 +52,8 @@ export const WorkerRegistrationProvider = ({ children } : {children: ReactNode; 
     state: "", 
     country: "",
     pincode: "", 
+    image: null,
+    governmentid: null,
   });
 
   const UpdateWorkerformdata = (data: Partial<WorkerRegistrationData>) => {
@@ -78,6 +82,8 @@ export const WorkerRegistrationProvider = ({ children } : {children: ReactNode; 
     state: "", 
     country: "",
     pincode: "", 
+    image: null,
+    governmentid: null,
     })
   };
 

@@ -10,6 +10,7 @@ import { useworkerRegistration } from "@/contexts/registration/workerProvider";
 import { useAuthorityRegistration } from "@/contexts/registration/authorityProvider";
 import { useLandownerRegistration } from "@/contexts/registration/landownerProvider";
 import{FaCheckCircle, MdCancel} from "@/components/ui/icons"
+import {ReviewField} from "@/components/ui/ReviewField";
 import Registration from "@/app/registration/layout";
 
 const roles = [
@@ -104,27 +105,17 @@ const {LandownerformData} = useLandownerRegistration();
 const renderField = ()=>{
     if (selectedRole==="authority"){
         return(
-        <InputField
-            label="Authority Id"
-            labelclassName="text-black"
-            name=""
-            placeholder=""
-            className="text-black"
+        <ReviewField
+           label="AuthorityID"
             value={AuthorityformData.authorityId}
-            readOnly
-            />)
+            /> )
     }
     else if(selectedRole === "worker"){
         return(
-        <InputField
+       <ReviewField
             label="Date of Birth"
-            labelclassName="text-black"
-            name=""
-            placeholder=""
-            className="text-black"
             value={WorkerformData.DOB}
-            readOnly
-            />
+         /> 
         )
     }
     return null;
@@ -152,60 +143,28 @@ return createPortal(
             <div>
                  <div className="grid grid-cols-2 gap-5 mt-8">
                                
-                              <InputField
-                                 label="Full Name"
-                                 labelclassName="text-black"
-                                value={fullName}
-                                 readOnly
-                                name=""
-                                 placeholder=""
-                                 className="text-black"
-                                  />
-                                            
-                             <InputField
-                                 label="Email"
-                                 labelclassName="text-black"
-                                 name=""
-                                 placeholder=""
-                                 className="text-black"
-                                value={email}
-                                readOnly
-                                  />
-
-                                  <InputField
-                                 label="Contact Number"
-                                 labelclassName="text-black"
-                                 name=""
-                                 placeholder=""
-                                 className="text-black"
-                                value={mobile}
-                                readOnly
-                                  />
-
-                                  {renderField()}
-                                            
-                             
-                            <InputField
-                                 label="Username"
-                                 labelclassName="text-black"
-                                 name=""
-                                 placeholder=""
-                                 className="text-black"
-                                value={username}
-                                readOnly
-                                  />
-                            
-                              <InputField
-                                 label="Password"
-                                 labelclassName="text-black"
-                                 type="password"
-                                 name=""
-                                 placeholder=""
-                                 className="text-black"
-                                value={password}
-                                readOnly
-                                  />
-                            </div>
+                     <ReviewField
+                        label="Full Name"
+                        value={WorkerformData.fullName}
+                    />
+                       <ReviewField
+                        label="Email"
+                        value={WorkerformData.email}
+                    />                     
+                      <ReviewField
+                        label="Contact Number"
+                        value={WorkerformData.mobileNumber}
+                    /> 
+                        {renderField()}
+                     <ReviewField
+                        label="Username"
+                        value={WorkerformData.userName}
+                    />   
+                      <ReviewField
+                        label="Password"
+                        value={WorkerformData.password}
+                    />       
+                  </div>
             </div>
         </Card>   
         {selectedRole !== "landowner" && (
@@ -214,111 +173,55 @@ return createPortal(
                 <h2 className="text-xl ">{selectedRole} Address Details</h2>
                 <div className="flex flex-col">
                      <div className="grid grid-cols-2 gap-5 mt-8">
-                                   
-                                  <InputField
-                                     label="houseno/streetno/name"
-                                     labelclassName="text-black"
-                                    value={WorkerformData.houseno || AuthorityformData.houseno}
-                                     name=""
-                                     placeholder=""
-                                     className="text-black"
-                                     readOnly />
-                                                
-                                 <InputField
-                                     label="Landmark"
-                                     labelclassName="text-black"
-                                     name=""
-                                     placeholder=""
-                                     className="text-black"
-                                    value={WorkerformData.landmark || AuthorityformData.landmark}
-                                    readOnly
-                                       />
 
-                                       <InputField
-                                     label="Country"
-                                     labelclassName="text-black"
-                                     name=""
-                                     placeholder=""
-                                     className="text-black"
-                                    value={WorkerformData.country || AuthorityformData.country}
-                                    readOnly
-                                       />
-                                                
-                                 <InputField
-                                     label="State"
-                                     labelclassName="text-black"
-                                     name=""
-                                     placeholder=""
-                                     className="text-black"
-                                    value={WorkerformData.state || AuthorityformData.state}
-                                    readOnly
-                                       />
-                    
-                                <InputField
-                                     label="District"
-                                     labelclassName="text-black"
-                                     name=""
-                                     placeholder=""
-                                     className="text-black"
-                                    value={WorkerformData.district || AuthorityformData.district}
-                                    readOnly
-                                       />
-                                
-                                  <InputField
-                                     label="City"
-                                     labelclassName="text-black"
-                                     name=""
-                                     placeholder=""
-                                     className="text-black"
-                                    value={ WorkerformData.city  || AuthorityformData.city}
-                                    readOnly
-                                       />
-
-                                    <InputField
-                                     label="Pincode"
-                                     labelclassName="text-black"
-                                     name=""
-                                     placeholder=""
-                                     className="text-black"
-                                    value={ WorkerformData.pincode || AuthorityformData.pincode}
-                                    readOnly
-                                       />
-
-                                    <InputField
-                                     label="Working Zone"
-                                     labelclassName="text-black"
-                                     name=""
-                                     placeholder=""
-                                     className="text-black"
-                                     readOnly
-                                    value={ WorkerformData.workingZone || AuthorityformData.workingZone}
-                                       />
+                        <ReviewField
+                        label="houseno/streetno/name"
+                        value={WorkerformData.houseno || AuthorityformData.houseno}
+                        /> 
+                        <ReviewField
+                        label="Landmark"
+                        value={WorkerformData.landmark || AuthorityformData.landmark}
+                        />
+                        <ReviewField
+                        label="Country"
+                        value={WorkerformData.country || AuthorityformData.country}
+                        /> 
+                        <ReviewField
+                        label="State"
+                        value={WorkerformData.state || AuthorityformData.state}
+                        />
+                        <ReviewField
+                        label="District"
+                        value={WorkerformData.district || AuthorityformData.district}
+                        />
+                        <ReviewField
+                        label="City"
+                        value={WorkerformData.city || AuthorityformData.city}
+                        /> 
+                        <ReviewField
+                        label="Pincode"
+                        value={WorkerformData.pincode || AuthorityformData.pincode}
+                        />
+                        <ReviewField
+                        label="Working Zone"
+                        value={WorkerformData.workingZone || AuthorityformData.workingZone}
+                        />
                                     
-                                </div>
+                     </div>
                 </div>
             </Card>     
             <Card className="bg-white">
                 <h2 className="text-xl ">{selectedRole} Bank Details</h2>
                  <div className="flex flex-col">
                      <div className="grid grid-cols-2 gap-5 mt-8">
-                         <InputField
-                                     label="Bank Account/no"
-                                     labelclassName="text-black"
-                                    value={WorkerformData.bankaccount || AuthorityformData.bankaccount}
-                                    readOnly
-                                     name=""
-                                     placeholder=""
-                                     className="text-black" />
-                                                
-                                 <InputField
-                                     label="IFSC Code"
-                                     labelclassName="text-black"
-                                     name=""
-                                     placeholder=""
-                                     className="text-black"
-                                    value={WorkerformData.IFSCcode || AuthorityformData.IFSCcode}
-                                    readOnly
-                                       />
+                        <ReviewField
+                         label="Bank Account/no"
+                        value={WorkerformData.bankaccount || AuthorityformData.bankaccount}
+                        /> 
+                        <ReviewField
+                        label="IFSC Code"
+                        value={WorkerformData.IFSCcode || AuthorityformData.IFSCcode}
+                        />
                      </div>
                 </div>
             </Card>

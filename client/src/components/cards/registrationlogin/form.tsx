@@ -1,17 +1,59 @@
 "use client";
 import React, { useEffect } from "react";
+import {useForm, SubmitHandler} from "React-hook-form";
 import { InputField } from "@/components/ui/Input";
 import { useworkerRegistration } from "@/contexts/registration/workerProvider";
 import { useAuthorityRegistration } from "@/contexts/registration/authorityProvider";
 import { useLandownerRegistration } from "@/contexts/registration/landownerProvider";
 import { forwardRef, useImperativeHandle, useState } from "react";
-import { steps } from "framer-motion";
+import {MdOutlineFileUpload } from "react-icons/md";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-export interface WorkerPersonalInfoFormRef { saveData: () => void; }
+/*
+type WorkerPersonalFormValues = {
+  fullName: string;
+  email: string;
+  mobileNumber: string;
+  DOB: string;
+  userName: string;
+  password: string;
+};
+
+const WorkerPersonalInfoSchema = z.object({
+  fullName: z.string().trim().min(1, "Name is required").min(2, "Name must be at least 2 characters").max(50, "Name must be at most 50 characters"),
+  email: z.string().trim().min(1, "Name is required").pipe(z.email({error:"Enter a valid email address"})),
+  mobileNumber: z.string().trim().min(1, "Name is required").regex(/^[6-9]\d{9}$/,{error: "Enter a valid 10-digit Indian mobile number"}),
+  DOB: z.string().min(1, { error: "Date of birth is required" }).refine((value) => !isNaN(Date.parse(value)), "Enter a valid date"),
+  userName: z.string().trim().min(4, "Username must be at least 4 characters"),
+  password: z.string().trim().min(8, "Password must be at least 8 characters").regex(/[A-Z]/, {error: "Password must contain at least one uppercase letter",})
+  .regex(/[^A-Za-z0-9\s]/, { error: "Password must contain at least one special character", }),
+});*/
+
+export interface WorkerPersonalInfoFormRef {
+  saveData: () => void;
+}
 
 export const WorkerPersonalInfoForm = forwardRef<WorkerPersonalInfoFormRef>((props, ref) => {
-    const { WorkerformData, UpdateWorkerformdata,} = useworkerRegistration();
-    const [stepData, setStepData] = useState({
+  const { WorkerformData, UpdateWorkerformdata } = useworkerRegistration();
+  /*const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+    reset,
+  } = useForm<WorkerPersonalFormValues>({
+    resolver: zodResolver(WorkerPersonalInfoSchema),
+    defaultValues: {
+      fullName: WorkerformData.fullName || "",
+      email: WorkerformData.email || "",
+      mobileNumber: WorkerformData.mobileNumber || "",
+      DOB: WorkerformData.DOB || "",
+      userName: WorkerformData.userName || "",
+      password: WorkerformData.password || "",
+    },
+  });*/
+      const [stepData, setStepData] = useState({
          name: "", email: "", mobile: "", dob: "", username: "", password: "",
 });
     useEffect(() => {
@@ -25,6 +67,30 @@ export const WorkerPersonalInfoForm = forwardRef<WorkerPersonalInfoFormRef>((pro
     });
     }, []);
 
+  /*useEffect(() => {
+    reset({
+      fullName: WorkerformData.fullName || "",
+      email: WorkerformData.email || "",
+      mobileNumber: WorkerformData.mobileNumber || "",
+      DOB: WorkerformData.DOB || "",
+      userName: WorkerformData.userName || "",
+      password: WorkerformData.password || "",
+    });
+  }, []);*/
+
+ /* useImperativeHandle(ref, () => ({
+    saveData: () => {
+      const values = getValues();
+      UpdateWorkerformdata({
+        fullName: values.fullName,
+        mobileNumber: values.mobileNumber,
+        email: values.email,
+        DOB: values.DOB,
+        password: values.password,
+        userName: values.userName,
+      });
+    },
+  }));*/
      useImperativeHandle(ref, ()=>({
         saveData: () => {
             UpdateWorkerformdata({
@@ -37,8 +103,7 @@ export const WorkerPersonalInfoForm = forwardRef<WorkerPersonalInfoFormRef>((pro
             });
         },
      }),[stepData]);
-
-    return (
+         return (
         <>
             <h1 className="text-4xl text-white absolute top-5 right-30">
                 Worker Information
@@ -110,6 +175,117 @@ export const WorkerPersonalInfoForm = forwardRef<WorkerPersonalInfoFormRef>((pro
         </>
     );
 });
+
+ /* return (
+    <>
+      <h1 className="text-4xl text-white absolute top-5 right-30">
+        Worker Information
+      </h1>
+
+      <div className="grid grid-cols-2 gap-5 mt-8">
+
+        <div className="flex flex-col gap-1">
+          <InputField
+            label="Full Name"
+            labelclassName="text-white"
+            placeholder="Enter Full Name"
+            className="text-white hover:text-black"
+            required 
+            {/*...register("fullName")
+          />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <InputField
+            label="Email"
+            labelclassName="text-white"
+            placeholder="Enter Registered Email"
+            className="text-white hover:text-black"
+            {/*...register("email")}
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <InputField
+            label="Contact Number"
+            labelclassName="text-white"
+            placeholder="Enter 10-digit mobile number"
+            className="text-white hover:text-black"
+            required
+            {/*...register("mobileNumber", {
+              required: "Mobile number is required",
+              pattern: {
+                value: /^[6-9]\d{9}$/,
+                message: "Enter a valid 10-digit Indian mobile number",
+              },
+            })}
+          />
+          {errors.mobileNumber && (
+            <span className="text-red-400 text-xs mt-1">{errors.mobileNumber.message}</span>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <InputField
+            label="Date of Birth"
+            labelclassName="text-white"
+            type="date"
+            placeholder="YYYY-MM-DD"
+            className="text-white hover:text-black [color-scheme:dark]"
+            required
+            {...register("DOB", {
+              required: "Date of birth is required",
+            })}
+          />
+          {errors.DOB && (
+            <span className="text-red-400 text-xs mt-1">{errors.DOB.message}</span>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <InputField
+            label="Username"
+            labelclassName="text-white"
+            placeholder="Enter Username"
+            className="text-white hover:text-black"
+            required
+            {...register("userName", {
+              required: "Username is required",
+              minLength: { value: 3, message: "Username must be at least 3 characters" },
+              pattern: {
+                value: /^[a-zA-Z0-9_]+$/,
+                message: "Only letters, numbers, and underscores allowed",
+              },
+            })}
+          />
+          {errors.userName && (
+            <span className="text-red-400 text-xs mt-1">{errors.userName.message}</span>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <InputField
+            label="Password"
+            labelclassName="text-white"
+            type="password"
+            placeholder="Enter strong password (min 8 chars)"
+            className="text-white hover:text-black"
+            required
+            {...register("password", {
+              required: "Password is required",
+              minLength: { value: 8, message: "Password must be at least 8 characters" },
+            })}
+          />
+          {errors.password && (
+            <span className="text-red-400 text-xs mt-1">{errors.password.message}</span>
+          )}
+        </div>
+
+      </div>
+    </>
+  );
+});*/
+WorkerPersonalInfoForm.displayName = "WorkerPersonalInfoForm";
+
 
 export interface WorkerAddressFormRef {saveData: () => void;}
 export const WorkerAddressForm = forwardRef<WorkerAddressFormRef>((props, ref)=> {
@@ -296,6 +472,85 @@ export const WorkerBankForm = forwardRef<WorkerBankFormRef>((props, ref)=>{
                  onChange={(e)=> setStepData({...stepData, Workingzone : e.target.value})}
                   required />
                             
+            </div>
+        </>
+    );
+});
+
+export interface WorkerImageFormRef{ saveData: ()=> void;}
+export const WorkerImageForm = forwardRef<WorkerImageFormRef>((props, ref)=>{
+    const{ WorkerformData, UpdateWorkerformdata}= useworkerRegistration();
+    const[image, setImage] = useState<File | null>(null);
+    const[imagePreview, setImagePreview] = useState<string>("");
+    const[governmentid, setgovernmentid] = useState<File | null>(null);
+    const[governmentidPreview, setgovernmentidPreview] = useState<string>("");
+    const handleImageChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if(!file) return;
+        setImage(file);
+        const PreviewUrl = URL.createObjectURL(file);
+        setImagePreview(PreviewUrl);
+        UpdateWorkerformdata({image: file});
+    }
+    const handledocumentimageChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if(!file) return;
+        setgovernmentid(file);
+        const PreviewUrl = URL.createObjectURL(file);
+        setgovernmentidPreview(PreviewUrl);
+        UpdateWorkerformdata({governmentid: file});
+    }
+    
+
+    return (
+        <>
+            <h1 className="text-4xl text-white absolute top-5 right-30">
+                Worker Information
+            </h1>
+            <div className="grid grid-cols-2 gap-2 mt-8 h-full ">
+            <div className="w-1/2 h-1/3">
+            <div className="w-7/10 h-full bg-black ml-20  border-2 border-white/50">
+            {imagePreview && (
+                <img 
+                src={imagePreview} 
+                alt="Image Preview"
+                className="w-full h-full object-cover rounded-xs"
+             />)}
+            </div>
+              <input
+              name="WorkerImage"
+              className="bg-gray-200 hover:bg-gray-500 text-black py-2 px-4 rounded mt-5"
+              type = "file"
+              accept="image/*"
+              onChange={handleImageChange}
+               />
+            <button
+            className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded mt-5 ml-20 w-full">
+                Save Image
+            </button>
+             </div>
+             <div className="w-1/2 h-1/3 ">
+             <div className="w-7/10 h-full bg-black border-2 border-white/50  ml-15">
+             {governmentidPreview && (
+                <img 
+                src={governmentidPreview} 
+                alt="Government ID Preview"
+                className="w-full h-full object cover rounded-xs"
+                />
+             )}
+             </div>
+               <input 
+              name = "WorkerGovermentImage"
+              className="bg-gray-200 hover:bg-gray-500 text-black py-2 px-4 rounded mt-5 "
+              type = "file"
+              accept="image/*"
+              onChange={handledocumentimageChange}
+               />
+             <button
+            className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded mt-5 ml-15 w-full">
+                Save Government ID
+            </button>
+             </div>   
             </div>
         </>
     );

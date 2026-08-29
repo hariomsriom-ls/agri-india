@@ -27,17 +27,17 @@ const generateAccessAndRefreshToken = async(pendingWorkerRegistrationId) => {
 
 const registerPendingWorker = asyncHandler(async(req, res) => {
 
-    const {fullName, mobileNumber, email, userName, password, houseno, street, landmark,city,district, state,country,pincode,workingZone, bankaccount, IFSCcode, DOB, submittedAt}= req.body
+    const {fullName, mobileNumber, email, userName, password, houseno, street, landmark,city,district, state,country,pincode,workingZone, bankaccount, IFSCcode, DOB, submittedAt,}= req.body
         // console.log(req.body);
     
     registrationValidations.fieldNotEmpty(req.body);
     registrationValidations.validateEmailId(req.body.email);
     registrationValidations.validateMobileNumber(req.body.mobileNumber);
 
-    const imageLocalPath = req.files?.image[0]?.path;
-    const governmentidLocalPath = req.files?.governmentid[0]?.path;
+   const imageLocalPath = req.files?.image[0]?.path;
+   const governmentidLocalPath = req.files?.governmentid[0]?.path || "";
 
-    if(!imageLocalPath || !governmentidLocalPath){
+   if(!imageLocalPath || !governmentidLocalPath){
         throw new ApiError(400, "image and government id are required")
     }
 
@@ -54,7 +54,7 @@ const registerPendingWorker = asyncHandler(async(req, res) => {
          throw new ApiError(409, "request already registered")
          }
 
-           let addressId = null;
+     let addressId = null;
     if (address && typeof address === "object") {
         const newAddress = await Address.create(address);
         addressId = newAddress._id;
@@ -74,9 +74,9 @@ const registerPendingWorker = asyncHandler(async(req, res) => {
 
 
     const pendingRequest = await pendingWorkerRegistration.create({fullName, mobileNumber, email, userName, password,
-         address: addressId, bankaccount, IFSCcode, DOB, submittedAt,
-        image: image.url,
-        governmentid: governmentid.url
+         address: addressId, bankaccount, IFSCcode, DOB, submittedAt, workingZone,
+        image: image.url? image.url : "",
+        governmentid: governmentid.url? governmentid.url : "",
     })
 
     const createdpendingRequest = await pendingWorkerRegistration.findById(pendingRequest._id)
