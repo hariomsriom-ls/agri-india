@@ -2,15 +2,16 @@
 
 import { ReactNode, useState, type ChangeEvent, type FormEvent } from "react";
 import {FiEye, FiEyeOff, FiMessageSquare,FiShield,FiShoppingCart, FcGoogle, PiPlant, FiUsers} from "@/components/ui/icons";
+import { InputField } from "@/components/ui/Input";
+import api from "@/utils/services";
 
 
-
-type Role = "farmer" | "buyer" | "admin";
+type Role = "landowner" | "worker" | "authority" | null;
 
 const roles = [
-  { id: "farmer" as Role, name: "Landowner", icon: PiPlant },
-  { id: "buyer" as Role, name: "Worker", icon: FiShoppingCart },
-  { id: "admin" as Role, name: "Authority", icon: FiShield },
+  { id: "landowner" as Role, name: "Landowner", icon: PiPlant },
+  { id: "worker" as Role, name: "Worker", icon: FiShoppingCart },
+  { id: "authority" as Role, name: "Authority", icon: FiShield },
 ];
 
 function ContourLines() {
@@ -50,12 +51,12 @@ function Feature({ icon, label }: FeatureProps) {
 }
 
 export default function Loginpage() {
-  const [selectedRole, setSelectedRole] = useState<Role>("farmer");
+  const [selectedRole, setSelectedRole] = useState<Role>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [keepSignedIn, setKeepSignedIn] = useState(false);
 
   const [formData, setFormData] = useState({
-    login: "",
+   login: "",
     password: "",
   });
 
@@ -78,10 +79,10 @@ export default function Loginpage() {
       keepSignedIn,
     };
 
-    console.log("Login data:", loginData);
+    const apiURL = selectedRole === "landowner" ? "/landowner/loginlandowner" : selectedRole === "worker" ? "/worker/login-worker" : "/authority/login-authority";
 
-    // Connect your backend here:
-    // const response = await axios.post("/api/login", loginData);
+   // console.log("Login data:", loginData);
+     const response = await api.post(apiURL, loginData);
   }
 
   return (
@@ -139,7 +140,7 @@ export default function Loginpage() {
       >
         <div className="w-full max-w-xl">
           <div className="mb-8">
-            <h2 className="font-serif text-4xl font-semibold text-[#241b13]">
+            <h2 className="font-serif text-4xl font-semibold text-[#655140]">
              WELCOME BACK
             </h2>
             <p className="mt-2 text-lg text-[#655140]">
@@ -184,45 +185,30 @@ export default function Loginpage() {
             </div>
 
             <div>
-              <label
-                htmlFor="login"
-                className="mb-3 block font-mono text-sm font-semibold uppercase tracking-[0.14em] text-[#59634d]"
-              >
-                Username, phone or email
-              </label>
-
-              <input
-                id="login"
-                name="login"
-                type="text"
-                value={formData.login}
-                onChange={handleInputChange}
-                required
-                placeholder="jane.acresfarm / +91 98xxxxxxx / jane@mail.com"
-                className="h-16 w-full rounded-lg border-2 border-[#d4d0c7] bg-[#fffdfa] px-5 text-lg outline-none placeholder:text-[#a49d89] focus:border-[#667258]"
+            <InputField
+            label="Username, phone or email"
+            labelclassName="mb-3 block font-mono text-sm font-semibold uppercase tracking-[0.14em] text-[#59634d]"
+            name="login"
+            placeholder="jane.acresfarm / +91 98xxxxxxx / jane@mail.com"
+            className="h-16 w-full rounded-lg border-2 border-[#d4d0c7] bg-[#fffdfa] px-5 text-lg outline-none placeholder:text-[#a49d89] focus:border-[#667258]"
+            value={formData.login}
+            onChange={handleInputChange}
+              required
               />
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="mb-3 block font-mono text-sm font-semibold uppercase tracking-[0.14em] text-[#59634d]"
-              >
-                Password
-              </label>
-
+            <InputField
+            label="Password"
+            labelclassName="mb-3 block font-mono text-sm font-semibold uppercase tracking-[0.14em] text-[#59634d]"
+            name="password"
+            type="password"
+            placeholder="Enter your password"
+            className="h-16 w-full rounded-lg border-2 border-[#d4d0c7] bg-[#fffdfa] px-5 text-lg outline-none placeholder:text-[#a49d89] focus:border-[#667258]"
+            value={formData.password}
+            onChange={handleInputChange}
+              required
+              />
+              </div>
+               <div>
               <div className="relative">
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="Enter your password"
-                  className="h-16 w-full rounded-lg border-2 border-[#d4d0c7] bg-[#fffdfa] px-5 pr-14 text-lg outline-none placeholder:text-[#a49d89] focus:border-[#667258]"
-                />
-
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
@@ -290,7 +276,7 @@ export default function Loginpage() {
                 href="/register"
                 className="font-bold text-[#59634d] hover:underline"
               >
-                Register your farm
+                Register now.
               </a>
             </p>
           </form>

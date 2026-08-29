@@ -33,28 +33,11 @@ interface WorkerRegistrationContextType {
 export const WorkerRegistrationContext = createContext<WorkerRegistrationContextType | undefined>(undefined);
 
 export const WorkerRegistrationProvider = ({ children } : {children: ReactNode; }) => {
+
   const [WorkerformData, setWorkerformData] = useState<WorkerRegistrationData>({
-    role: "worker",
-    fullName: "",
-    email: "",
-    mobileNumber: "",
-    userName: "",
-    password: "",
-    workingZone: "",
-   bankaccount: "" ,
-    IFSCcode:  "",
-     DOB: "" ,
-    houseno: "",
-     street: "",
-    landmark: "",
-    city: "",
-    district: "",
-    state: "", 
-    country: "",
-    pincode: "", 
-    image: null,
-    governmentid: null,
-  });
+    role: "worker",fullName: "",email: "",mobileNumber: "",userName: "",password: "", workingZone: "",bankaccount: "" ,IFSCcode:  "",
+    DOB: "" ,houseno: "",street: "",landmark: "",city: "",district: "",state: "", country: "",pincode: "", image: null,
+    governmentid: null,});
 
   const UpdateWorkerformdata = (data: Partial<WorkerRegistrationData>) => {
     setWorkerformData((prev) => ({ ...prev, ...data, })
@@ -63,28 +46,9 @@ export const WorkerRegistrationProvider = ({ children } : {children: ReactNode; 
 
 
  const ResetWorkerformdata = () => {
-    setWorkerformData({
-      role: "",
-   fullName: "",
-    email: "",
-    mobileNumber: "",
-    userName: "",
-    password: "",
-    workingZone: "",
-   bankaccount: "",
-    IFSCcode: "",
-     DOB: "",
-     houseno: "",
-     street: "",
-    landmark: "",
-    city: "",
-    district: "",
-    state: "", 
-    country: "",
-    pincode: "", 
-    image: null,
-    governmentid: null,
-    })
+    setWorkerformData({role: "",fullName: "",email: "",mobileNumber: "", userName: "", password: "", workingZone: "",
+       bankaccount: "", IFSCcode: "", DOB: "", houseno: "", street: "",landmark: "", city: "", district: "", state: "", 
+        country: "", pincode: "", image: null, governmentid: null, })
   };
 
   return (

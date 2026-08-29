@@ -10,6 +10,7 @@ import { uploadOnCloudinary } from "../../utils/cloudinary.js";
 import { upload } from "../../middlewares/multer.middleware.js";
 import { organizationauthority } from "../../models/users/authority.js";
 import allowedauthorites from "../../models/record/allowedauthoritesrecord.js";
+import { userLogin} from "../../services/authorization.js"
 
 
 const generateAccessAndRefreshToken = async(organizationAuthorityId) => {
@@ -76,16 +77,12 @@ const createdAuthority = await organizationauthority.findById(organizationAuthor
 
  
  const loginorganizationAuthority = asyncHandler(async(req, res) => {
-    const {email, userName, contactNumber, authorityid, password} = req.body
 
-    if(!userName && !email && !contactNumber && !authorityid){
-        throw new ApiError(400, "username required in authority login")
-    }
-    if(!password){
-        throw new ApiError(400, "password required in authority login")
-    }
+    const {login, password} = req.body
+    if(!login && !authorityid){ throw new ApiError(400, "Username or authorityid required in authority login")}
+    if(!password){throw new ApiError(400, "password required in authority login")}
 
-    constorganizationAuthority = await organizationauthority.findOne({
+    const organizationAuthority = await organizationauthority.findOne({
         $or: [{userName}, {email}, {contactNumber}, {authorityid}]
     })
     if(!organizationAuthority){

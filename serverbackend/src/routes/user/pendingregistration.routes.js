@@ -8,8 +8,8 @@ import { refreshAccessToken } from "../../controllers/user.controller/pendingreg
 const router = Router()
 
 router.route("/pending-worker-request").post(
-    //verifyJwt,
-    /*upload.fields([
+    verifyJwt,
+    upload.fields([
         {
             name: "image",
             maxCount: 1
@@ -18,7 +18,7 @@ router.route("/pending-worker-request").post(
             name: "governmentId",
             maxCount: 1
         }
-    ]),*/
+    ]),
     registerPendingWorker)
 router.route("/login-pendingworker").post(loginpendingWorker)
 router.route("/logout").post(logoutpendingWorker)

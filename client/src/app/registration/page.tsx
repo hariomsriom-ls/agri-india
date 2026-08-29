@@ -155,15 +155,10 @@ export default function Form() {
   const handleSubmit = async () => {
     setLoading(true);
     setshowResponse(true);
+    const registerApiUrl = selectedRole === "worker" ? "/pending-registration/pending-worker-request" : selectedRole === "authority" ? "/authority/register-authority" : "/landowner/registerlandowner";
+    const RegistrationData = selectedRole === "worker" ? WorkerformData : selectedRole === "authority" ? AuthorityformData : LandownerformData;
     try {
-      let response;
-      if (selectedRole === "worker") {
-        response = await api.post("/pending-registration/pending-worker-request", WorkerformData);
-      } else if (selectedRole === "authority") {
-        response = await api.post("/authority/register-authority", AuthorityformData);
-      } else if (selectedRole === "landowner") {
-        response = await api.post("/landowner/registerlandowner", LandownerformData);
-      }
+      const response = await axios.post(registerApiUrl, RegistrationData);
       setregistrationSuccess(true);
       setRegistrationMessage(response?.data?.message || "User registered successfully");
     } catch (error) {

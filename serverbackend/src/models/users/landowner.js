@@ -5,82 +5,25 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt"
 
 const landownerSchema = new Schema({
-    fullName: {
-        type: String,
-        required: true,
-        trim: true,
-        index: true
-    },
-    address: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Address"
-        },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        lowercase: true,
-        trim: true
-    },
-    mobileNumber: {
-        type: Number,
-        required: true,
-        unique: true,
-        trim: true
-    },
-    userName: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-        index: true
-    },
-    password: {
-        type: String,
-        required: [true,'password is required']
-    },
-    image: {
-        type: String,
-    },
-    governmentId: {
-        type: String,
-    },
-    bankaccount: {
-        type: Number,
-    },
-    IFSCcode: {
-        type: String,
-    },
-    landID: [
-        {
-        type: Schema.Types.ObjectId,
-        ref: "landRecord",
-    }
-],
-    landArea: {
-        type: Number,
-    },
-    landCity: {
-        type: String,
-    },
-    landLocation: {
-        type: String,
-    },
-    landDocuments: {
-        type: String,
-    },
-    landRentPayments: {
-        type: Number,
-    },
-    landLeaseAgreements: {
-        type: String,
-    },
-    cultivationPeriod:{
-        type: Number,
-    },
-    refreshToken: {
-        type: String
-    }
+    fullName: {type: String,required: true,trim: true,index: true },
+    address: {type: mongoose.Schema.Types.ObjectId,ref: "Address"},
+    email: {type: String,required: true,unique: true,lowercase: true,trim: true},
+    mobileNumber: { type: Number, required: true, unique: true, trim: true},
+    userName: { type: String, required: true, unique: true, trim: true, index: true },
+    password: { type: String, required: [true,'password is required']},
+    image: { type: String,},
+    governmentId: { type: String,},
+    bankaccount: { type: Number, },
+    IFSCcode: {type: String,},
+    landID: [{ type: Schema.Types.ObjectId, ref: "landRecord",}],
+    landArea: {type: Number,},
+    landCity: {type: String,},
+    landLocation: {type: String,},
+    landDocuments: {type: String,},
+    landRentPayments: { type: Number,},
+    landLeaseAgreements: {type: String, },
+    cultivationPeriod:{type: Number, },
+    refreshToken: {type: String }
 },{ timestamps: true })
 
  landownerSchema.pre("save", async function(next) {

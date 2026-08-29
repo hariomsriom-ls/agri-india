@@ -5,74 +5,37 @@ import bcrypt from "bcrypt";
 
 const workerSchema = new Schema({
     _id: String,
-    fullName: {
-        type: String,
-        required: true,
-        trim: true,
-        index: true
+    fullName: {type: String,required: true,trim: true,index: true
     },
-    address: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Address"
+    address: {type: mongoose.Schema.Types.ObjectId,ref: "Address"
         },
-    workingZone: {
-        type: String,
-        required: true,
+    workingZone: {type: String,required: true,
     },
-    mobileNumber: {
-        type: Number,
-        required: true,
-        unique: true,
-        trim: true
+    mobileNumber: {type: Number,required: true,unique: true,trim: true
     },
-    userName: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-        index: true
+    userName: {type: String,required: true, unique: true,trim: true,index: true
     },
-    password: {
-        type: String,
-        required: [true,'password is required']
+    password: {type: String,required: [true,'password is required']
     },
-    image: {
-        type: String,
-        required: true
+    image: { type: String,required: true
     },
-    governmentid: {
-        type: String,
-        required: true
+    governmentid: {type: String,required: true
     },
-    bankaccount: {
-        type: Number,
-        required: true
+    bankaccount: {type: Number,required: true
     },
-    IFSCcode: {
-        type: String,
-          required: true
+    IFSCcode: {type: String,  required: true
     },
-    DOB: {
-        type: Date,
-        required: true
+    DOB: { type: Date, required: true
     },
-     workerSalary: {
-        type: Number,
-        required: true
+     workerSalary: { type: Number, required: true
     },
-    workingTime: {
-        type: Number,
-        required: true
+    workingTime: { type: Number, required: true
     },
-    bonus: {
-        type: Number
+    bonus: { type: Number
     },
-    workingOn: {
-        type: Schema.Types.ObjectId,
-        ref: "project",
+    workingOn: { type: Schema.Types.ObjectId, ref: "project",
     },
-    refreshToken: {
-        type: String
+    refreshToken: { type: String
     },
 
 },{timestamps: true})

@@ -30,7 +30,7 @@ export function InputField({
     <div className="flex flex-col gap-2 w-full">
       <label
         htmlFor={name}
-        className={`text-base font-semibold text-gray-900 ${labelclassName}`}
+        className={labelclassName}
       >
         {label}
         {required && (
