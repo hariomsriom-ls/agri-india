@@ -1,17 +1,53 @@
  "use client";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
-import {FiEye, FiEyeOff, FiMessageSquare,FiShield,FiShoppingCart, FcGoogle, PiPlant} from "@/components/ui/icons";
+import { ReactNode, useState, type ChangeEvent, type FormEvent } from "react";
+import {FiEye, FiEyeOff, FiMessageSquare,FiShield,FiShoppingCart, FcGoogle, PiPlant, FiUsers} from "@/components/ui/icons";
 
 
 
 type Role = "farmer" | "buyer" | "admin";
 
 const roles = [
-  { id: "farmer" as Role, name: "Farmer", icon: PiPlant },
-  { id: "buyer" as Role, name: "Buyer", icon: FiShoppingCart },
-  { id: "admin" as Role, name: "Admin", icon: FiShield },
+  { id: "farmer" as Role, name: "Landowner", icon: PiPlant },
+  { id: "buyer" as Role, name: "Worker", icon: FiShoppingCart },
+  { id: "admin" as Role, name: "Authority", icon: FiShield },
 ];
+
+function ContourLines() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 900 900"
+      preserveAspectRatio="none"
+      className="pointer-events-none absolute inset-0 h-full w-full opacity-30"
+      fill="none"
+      stroke="#b4b779"
+      strokeWidth="1"
+    >
+      <path d="M150 900C300 760 350 650 510 620c190-35 210-180 190-350" />
+      <path d="M210 900C345 775 395 685 540 650c175-43 205-180 180-390" />
+      <path d="M275 900C380 805 435 725 570 680c160-53 190-185 165-410" />
+      <path d="M340 900C420 830 480 770 610 710c140-65 165-190 135-440" />
+      <path d="M405 900C470 855 525 805 650 740c125-65 145-200 110-470" />
+      <path d="M470 900C530 875 585 840 695 770c105-65 125-210 80-500" />
+      <path d="M535 900C590 885 650 870 740 805c90-65 100-220 55-535" />
+    </svg>
+  );
+}
+
+type FeatureProps = {
+  icon: ReactNode;
+  label: string;
+};
+
+function Feature({ icon, label }: FeatureProps) {
+  return (
+    <div className="flex flex-col items-center gap-3 px-4 text-center text-[#c5a94f]">
+      <span className="text-4xl">{icon}</span>
+      <span className="text-xs font-medium text-[#d9c56e]">{label}</span>
+    </div>
+  );
+}
 
 export default function Loginpage() {
   const [selectedRole, setSelectedRole] = useState<Role>("farmer");
@@ -49,67 +85,51 @@ export default function Loginpage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f7f0dc] lg:grid lg:grid-cols-2">
+       <main className="min-h-screen bg-[rgba(229, 231, 228, 0.92)] p-3 sm:p-5">
+      <div className="mx-auto min-h-[calc(100vh-2.5rem)] max-w-[1500px] overflow-hidden rounded-2xl border border-[#d7dad7] shadow-sm lg:grid lg:grid-cols-[56%_44%]">
+
+            <section className="relative hidden min-h-[700px] overflow-hidden bg-[rgba(108, 178, 112, 0.55)] lg:flex lg:items-center">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `
+                radial-gradient(ellipse at 80% 100%, rgba(214, 224, 178, 0.65), transparent 28%),
+                linear-gradient(135deg, rgb(1, 29, 22) 0%, rgb(6, 45, 19) 48%, rgb(1, 88, 40) 72%, rgb(11, 131, 67) 100%)
+              `,
+            }}
+          />
+
+          {/* Soft aurora glow */}
+          <div className="absolute left-[55%] top-[34%] h-44 w-80 -rotate-[18deg] rounded-full bg-[#d5efaa]/25 blur-[55px]" />
+
+          <div className="absolute -bottom-24 right-0 h-72 w-96 rounded-full bg-[#dce4bd]/25 blur-[70px]" />
+
+          <ContourLines />
+
+          <div className="relative z-10 w-full max-w-2xl px-[8%] text-[#f7faf5]">
+            <PiPlant className="mb-12 text-6xl text-[#a7ad72]" />
+
+            <h1 className="max-w-xl font-serif text-5xl font-semibold leading-[1.05] tracking-tight xl:text-6xl">
+              Cultivating today
+              <br />
+              for a <span className="text-[#d6bd69]">better tomorrow</span>
+            </h1>
+
+            <div className="my-8 h-0.5 w-10 bg-[#d2b45c]" />
+
+            <p className="max-w-md text-lg leading-8 text-[#dbe6df]">
+              A unified platform for landowners, workers and authorities to
+              build stronger, more productive communities.
+            </p>
+
+            <div className="mt-16 grid max-w-lg grid-cols-3 divide-x divide-[#b49d57]/45">
+              <Feature icon={<PiPlant />} label="Work together" />
+              <Feature icon={<FiUsers />} label="Grow sustainably" />
+              <Feature icon={<FiShield />} label="Stronger communities" />
+            </div>
+          </div>
+        </section>
      <section
-        className="relative hidden min-h-screen overflow-hidden bg-[#19160f] px-[8%] py-[7%] text-white lg:flex lg:flex-col"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at top left, rgba(111, 87, 36, 0.25), transparent 40%), repeating-linear-gradient(176deg, transparent 0px, transparent 145px, rgba(126, 119, 94, 0.28) 147px, transparent 149px)",
-        }}
-      >
-        <div className="flex items-center gap-3 font-mono text-sm font-semibold uppercase tracking-[0.22em] text-[#7d886f]">
-          <PiPlant className="text-2xl text-[#d4aa23]" />
-          Season 2026
-        </div>
-
-        <div className="my-auto max-w-[590px]">
-          <p className="mb-7 font-mono text-sm font-semibold uppercase tracking-[0.22em] text-[#e4b923]">
-            Farm management, in season
-          </p>
-
-          <h1 className="font-serif text-[clamp(3.4rem,4vw,5rem)] font-semibold leading-[0.95] tracking-tight text-[#f7efd9]">
-            Every plot has
-            <span className="my-3 block italic text-[#e3b51f]">a story.</span>
-            Come read yours.
-          </h1>
-
-          <p className="mt-8 max-w-[520px] text-xl leading-8 text-[#c5bfae]">
-            Track plantings, weather windows, and yield across every field you
-            work — from the first pass of the tiller to the last truck out.
-          </p>
-        </div>
-
-        <div className="grid max-w-[650px] grid-cols-3 border-t border-[#4a4639] pt-8">
-          <div>
-            <p className="font-serif text-3xl font-semibold text-[#f5edd8]">
-              6,400+
-            </p>
-            <p className="mt-1 font-mono text-xs uppercase tracking-widest text-[#7d886f]">
-              Farms tracked
-            </p>
-          </div>
-
-          <div>
-            <p className="font-serif text-3xl font-semibold text-[#f5edd8]">
-              211
-            </p>
-            <p className="mt-1 font-mono text-xs uppercase tracking-widest text-[#7d886f]">
-              Crop varieties
-            </p>
-          </div>
-
-          <div>
-            <p className="font-serif text-3xl font-semibold text-[#f5edd8]">
-              24/7
-            </p>
-            <p className="mt-1 font-mono text-xs uppercase tracking-widest text-[#7d886f]">
-              Field reports
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section
         className="flex min-h-screen items-center justify-center px-5 py-10 sm:px-8"
         style={{
           backgroundImage:
@@ -118,16 +138,9 @@ export default function Loginpage() {
         }}
       >
         <div className="w-full max-w-xl">
-          <div className="mb-12 flex items-center gap-3">
-            <PiPlant className="text-4xl text-[#af5a2c]" />
-            <p className="font-serif text-3xl font-bold text-[#20170f]">
-              Furrow
-            </p>
-          </div>
-
           <div className="mb-8">
             <h2 className="font-serif text-4xl font-semibold text-[#241b13]">
-              Sign in
+             WELCOME BACK
             </h2>
             <p className="mt-2 text-lg text-[#655140]">
               Pick your role and enter your details.
@@ -283,6 +296,7 @@ export default function Loginpage() {
           </form>
         </div>
       </section>
+      </div>
     </main>
   );
 }

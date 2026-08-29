@@ -39,7 +39,8 @@ export function Navbar() {
                 </Menu>
 
                 <div className ="flex-2 flex justify-center py-2 gap-8">
-                    <button className=" rounded-lg px-4 border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
+                    <button onClick={() => router.push("/login")}
+                    className=" rounded-lg px-4 border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
                         login
                     </button>
     

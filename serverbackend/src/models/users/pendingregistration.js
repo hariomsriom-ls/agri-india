@@ -4,70 +4,20 @@ import Jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 const pendingWorkerRegistrationSchema = new Schema({
-    fullName: {
-        type: String,
-        required: true,
-        trim: true,
-        index: true
-    },
-    address: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Address"
-        },
-    workingZone: {
-        type: String,
-        required: true,
-    },
-    mobileNumber: {
-        type: Number,
-        required: true,
-        unique: true,
-        trim: true
-    },
-    userName: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-        index: true
-    },
-    password: {
-        type: String,
-        required: [true,'password is required']
-    },
-    image: {
-        type: String,
-        required: true
-    },
-    governmentid: {
-        type: String,
-        required: true
-    },
-    bankaccount: {
-        type: Number,
-        required: true
-    },
-    IFSCcode: {
-        type: String,
-          required: true
-    },
-    DOB: {
-        type: Date,
-        required: true
-    },
-     status: {
-        type: String,
-        enum: ["PENDING", "APPROVED", "REJECTED"],
-        default: "PENDING"
-    },
-    rejectionReason: {
-        type: String,
-        default: ""
-    },
-    submittedAt: {
-        type: Date,
-        default: Date.now
-    }
+    fullName: {type: String, required: true, trim: true,index: true},
+    address: {type: mongoose.Schema.Types.ObjectId,ref: "Address"},
+    workingZone: {type: String,required: true},
+    mobileNumber: {type: Number,required: true,unique: true, trim: true},
+    userName: {type: String,required: true,unique: true,trim: true,index: true},
+    password: {type: String,required: [true,'password is required']},
+    image: {type: String,required: true},
+    governmentid: {type: String,required: true},
+    bankaccount: {type: Number,required: true},
+    IFSCcode: {type: String,  required: true},
+    DOB: {type: Date,required: true},
+     status: {type: String,enum: ["PENDING", "APPROVED", "REJECTED"],default: "PENDING"},
+    rejectionReason: {type: String,default: ""},
+    submittedAt: {type: Date,default: Date.now}
  },{timestamps: true})
 
   pendingWorkerRegistrationSchema.pre("save", async function(next) {

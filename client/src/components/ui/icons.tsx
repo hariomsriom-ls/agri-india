@@ -13,7 +13,7 @@ import { FcViewDetails } from "react-icons/fc";
 import { RiExchangeBoxFill, RiPassPendingFill } from "react-icons/ri";
 import { TbReport } from "react-icons/tb";
 import { GoReport } from "react-icons/go";
-import { FiEye,FiEyeOff,FiMessageSquare,FiShield,FiShoppingCart,} from "react-icons/fi";
+import { FiEye,FiEyeOff,FiMessageSquare,FiShield,FiShoppingCart, FiUsers} from "react-icons/fi";
 import { PiPlant } from "react-icons/pi";
 import { FcGoogle } from "react-icons/fc"
 
@@ -24,5 +24,5 @@ export {
     MdOutlineChat, MdReviews, FaRegUserCircle,GrProjects,MdOutlineSearch, VscOrganization,
     MdOutlineMessage,FcViewDetails,RiExchangeBoxFill,MdPendingActions,RiPassPendingFill,GrDocumentVerified,
     FaUserCheck,MdOutlineSyncProblem,TbReport, GoReport, GrAnalytics, MdOutlinePolicy,IoHomeOutline,FaCheckCircle,
-    FiEye,FiEyeOff,FiMessageSquare,FiShield,FiShoppingCart, FcGoogle , PiPlant
+    FiEye,FiEyeOff,FiMessageSquare,FiShield,FiShoppingCart, FcGoogle , PiPlant, FiUsers
 };
