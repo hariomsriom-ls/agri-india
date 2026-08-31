@@ -1,12 +1,12 @@
 import { asyncHandler } from "../../utils/asyncHandler.js";
-import { ApiError } from "../../utils/ApiError.js";
 import registrationValidations from "../../validations/registration.validations.js";
 import { landowner } from "../../models/users/landowner.js"; 
 import {Address} from "../../models/address/address.js";
-import { ApiResponse } from "../../utils/ApiResponse.js";
+import { ApiResponse, ApiError } from "../../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import { uploadOnCloudinary } from "../../utils/cloudinary.js";
 import { upload } from "../../middlewares/multer.middleware.js";
+import { userLogin, findUser } from "../../services/authorization.js";
 
 export const generateAccessAndRefreshToken = async(landownerId) => {
     try {
@@ -68,27 +68,9 @@ const loginLandOwner = asyncHandler(async(req, res) => {
     check refresh token each time session expires
     provide new access token
     at logout destroy access and refresh token*/
-    const {email, userName, mobileNumber, password} = req.body
-
-    if(!userName && !email && !mobileNumber){
-        throw new ApiError(400, "username required in landowner login")
-    }
-    if(!password){
-        throw new ApiError(400, "password required in landowner login")
-    }
-
-    const landOwner = await landowner.findOne({
-        $or: [{userName}, {email}, {mobileNumber}]
-    })
-    if(!landOwner){
-        throw new ApiError(404, "landowner not registered")
-    }
-
-    const isPasswordValid = await landOwner.isPasswordCorrect(password)
-
-    if(!isPasswordValid){
-        throw new ApiError(401, "Invalid landowner credentials")
-    }
+    const {role,login, password,keepSignedIn} = req.body;
+    const loginData = await userLogin(login,role,password);
+    const landOwner = await findUser(loginData, role,password);
 
     const {accessToken, refreshToken} = await generateAccessAndRefreshToken(landOwner._id)
 
@@ -100,12 +82,7 @@ const loginLandOwner = asyncHandler(async(req, res) => {
     }
 
     return res.status(200).cookie("accessToken", accessToken, options).cookie("refreshToken", refreshToken, options)
-    .json(
-        new ApiResponse(200,
-            {landowner: loggedInlandOwner, accessToken, refreshToken}, 
-            "landowner logged in successfully"
-    )
-    )
+    .json( new ApiResponse(200, {landowner: loggedInlandOwner}, "landowner logged in successfully" ) )
 })
 
 const logoutLandOwner = asyncHandler(async(req, res) => {

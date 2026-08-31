@@ -1,16 +1,15 @@
 import { asyncHandler } from "../../utils/asyncHandler.js";
-import { ApiError } from "../../utils/ApiError.js";
 import registrationValidations from "../../validations/registration.validations.js";
 import { createAddress } from "../address.controller.js";
 import { pendingWorkerRegistration } from "../../models/users/pendingregistration.js";
 import { worker } from "../../models/users/workers.js";
-import { ApiResponse } from "../../utils/ApiResponse.js";
+import { ApiResponse, ApiError } from "../../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import { uploadOnCloudinary } from "../../utils/cloudinary.js";
 import { upload } from "../../middlewares/multer.middleware.js";
 import { organizationauthority } from "../../models/users/authority.js";
 import allowedauthorites from "../../models/record/allowedauthoritesrecord.js";
-import { userLogin} from "../../services/authorization.js"
+import { userLogin, findUser} from "../../services/authorization.js"
 
 
 const generateAccessAndRefreshToken = async(organizationAuthorityId) => {
@@ -78,22 +77,10 @@ const createdAuthority = await organizationauthority.findById(organizationAuthor
  
  const loginorganizationAuthority = asyncHandler(async(req, res) => {
 
-    const {login, password} = req.body
-    if(!login && !authorityid){ throw new ApiError(400, "Username or authorityid required in authority login")}
-    if(!password){throw new ApiError(400, "password required in authority login")}
-
-    const organizationAuthority = await organizationauthority.findOne({
-        $or: [{userName}, {email}, {contactNumber}, {authorityid}]
-    })
-    if(!organizationAuthority){
-        throw new ApiError(404, "authority not registered")
-    }
-
-    const isPasswordValid = await organizationAuthority.isPasswordCorrect(password)
-
-    if(!isPasswordValid){
-        throw new ApiError(401, "Invalid organizationauthority credentials")
-    }
+    const {role,login, password,keepSignedIn} = req.body;
+    
+    const loginData = await userLogin(login, password, role);
+    const {organizationAuthority} = await findUser(loginData, role,password);
 
     const {accessToken, refreshToken} = await generateAccessAndRefreshToken(organizationAuthority._id)
 
@@ -108,7 +95,7 @@ const createdAuthority = await organizationauthority.findById(organizationAuthor
     return res.status(200).cookie("acessToken", accessToken, options).cookie("refreshToken", refreshToken, options)
     .json(
         new ApiResponse(200,
-            {organizationauthority: loggedInorganizationAuthority, accessToken, refreshToken}, 
+            {organizationauthority: loggedInorganizationAuthority,}, 
             "authority logged in successfully"
     )
     )
@@ -175,27 +162,9 @@ const refreshAccessToken = asyncHandler(async (req, res)=>{
 
 const showPendingWorkerList = asyncHandler(async (req,res) =>{
     const pendingWorkerRequests = await pendingWorkerRegistration.aggregate([
-        {
-            $match: {
-                status: "PENDING",
-                workingZone: req.organizationAuthority.workingZone,
-            },
-        },
-        {
-            $project: {
-                fullName: 1,
-                mobileNumber: 1,
-                image: 1,
-                governmentId: 1,
-                age: 1
-
-            },
-        },
-        {
-            $sort: {
-                submittedAt: -1
-            }
-        }
+        {$match: { status: "PENDING", workingZone: req.organizationAuthority.workingZone, }, },
+        { $project: { fullName: 1, mobileNumber: 1, image: 1, governmentId: 1, age: 1},},
+        { $sort: { submittedAt: -1}}
     ])
     return res.status(202).json(new ApiResponse(202, pendingWorkerRequests, "pending workers list created successfully"))
 

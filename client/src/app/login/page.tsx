@@ -4,6 +4,9 @@ import { ReactNode, useState, type ChangeEvent, type FormEvent } from "react";
 import {FiEye, FiEyeOff, FiMessageSquare,FiShield,FiShoppingCart, FcGoogle, PiPlant, FiUsers} from "@/components/ui/icons";
 import { InputField } from "@/components/ui/Input";
 import api from "@/utils/services";
+import { useRouter } from "next/navigation";
+import axios from "axios"
+import { ResponseCard } from "@/components/cards/registrationlogin/response";
 
 
 type Role = "landowner" | "worker" | "authority" | null;
@@ -14,6 +17,8 @@ const roles = [
   { id: "authority" as Role, name: "Authority", icon: FiShield },
 ];
 
+
+
 function ContourLines() {
   return (
     <svg
@@ -22,16 +27,18 @@ function ContourLines() {
       preserveAspectRatio="none"
       className="pointer-events-none absolute inset-0 h-full w-full opacity-30"
       fill="none"
-      stroke="#b4b779"
+      stroke="#bbbf6a"
       strokeWidth="1"
     >
-      <path d="M150 900C300 760 350 650 510 620c190-35 210-180 190-350" />
-      <path d="M210 900C345 775 395 685 540 650c175-43 205-180 180-390" />
-      <path d="M275 900C380 805 435 725 570 680c160-53 190-185 165-410" />
-      <path d="M340 900C420 830 480 770 610 710c140-65 165-190 135-440" />
-      <path d="M405 900C470 855 525 805 650 740c125-65 145-200 110-470" />
-      <path d="M470 900C530 875 585 840 695 770c105-65 125-210 80-500" />
-      <path d="M535 900C590 885 650 870 740 805c90-65 100-220 55-535" />
+      <path d="M600 900C620 840 700 860 780 700c30-80 100-90 140-120" />
+      <path d="M580 900C620 780 700 820 780 660c30-80 100-90 140-120" />
+      <path d="M560 900C620 750 700 800 780 640c30-80 100-90 140-120" />
+      <path d="M500 900C620 720 700 770 780 620c30-80 100-90 140-120" />
+      <path d="M480 900C620 700 700 750 780 610c30-80 100-90 140-120" />
+      <path d="M450 900C620 680 700 725 780 590c30-80 100-90 140-120" />
+      <path d="M420 900C620  700 715 780 570c30-80 100-90 140-120" />
+
+      
     </svg>
   );
 }
@@ -54,22 +61,20 @@ export default function Loginpage() {
   const [selectedRole, setSelectedRole] = useState<Role>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [keepSignedIn, setKeepSignedIn] = useState(false);
+  const [loginError, setLoginError] = useState<string>("");
+   const [showResponse, setShowResponse] = useState(false);
+   const [loading, setLoading] = useState(true);
 
-  const [formData, setFormData] = useState({
-   login: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({login: "",password: "",});
+  const router = useRouter();
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
 
-    setFormData((previousData) => ({
-      ...previousData,
-      [name]: value,
-    }));
+    setFormData((previousData) => ({ ...previousData,[name]: value,}));
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const loginData = {
@@ -80,11 +85,29 @@ export default function Loginpage() {
     };
 
     const apiURL = selectedRole === "landowner" ? "/landowner/loginlandowner" : selectedRole === "worker" ? "/worker/login-worker" : "/authority/login-authority";
-
+    const renderURL = selectedRole === "landowner" ? "/Landowner/LandownerDashboard" : selectedRole === "worker" ? "/Worker/WorkerDashboard" : "/Authority/authorityDashboard";
    // console.log("Login data:", loginData);
-     const response = await api.post(apiURL, loginData);
-  }
 
+    try {
+        const response = await api.post(apiURL, loginData);
+        if (response.data.success) { router.replace(renderURL);}
+    } 
+    catch (error) {
+         if(!selectedRole) {setLoginError("Select any Role.");
+            setLoading(false);
+            setShowResponse(true)
+          } 
+        else if (axios.isAxiosError(error)) {
+           setLoginError( error.response?.data?.message ||"Login failed. Check your credentials.");
+       }
+        else { setLoginError("An unexpected error occurred.");}
+       setShowResponse(true);
+      } 
+      finally{
+        setLoading(false);
+      };
+  }
+  
   return (
        <main className="min-h-screen bg-[rgba(229, 231, 228, 0.92)] p-3 sm:p-5">
       <div className="mx-auto min-h-[calc(100vh-2.5rem)] max-w-[1500px] overflow-hidden rounded-2xl border border-[#d7dad7] shadow-sm lg:grid lg:grid-cols-[56%_44%]">
@@ -94,8 +117,9 @@ export default function Loginpage() {
             className="absolute inset-0"
             style={{
               backgroundImage: `
-                radial-gradient(ellipse at 80% 100%, rgba(214, 224, 178, 0.65), transparent 28%),
-                linear-gradient(135deg, rgb(1, 29, 22) 0%, rgb(6, 45, 19) 48%, rgb(1, 88, 40) 72%, rgb(11, 131, 67) 100%)
+                radial-gradient(ellipse at 100% 100%, rgba(226, 226, 193, 0.9), transparent 10%),
+                radial-gradient(ellipse at 90% 100%, rgba(222, 226, 193, 0.80), transparent 28%),
+                linear-gradient(135deg, rgb(1, 29, 17) 0%, rgb(2, 40, 20) 100%)
               `,
             }}
           />
@@ -282,6 +306,17 @@ export default function Loginpage() {
           </form>
         </div>
       </section>
+       {showResponse && (
+          <ResponseCard
+          loading={loading}
+          processSuccess= {false}
+          callMethod="Login"
+          message={loginError}
+          onClose={() => {
+            setShowResponse(false);
+          }}
+            />
+        )}
       </div>
     </main>
   );

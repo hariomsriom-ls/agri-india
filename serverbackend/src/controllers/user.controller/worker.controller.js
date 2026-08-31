@@ -1,5 +1,5 @@
 import { asyncHandler } from "../../utils/asyncHandler.js";
-import { ApiError } from "../../utils/ApiError.js";
+import { ApiError } from "../../utils/ApiResponse.js";
 import registrationValidations from "../../validations/registration.validations.js";
 import { pendingWorkerRegistration } from "../../models/users/pendingregistration.js";
 import { worker } from "../../models/users/workers.js";
@@ -7,6 +7,7 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import { uploadOnCloudinary } from "../../utils/cloudinary.js";
 import { upload } from "../../middlewares/multer.middleware.js";
+import { userLogin, findUser } from "../../services/authorization.js";
 
 const generateAccessAndRefreshToken = async(workerId) => {
     try {
@@ -25,27 +26,9 @@ const generateAccessAndRefreshToken = async(workerId) => {
     }
 }
 const loginWorker = asyncHandler(async(req, res) => {
-    const {email, userName, mobileNumber, password} = req.body
-
-    if(!userName && !email && !mobileNumber){
-        throw new ApiError(400, "username required in worker login")
-    }
-    if(!password){
-        throw new ApiError(400, "password required in worker login")
-    }
-
-    const Worker = await worker.findOne({
-        $or: [{userName}, {email}, {mobileNumber}]
-    })
-    if(!Worker){
-        throw new ApiError(404, "worker not registered")
-    }
-
-    const isPasswordValid = await Worker.isPasswordCorrect(password)
-
-    if(!isPasswordValid){
-        throw new ApiError(401, "Invalid worker credentials")
-    }
+    const {role, login, password, keepSignedIn} = req.body;
+    const loginData = await userLogin(role, login, password);
+    const {Worker} = await findUser(loginData,role,password);
 
     const {accessToken, refreshToken} = await generateAccessAndRefreshToken(Worker._id)
 
@@ -55,11 +38,10 @@ const loginWorker = asyncHandler(async(req, res) => {
         httpOnly: true,
         secure: true
     }
-
     return res.status(200).cookie("accessToken", accessToken, options).cookie("refreshToken", refreshToken, options)
     .json(
         new ApiResponse(200,
-            {worker: loggedInWorker, accessToken, refreshToken}, 
+            {worker: loggedInWorker,}, 
             "worker logged in successfully"
     )
     )

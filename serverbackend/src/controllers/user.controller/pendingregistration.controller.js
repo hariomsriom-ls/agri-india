@@ -1,8 +1,7 @@
 import { asyncHandler } from "../../utils/asyncHandler.js";
-import { ApiError } from "../../utils/ApiError.js";
 import registrationValidations from "../../validations/registration.validations.js";
 import { pendingWorkerRegistration } from "../../models/users/pendingregistration.js";
-import { ApiResponse } from "../../utils/ApiResponse.js";
+import { ApiResponse, ApiError } from "../../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import  {Address}  from "../../models/address/address.js";
 import { uploadOnCloudinary } from "../../utils/cloudinary.js";
@@ -139,7 +138,7 @@ const loginpendingWorker = asyncHandler(async(req, res) => {
     return res.status(200).cookie("acessToken", accessToken, options).cookie("refreshToken", refreshToken, options)
     .json(
         new ApiResponse(200,
-            {pendingWorker: loggedInpendingWorker, accessToken, refreshToken}, 
+            {pendingWorker: loggedInpendingWorker,}, 
             "pendingWorker logged in successfully"
     )
     )

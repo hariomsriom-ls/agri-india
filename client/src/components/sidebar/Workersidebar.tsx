@@ -9,6 +9,11 @@ export function WorkersideBar() {
     const [active, setActive] = useState("");
     return(
        <div className = "max-w-xl mx-auto flex-col  w-full h-full overflow-hidden justify-items-start items-center bg-[#065035]">
+                <div className="flex h-1/9 w-full justify-between items-center">
+              <img className="w-20 h-20 text-white"
+              src="images/logo.png"/> 
+              <h1 className="text-4xl font-bold text-white font-Rolle ">AGRI INDIA</h1>
+            </div>
                 <SideMenu>
 
                     <SideMenuItem

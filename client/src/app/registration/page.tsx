@@ -9,7 +9,8 @@ import {AuthorityPersonalInfoForm, AuthorityAddressForm,AuthorityBankForm,Landow
   AuthorityPersonalInfoFormRef, AuthorityAddressFormRef, AuthorityBankFormRef, LandownerFormRef, WorkerImageForm,
  
 } from "@/components/cards/registrationlogin/form";
-import { ReviewCard, RoleselectionCard, ResponseCard,} from "@/components/cards/registrationlogin/registration";
+import { ReviewCard, RoleselectionCard,} from "@/components/cards/registrationlogin/registration";
+import {ResponseCard} from "@/components/cards/registrationlogin/response"
 import { useworkerRegistration } from "@/contexts/registration/workerProvider";
 import { useAuthorityRegistration } from "@/contexts/registration/authorityProvider";
 import { useLandownerRegistration } from "@/contexts/registration/landownerProvider";
@@ -242,8 +243,9 @@ export default function Form() {
       {showResponse && (
         <ResponseCard
           loading={loading}
-          registrationSuccess={registrationSuccess}
+          processSuccess={registrationSuccess}
           message={registrationMessage}
+          callMethod="Registration"
           onClose={() => {
             setshowResponse(false);
             setshowForm(true);

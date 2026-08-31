@@ -1,5 +1,4 @@
-import { ApiError } from "../utils/ApiError.js"
-
+import { ApiError } from "../utils/ApiResponse.js"
 
 const fieldNotEmpty = ({fullName, mobileNumber, email, userName, password}) => {
         if (
@@ -20,7 +19,5 @@ const validateEmailId = (email) => {
         throw new ApiError(400, "Invalid Email Id")
     }
 }
-
-
 
 export default { fieldNotEmpty , validateMobileNumber, validateEmailId};
