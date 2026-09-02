@@ -13,7 +13,6 @@ const Card = ({children,className}:CardProps) => {
         <div
             className={`
                 rounded-xl
-                shadow-md
                 p-5
                 ${className}   
             `}

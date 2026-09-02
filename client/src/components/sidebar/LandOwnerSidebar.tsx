@@ -12,12 +12,12 @@ export function LandOwnerSideBar() {
     const [active, setActive] = useState("");
     return(
             <div className = "max-w-xl mx-auto flex-col  w-full h-full overflow-hidden justify-items-start items-center bg-[#065035]">
-                <div className="flex h-1/9 w-full justify-between items-center">
-              <img className="w-20 h-20 text-white"
-              src="/images/logo.png"/> 
+                <div className="flex h-1/8 w-full justify-center items-center pt-10">
+              <img className="w-20 h-20 text-white bg-none"
+              src="/images/finallogo.png"/> 
               <h1 className="text-4xl font-bold text-white font-Rolle ">AGRI INDIA</h1>
             </div>
-            <Card className="w-full h-3/4 bg-rgb(6,80,53) rounded-lg shadow-lg shadow-black/50">
+            <Card className="w-full h-3/4 rounded-lg ">
                 <SideMenu>
 
                       <SideMenuItem

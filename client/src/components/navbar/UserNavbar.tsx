@@ -10,7 +10,6 @@ export function UserNavbar() {
     const [active, setActive] = useState("");
    const dispatch = useAppDispatch();
    const role = useAppSelector((state) => state.auth.role);
-   console.log("User role in UserNavbar:", role);
    const { data: user, loading, error,} = useAppSelector((state) => state.user);
    console.log("User data in UserNavbar:", user);
    if(!role) {return <p>User role not found in user navbar page line no 15</p>} 
@@ -20,7 +19,6 @@ export function UserNavbar() {
   if (loading) { return <p>Loading user...</p>; }
   if (error) { return <p className="text-red-600">{error}</p>; }
   if (!user) { return <p>User not found user navbar line 21</p>;}
- ;
    
   
     return(  
@@ -31,7 +29,7 @@ export function UserNavbar() {
                     <IoHomeOutline className="text-green-700 w-7 h-7" />
                 </div>
                <div className="flex h-14 items-center pl-4 justify-center">
-                <h1 className=" ">WELCOME BACK {user?.username}</h1>
+                <h1 className=" ">WELCOME BACK {user?.userName}</h1>
                 </div>
                 </div>
                 <div className="flex items-start pt-2 justify-end">
