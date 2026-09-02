@@ -1,5 +1,5 @@
  "use client";
-
+import {useDispatch, useSelector} from "react-redux";
 import { ReactNode, useState, type ChangeEvent, type FormEvent } from "react";
 import {FiEye, FiEyeOff, FiMessageSquare,FiShield,FiShoppingCart, FcGoogle, PiPlant, FiUsers} from "@/components/ui/icons";
 import { InputField } from "@/components/ui/Input";
@@ -7,6 +7,9 @@ import api from "@/utils/services";
 import { useRouter } from "next/navigation";
 import axios from "axios"
 import { ResponseCard } from "@/components/cards/registrationlogin/response";
+import { updateUserData, updateProfileImage, setUser } from "@/features/user";
+import { setAuth } from "@/features/auth";
+import { useAppSelector } from "@/store/hooks";
 
 
 type Role = "landowner" | "worker" | "authority" | null;
@@ -36,7 +39,7 @@ function ContourLines() {
       <path d="M500 900C620 720 700 770 780 620c30-80 100-90 140-120" />
       <path d="M480 900C620 700 700 750 780 610c30-80 100-90 140-120" />
       <path d="M450 900C620 680 700 725 780 590c30-80 100-90 140-120" />
-      <path d="M420 900C620  700 715 780 570c30-80 100-90 140-120" />
+      <path d="M420 900C620 660 700 715 780 570c30-80 100-90 140-120" />
 
       
     </svg>
@@ -67,6 +70,8 @@ export default function Loginpage() {
 
   const [formData, setFormData] = useState({login: "",password: "",});
   const router = useRouter();
+  const dispatch = useDispatch();
+
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
@@ -83,14 +88,20 @@ export default function Loginpage() {
       password: formData.password,
       keepSignedIn,
     };
-
+    if (!selectedRole) {setLoginError("Select a role"); return;}
     const apiURL = selectedRole === "landowner" ? "/landowner/loginlandowner" : selectedRole === "worker" ? "/worker/login-worker" : "/authority/login-authority";
     const renderURL = selectedRole === "landowner" ? "/Landowner/LandownerDashboard" : selectedRole === "worker" ? "/Worker/WorkerDashboard" : "/Authority/authorityDashboard";
    // console.log("Login data:", loginData);
-
+           
     try {
         const response = await api.post(apiURL, loginData);
-        if (response.data.success) { router.replace(renderURL);}
+        const user = response.data.data[selectedRole];
+        console.log("Login response:", response.data);
+        if (response.data.success) { 
+          router.replace(renderURL);
+          dispatch(setAuth({ role: user.role}));
+        }
+
     } 
     catch (error) {
          if(!selectedRole) {setLoginError("Select any Role.");

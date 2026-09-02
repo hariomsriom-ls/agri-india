@@ -2,6 +2,8 @@ import { Router } from "express";
 import { verifyJwt } from "../../middlewares/auth.middleware.js";
 import { refreshAccessToken } from "../../controllers/user.controller/authority.controller.js";
 import { acceptWorker, loginorganizationAuthority, logoutorganizationAuthority, registerAuthority, rejectWorker, showPendingWorkerList } from "../../controllers/user.controller/authority.controller.js";
+import { getUserDetails } from "../../services/getUserDetails.js";
+import{ organizationauthority } from "../../models/users/authority.js";
 
 const router = Router()
 
@@ -12,5 +14,6 @@ router.route("/accept-register-worker").post(acceptWorker)
 router.route("/reject-worker").post(rejectWorker)
 router.route("/worker-approvallist").post(showPendingWorkerList)
 router.route("/refresh-access-token").post(refreshAccessToken)
+router.route("/get-user-details").get(verifyJwt(organizationauthority), getUserDetails)
 
 export default router

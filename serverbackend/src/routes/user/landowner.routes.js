@@ -4,6 +4,7 @@ import { upload } from "../../middlewares/multer.middleware.js";
 import { landowner } from "../../models/users/landowner.js";
 import { verifyJwt } from "../../middlewares/auth.middleware.js";
 import { refreshAccessToken } from "../../controllers/user.controller/landowner.controller.js";
+import { getUserDetails } from "../../services/getUserDetails.js";
 
 const router = Router()
 
@@ -28,6 +29,8 @@ router.route("/landDetails").post(
     verifyJwt(landowner),
     upload.single("landDocuments"),
     addLandDetails)
+router.route("/get-user-details").get(
+    verifyJwt(landowner), getUserDetails)
 
 
 export default router

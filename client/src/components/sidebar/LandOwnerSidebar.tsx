@@ -4,6 +4,7 @@ import {SideMenu, SideMenuItem} from "../ui/side-bar";
 import { MdDashboardCustomize , LuLandPlot, FaRegUserCircle, MdOutlineAdd, GiPayMoney, MdOutlineRequestPage,
      VscLayersActive, ImHistory, IoDocumentsSharp, MdNotifications, MdOutlineChat, MdReviews,
       GoReport } from "../ui/icons";
+import Card from "../ui/customizable-cards";
 
 
 
@@ -13,9 +14,10 @@ export function LandOwnerSideBar() {
             <div className = "max-w-xl mx-auto flex-col  w-full h-full overflow-hidden justify-items-start items-center bg-[#065035]">
                 <div className="flex h-1/9 w-full justify-between items-center">
               <img className="w-20 h-20 text-white"
-              src="images/logo.png"/> 
+              src="/images/logo.png"/> 
               <h1 className="text-4xl font-bold text-white font-Rolle ">AGRI INDIA</h1>
             </div>
+            <Card className="w-full h-3/4 bg-rgb(6,80,53) rounded-lg shadow-lg shadow-black/50">
                 <SideMenu>
 
                       <SideMenuItem
@@ -102,6 +104,7 @@ export function LandOwnerSideBar() {
                     setActive={setActive}
                     href="/Landowner/LandownerRegisterComplaint"/>
                 </SideMenu>
+                </Card>
 
             </div>
     )

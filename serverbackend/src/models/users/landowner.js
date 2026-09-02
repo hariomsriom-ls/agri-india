@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt"
 
 const landownerSchema = new Schema({
+    role: {type: String,enum: ["landowner"],default: "landowner",immutable: true},
     fullName: {type: String,required: true,trim: true,index: true },
     address: {type: mongoose.Schema.Types.ObjectId,ref: "Address"},
     email: {type: String,required: true,unique: true,lowercase: true,trim: true},
