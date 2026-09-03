@@ -39,3 +39,37 @@ export function AuthorityPendingTable() {
          headerClassName="bg-gray-100 text-black text-base rounded-xl"/>
     )}
 
+
+export function AuthorityWorkerTable() {
+    const [active, setActive] = useState("");
+    const columns = [
+  { key: "workerId", label: "Worker Id" },
+  { key: "name", label: "Worker Name" },
+  { key: "district", label: "District" },
+  { key: "joinedOn", label: "Joined On" },
+  { key: "project", label: "Project" },
+  { key: "status", label: "Status" },
+  { key: "action", label: "Action" },
+];
+    return(
+        <DataTable columns={columns}
+        data={authorityperformanceData}
+         headerClassName="bg-gray-100 text-black text-base rounded-xl"/>
+    )}
+
+export function AuthorityLandownerTable() {
+    const [active, setActive] = useState("");
+    const columns = [
+  { key: "landownerId", label: "Landowner Id" },
+  { key: "name", label: "Landowner Name" },
+  { key: "district", label: "District" },
+  { key: "payments", label: "Payments" },
+  { key: "project", label: "Project" },
+  { key: "status", label: "Status" },
+  { key: "action", label: "Action" },
+];
+    return(
+        <DataTable columns={columns}
+        data={authorityperformanceData}
+         headerClassName="bg-gray-100 text-black text-base rounded-xl"/>
+    )}

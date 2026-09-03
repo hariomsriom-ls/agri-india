@@ -9,12 +9,30 @@ import {GoShieldLock, CiEdit} from "@/components/ui/icons";
 
 export default function LandownerProfile() {
 
-  const user = useAppSelector((state) => state.user.data);
-  if(!user) {return <p>User data not found in LandownerProfile page line no 10</p>;}
+ const storedUser = useAppSelector((state) => state.user.data);
+
+  const user = storedUser ??{
+    _id: "1234567890",
+    fullName: "John Doe",
+    userName: "johndoe",
+    email: "johndoe@example.com"
+  , contactNumber: "1234567890", 
+address: {
+  city: "Sample City",
+  district: "Sample District",
+  state: "Sample State",
+  pinCode: "123456"
+},
+  role: "landowner",
+  landArea: "10 acres",
+  createdAt: "2022-01-01",
+    landId: "LAND123456",
+  };
+ // if(!user) {return <p>User data not found in LandownerProfile page line no 10</p>;}
   if(user.role !== "landowner") {return <p>User is not a landowner in LandownerProfile page line no 12</p>;}
   return (
     <>
-    <main className="ml-[230px] w-[calc(100%-230px)]">
+    <div className="min-h-full bg-[#f7f9f8] px-4 py-6 text-slate-800 sm:px-7">
         {/* Topbar */}
         <header className="flex h-20 items-center justify-between border-b bg-white px-8">
           <h1 className="text-2xl font-semibold text-gray-900">Profile</h1>
@@ -191,7 +209,7 @@ export default function LandownerProfile() {
             </ProfileCard>
             </div>
           </div>
-      </main>
+          </div>
     </>
   );
 }

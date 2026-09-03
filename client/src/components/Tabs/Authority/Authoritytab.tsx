@@ -28,7 +28,7 @@ export function AuthorityteamTab() {
     )}
 
 
-export function AuthorityPendingTab() {
+export function AuthorityWorkerTab() {
     const [active, setActive] = useState("");
     return(
        
@@ -40,6 +40,32 @@ export function AuthorityPendingTab() {
                 />
             </div>
             <div className="flex gap-6 items-center justify-end">
+                <button className="text-black hover:text-emerald-600  bg-gray-300 hover:bg-gray-500 rounded-2xl h-14 px-2">Workers</button>
+                <button className="text-black hover:text-emerald-600  bg-gray-300 hover:bg-gray-500 rounded-2xl h-14 px-2">Pending Requests</button>
+                <button className="text-black hover:text-emerald-600  bg-gray-300 hover:bg-gray-500 rounded-2xl h-14 px-2">Filters</button>
+            </div>
+            </div>
+            <div className=" p-2 rounded-lg">
+                <AuthorityPendingTable/>
+            </div> 
+        </Card>
+    )}
+
+
+export function AuthorityLandownerTab() {
+    const [active, setActive] = useState("");
+    return(
+       
+        <Card className=" bg-white flex flex-col w-full aspect-3/2">
+            <div className="flex flex-col h-1/7  border border-2 pt-2 border-white border-b-gray-300 ">
+            <div className="flex items-start pt-2 w-2/3 justify-start">
+            <SearchBar name="auPenWork"
+                placeholder="Search by name, request id, mobile number"
+                />
+            </div>
+            <div className="flex gap-6 items-center justify-end">
+                <button className="text-black hover:text-emerald-600  bg-gray-300 hover:bg-gray-500 rounded-2xl h-14 px-2">Landowners</button>
+                <button className="text-black hover:text-emerald-600  bg-gray-300 hover:bg-gray-500 rounded-2xl h-14 px-2">Pending Requests</button>
                 <button className="text-black hover:text-emerald-600  bg-gray-300 hover:bg-gray-500 rounded-2xl h-14 px-2">Filters</button>
             </div>
             </div>
