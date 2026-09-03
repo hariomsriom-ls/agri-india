@@ -32,10 +32,10 @@ export function WorkersideBar() {
 
                      <SideMenuItem
                      icon={<MdOutlineRequestPage/>}
-                    item ="Leave request"
+                    item ="Request"
                     active={active}
                     setActive={setActive}
-                    href="/Worker/WorkerLeaveRequest"/>
+                    href="/Worker/WorkerRequest"/>
 
                      <SideMenuItem
                      icon={<GrProjects/>}
@@ -51,40 +51,12 @@ export function WorkersideBar() {
                     setActive={setActive}
                     href="/Worker/WorkerSalaryHistory"/>
 
-                     <SideMenuItem
-                     icon={<MdOutlineMessage/>}
-                    item ="Messages"
-                    active={active}
-                    setActive={setActive}
-                    href="/Worker/WorkerMessages"/>
-
-                     <SideMenuItem
-                     icon={<FcViewDetails />}
-                    item ="Authority Details"
-                    active={active}
-                    setActive={setActive}
-                    href="/Worker/WorkerAuthoritydetails"/>
-
                     <SideMenuItem
                     icon={<IoDocumentsSharp/>}
                     item ="Documents"
                     active={active}
                     setActive={setActive}
                     href="/Worker/WorkerDocuments"/>
-
-                    <SideMenuItem
-                    icon={<RiExchangeBoxFill/>}
-                    item ="Region Change"
-                    active={active}
-                    setActive={setActive}
-                    href="/Worker/WorkerRegionChange"/>
-
-                    <SideMenuItem
-                    icon={<MdNotifications/>}
-                    item ="Notifications"
-                    active={active}
-                    setActive={setActive}
-                    href="/Worker/WorkerNotifications"/>
 
                     <SideMenuItem
                     icon={<MdOutlineChat/>}

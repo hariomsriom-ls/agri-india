@@ -6,9 +6,8 @@ import axios from "axios";
 import api from "@/utils/services";
 import {AuthorityPersonalInfoForm, AuthorityAddressForm,AuthorityBankForm,LandownerForm,WorkerPersonalInfoForm,
   WorkerAddressForm,WorkerBankForm,WorkerPersonalInfoFormRef,WorkerAddressFormRef,WorkerBankFormRef,WorkerImageFormRef,
-  AuthorityPersonalInfoFormRef, AuthorityAddressFormRef, AuthorityBankFormRef, LandownerFormRef, WorkerImageForm,
- 
-} from "@/components/cards/registrationlogin/form";
+  AuthorityPersonalInfoFormRef, AuthorityAddressFormRef, AuthorityBankFormRef, LandownerFormRef, WorkerImageForm,LandownerAddressForm, LandownerAddressFormRef} 
+from "@/components/cards/registrationlogin/form";
 import { ReviewCard, RoleselectionCard,} from "@/components/cards/registrationlogin/registration";
 import {ResponseCard} from "@/components/cards/registrationlogin/response"
 import { useworkerRegistration } from "@/contexts/registration/workerProvider";
@@ -37,8 +36,9 @@ export default function Form() {
   const AuthorityAddressFormRef = useRef<AuthorityAddressFormRef>(null);
   const AuthorityBankFormRef = useRef<AuthorityBankFormRef>(null);
   const LandownerPersonalInfoRef = useRef<LandownerFormRef>(null);
+  const LandownerAddressFormRef = useRef<LandownerAddressFormRef>(null);
 
-  const totalSteps = selectedRole === "worker"? 5 : selectedRole === "authority" ? 4 : selectedRole === "landowner" ? 2 : 1;
+  const totalSteps = selectedRole === "worker"? 5 : selectedRole === "authority" ? 4 : selectedRole === "landowner" ? 3 : 1;
     const next = async() => {
     if (step === 2) {
       switch (selectedRole) {
@@ -138,6 +138,8 @@ export default function Form() {
       switch (step) {
         case 2:
           return <LandownerForm ref={LandownerPersonalInfoRef} />;
+        case 3:
+          return <LandownerAddressForm ref={LandownerAddressFormRef} />;
       }
     } else if (selectedRole === "worker") {
       switch (step) {
@@ -159,7 +161,7 @@ export default function Form() {
     const registerApiUrl = selectedRole === "worker" ? "/pending-registration/pending-worker-request" : selectedRole === "authority" ? "/authority/register-authority" : "/landowner/registerlandowner";
     const RegistrationData = selectedRole === "worker" ? WorkerformData : selectedRole === "authority" ? AuthorityformData : LandownerformData;
     try {
-      const response = await axios.post(registerApiUrl, RegistrationData);
+      const response = await api.post(registerApiUrl, RegistrationData);
       setregistrationSuccess(true);
       setRegistrationMessage(response?.data?.message || "User registered successfully");
     } catch (error) {

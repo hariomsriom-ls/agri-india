@@ -98,7 +98,7 @@ export default function Loginpage() {
         const user = response.data.data[selectedRole];
         console.log("Login response:", response.data);
         if (response.data.success) { 
-          router.replace(renderURL);
+         // router.replace(renderURL);
           dispatch(setAuth({ role: user.role}));
         }
 

@@ -2,12 +2,19 @@ import {createSlice, createAsyncThunk, PayloadAction} from "@reduxjs/toolkit";
 import api from "@/utils/services"; 
 import axios from "axios";
  
+interface Address {
+  city: string;
+  district: string;
+  state: string;
+  pinCode: string;
+}
+
 interface BaseUser {
   _id: string;
   fullName: string;
-  username: string;
   email: string;
-  address: object;
+  address: Address;
+  createdAt: Date;
   contactNumber: string;
   userName: string;
   bankaccount: string;
@@ -29,7 +36,6 @@ workingOn: string;
 interface Landowner extends BaseUser {
   role: "landowner";
   landArea: number;
-  district: string;
   landCity: string;
   landLocation: string;
   landDocuments: string;
@@ -77,7 +83,8 @@ export const fetchUser = createAsyncThunk(
     }
     try {
       const response = await api.get(apiCallUrl, {withCredentials: true,}); 
-      return response.data.data.userData;
+      const storedUser = response.data.data.userData; 
+      return { ...storedUser,  contactNumber: storedUser.mobileNumber, };
     } catch (error) {if (axios.isAxiosError(error)) {return rejectWithValue(error.response?.data?.message || "Failed to fetch user" );}
       return rejectWithValue("Unexpected error");
     } });

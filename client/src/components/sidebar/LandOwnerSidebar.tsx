@@ -35,13 +35,6 @@ export function LandOwnerSideBar() {
                     href="/Landowner/LandownerDashboard"/>
 
                      <SideMenuItem
-                     icon={<MdOutlineAdd />}
-                    item ="Add New Land"
-                    active={active}
-                    setActive={setActive}
-                    href="/Landowner/LandownerAddNewLand"/>
-
-                     <SideMenuItem
                      icon={<LuLandPlot />}
                     item ="My Lands"
                     active={active}
@@ -54,20 +47,6 @@ export function LandOwnerSideBar() {
                     active={active}
                     setActive={setActive}
                     href="/Landowner/LandownerEarnings"/>
-
-                     <SideMenuItem
-                     icon={<VscLayersActive/>}
-                    item ="Active Rentals"
-                    active={active}
-                    setActive={setActive}
-                    href="/Landowner/LandownerActiveRentals"/>
-                    
-                    <SideMenuItem
-                    icon={<ImHistory />}
-                    item ="Rental Request/History"
-                    active={active}
-                    setActive={setActive}
-                    href="/Landowner/LandownerRentalPlots"/>
 
                     <SideMenuItem
                     icon={<IoDocumentsSharp />}

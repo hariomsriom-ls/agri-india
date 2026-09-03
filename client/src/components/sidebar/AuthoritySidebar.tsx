@@ -32,20 +32,6 @@ export function AuthoritySideBar() {
                     href="/Authority/authorityDashboard"/>
 
                      <SideMenuItem
-                     icon={<MdPendingActions/>}
-                    item ="Pending Land Verifications"
-                    active={active}
-                    setActive={setActive}
-                    href="/Authority/authorityPendingLandVerification"/>
-
-                     <SideMenuItem
-                     icon={<RiPassPendingFill />}
-                    item ="Pending Workers Verifications"
-                    active={active}
-                    setActive={setActive}
-                    href="/Authority/authorityPendingWorkerVerification"/>
-
-                     <SideMenuItem
                      icon={<GrDocumentVerified />}
                     item ="Verified Landowners"
                     active={active}
@@ -100,13 +86,6 @@ export function AuthoritySideBar() {
                     active={active}
                     setActive={setActive}
                     href="/Authority/authorityChat"/>
-
-                    <SideMenuItem
-                    icon={<GrAnalytics />}
-                    item ="Analytics"
-                    active={active}
-                    setActive={setActive}
-                    href="/Authority/authorityAnalytics"/>
                 
                 <SideMenuItem
                 icon={<MdOutlinePolicy />}

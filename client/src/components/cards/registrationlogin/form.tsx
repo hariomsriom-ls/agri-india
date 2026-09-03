@@ -946,3 +946,116 @@ export const LandownerForm = forwardRef<LandownerFormRef>((props, ref) => {
         </>
     );
 });
+
+export interface LandownerAddressFormRef{ saveData: ()=> void;}
+export const LandownerAddressForm = forwardRef<LandownerAddressFormRef>((props, ref)=>  {
+    const {LandownerformData, UpdateLandownerformdata} = useLandownerRegistration();
+    const [stepData, setStepData] = useState({
+        houseno: "", landmark: "", country: "", city: "", district: "", state: "", pincode: ""
+
+    })
+     useEffect(() => {
+    setStepData({
+                houseno: LandownerformData.houseno  || "",
+                landmark: LandownerformData.landmark || "",
+                country: LandownerformData.country || "",
+                city: LandownerformData.city || "",
+                district: LandownerformData.district || "",
+                state: LandownerformData.state || "",
+                pincode: LandownerformData.pincode || ""
+    });
+    }, []);
+
+    useImperativeHandle(ref,()=>({
+        saveData: ()=>{
+            UpdateLandownerformdata({
+                houseno: stepData.houseno,
+                landmark: stepData.landmark,
+                country: stepData.country,
+                city: stepData.city,
+                district: stepData.district,
+                state: stepData.state,
+                pincode: stepData.pincode
+            })
+        }
+    }),[stepData])
+    return (
+        <>
+            <h1 className="text-4xl text-white absolute top-5 right-30">
+                Landowner Information
+            </h1>
+            <div className="grid grid-cols-2 gap-5 mt-8">
+               <InputField
+                  label="House No/Flat no/ Road no"
+                  labelclassName="text-white"
+                  name="loHouseno"
+                  placeholder="Enter House no"
+                  className="text-white hover:text-black"
+                   value={stepData.houseno}
+                 onChange={(e) => {setStepData({ ...stepData,houseno : e.target.value }) }}
+                   />
+               
+                 <InputField
+                 label="Land Mark"
+                 labelclassName="text-white"
+                  name="lolandmark"
+                 placeholder="Enter nearby landmark"
+                 className="text-white hover:text-black"
+                  value={stepData.landmark}
+                 onChange={(e) => {setStepData({ ...stepData, landmark: e.target.value }) }}
+                  required />
+               
+                  <InputField
+                 label="Country"
+                 labelclassName="text-white"
+                 name="locountry"
+                 placeholder="Enter House no"
+                 className="text-white hover:text-black"
+                  value={stepData.country}
+                 onChange={(e) => {setStepData({ ...stepData, country: e.target.value }) }}
+                 required />
+            
+              <InputField
+                label="city"
+                labelclassName="text-white"
+                name="locity"
+                placeholder="Enter city"
+                className="text-white hover:text-black"
+                 value={stepData.city}
+                 onChange={(e) => {setStepData({ ...stepData, city: e.target.value }) }}
+                 required />
+            
+             <InputField
+                 label="district"
+                 labelclassName="text-white"
+                 name="lodistrict"
+                 placeholder="district"
+                  value={stepData.district}
+                 onChange={(e) => {setStepData({ ...stepData, district: e.target.value }) }}
+                 className="text-white hover:text-black"
+                  required />
+
+            <InputField
+                label="state"
+                labelclassName="text-white"
+                name="lostate"
+                placeholder="Enter state"
+                className="text-white hover:text-black"
+                 value={stepData.state}
+                 onChange={(e) => {setStepData({ ...stepData, state: e.target.value }) }}
+                 required />
+            
+             <InputField
+                 label="pincode"
+                 labelclassName="text-white"
+                 name="lopincode"
+                 placeholder="pincode"
+                 className="text-white hover:text-black"
+                  value={stepData.pincode}
+                 onChange={(e) => {setStepData({ ...stepData, pincode: e.target.value }) }}
+                  required />
+
+            </div>
+        </>
+    );
+});

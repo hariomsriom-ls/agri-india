@@ -1,7 +1,7 @@
 "use client";
 type ReviewFieldProps = {
   label: string;
-  value?: string | number | null;
+  value?: string | number | Date | null;
 };
 
  export  function ReviewField({
@@ -15,7 +15,7 @@ type ReviewFieldProps = {
       </div>
 
       <div className="px-4 py-3 border-r border-gray-300">
-        {value || "NA"}
+        {value instanceof Date ? value.toLocaleDateString() : value || "NA"}
       </div>
     </>
   );

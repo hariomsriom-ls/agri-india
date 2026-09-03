@@ -9,6 +9,14 @@ export interface LandownerRegistrationData {
   mobileNumber: string;
   userName: string;
   password: string;
+  houseno:  string;
+  street:  string;
+  landmark:  string;
+  city:  string;
+  district:  string;
+  state:  string; 
+  country: string;
+  pincode: string;
 }
 
 interface LandownerRegistrationContextType {
@@ -27,6 +35,14 @@ export const LandownerRegistrationProvider = ({ children }: { children: ReactNod
     mobileNumber: "",
     userName: "",
     password: "",
+    houseno: "",
+    street: "",
+    landmark: "",
+    city: "",
+    district: "",
+    state: "",
+    country: "",
+    pincode: "",
   });
 
   const UpdateLandownerformdata = (data: Partial<LandownerRegistrationData>) => {
@@ -41,6 +57,14 @@ export const LandownerRegistrationProvider = ({ children }: { children: ReactNod
       mobileNumber: "",
       userName: "",
       password: "",
+      houseno: "",
+      street: "",
+      landmark: "",
+      city: "",
+      district: "",
+      state: "",
+      country: "",
+      pincode: "",
     });
   };
 
