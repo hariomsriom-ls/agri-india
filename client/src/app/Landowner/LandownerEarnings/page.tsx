@@ -1,18 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  FiBarChart2,
-  FiCalendar,
-  FiChevronDown,
-  FiChevronLeft,
-  FiChevronRight,
-  FiClock,
-  FiFilter,
-  FiInfo,
-  FiSearch,
-} from "react-icons/fi";
-import { GiWallet } from "react-icons/gi";
+import {FiBarChart2,FiCalendar,FiChevronDown,FiChevronLeft,FiChevronRight,FiClock,FiFilter,FiInfo,
+  FiSearch,GiWallet
+} from "@/components/ui/icons";
+
 
 type PaymentStatus = "Paid" | "Pending" | "Failed";
 

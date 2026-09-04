@@ -1,19 +1,10 @@
 "use client";
 import { ReactNode } from "react";
 import Link from "next/link";
-import {
-  FiAlertCircle,
-  FiCheckCircle,
-  FiChevronDown,
-  FiChevronRight,
-  FiFileText,
-  FiMessageSquare,
-  FiPlusCircle,
-  FiUser,
-  FiUsers,
-} from "react-icons/fi";
-import { HiOutlineCurrencyRupee } from "react-icons/hi2";
-import { LuLeaf } from "react-icons/lu";
+import { HiOutlineCurrencyRupee, LuLeaf,FiAlertCircle,FiCheckCircle,FiChevronDown,FiChevronRight,
+  FiFileText,FiMessageSquare,FiUser,FiUsers, FiPlusCircle 
+} from "@/components/ui/icons";
+
 import {
   LandownerActivePlotcard,
   LandownerActiveServicecard,

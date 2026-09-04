@@ -1,21 +1,9 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import {
-  FiBarChart2,
-  FiCheck,
-  FiChevronDown,
-  FiClock,
-  FiList,
-  FiMic,
-  FiPaperclip,
-  FiPlus,
-  FiSend,
-  FiSettings,
-  FiUsers,
-} from "react-icons/fi";
-import { GiPlantWatering } from "react-icons/gi";
-import { LuDroplets, LuLeaf, LuSparkles } from "react-icons/lu";
+import { LuDroplets, LuLeaf, LuSparkles, GiPlantWatering , FiBarChart2, FiCheck, FiChevronDown, FiClock, 
+  FiList, FiMic, FiPaperclip, FiPlus, FiSend, FiSettings, FiUsers } from "@/components/ui/icons";
+
 
 const quickActions = [
   { label: "Summarize crop status", icon: LuLeaf },

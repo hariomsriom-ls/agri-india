@@ -1,20 +1,9 @@
 "use client";
 
 import { FormEvent, ReactNode, useMemo, useRef, useState } from "react";
-import {
-  FiCheckCircle,
-  FiChevronLeft,
-  FiChevronRight,
-  FiClock,
-  FiEye,
-  FiMessageSquare,
-  FiMoreVertical,
-  FiPaperclip,
-  FiSearch,
-  FiSend,
-  FiSmile,
-  FiStar,
-} from "react-icons/fi";
+import {FiCheckCircle,FiChevronLeft,FiChevronRight,FiClock,FiEye,FiMessageSquare,FiMoreVertical,FiPaperclip,
+  FiSearch,FiSend,FiSmile,FiStar,
+} from "@/components/ui/icons";
 
 type ReviewStatus = "Published" | "Under Review" | "Responded";
 type ReviewCategory = "Platform Experience" | "Support & Service" | "Feature Request" | "General Feedback";

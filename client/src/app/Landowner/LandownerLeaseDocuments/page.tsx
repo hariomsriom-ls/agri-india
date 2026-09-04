@@ -1,23 +1,9 @@
 "use client";
 
 import { ChangeEvent, DragEvent, ReactNode, useRef, useState } from "react";
-import {
-  FiCheckCircle,
-  FiChevronLeft,
-  FiChevronRight,
-  FiClock,
-  FiDownload,
-  FiEye,
-  FiFileText,
-  FiInfo,
-  FiMoreVertical,
-  FiPhone,
-  FiPlus,
-  FiShield,
-  FiUploadCloud,
-  FiX,
-  FiXCircle,
-} from "react-icons/fi";
+import {FiCheckCircle,FiChevronLeft,FiChevronRight,FiClock,FiDownload,FiEye,FiFileText,FiInfo,FiMoreVertical,
+  FiPhone,FiPlus,FiShield,FiUploadCloud,FiX,FiXCircle,
+} from "@/components/ui/icons";
 
 type DocumentTab = "submitted" | "authority";
 type DocumentStatus = "Verified" | "Pending" | "Rejected";

@@ -1,23 +1,9 @@
 "use client";
 
 import { useMemo, useState, type ReactNode } from "react";
-import {
-  LuArrowUp,
-  LuBriefcaseBusiness,
-  LuChevronDown,
-  LuChevronLeft,
-  LuChevronRight,
-  LuCircleCheck,
-  LuClock3,
-  LuDownload,
-  LuEllipsisVertical,
-  LuFilter,
-  LuFlag,
-  LuSearch,
-  LuShieldCheck,
-  LuUsersRound,
-  LuX,
-} from "react-icons/lu";
+import {LuArrowUp,LuBriefcaseBusiness,LuChevronDown,LuChevronLeft, LuChevronRight,LuCircleCheck, 
+  LuClock3, LuDownload, LuEllipsisVertical, LuFilter,LuFlag,LuSearch,LuShieldCheck, LuUsersRound, LuX,
+} from "@/components/ui/icons";
 
 type LandownerTab = "All Landowners" | "Pending Requests" | "Verified Landowners" | "Flagged / Inactive";
 type LandownerStatus = "Verified" | "Pending" | "Under Review" | "Flagged";

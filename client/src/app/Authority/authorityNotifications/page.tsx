@@ -1,29 +1,10 @@
 "use client";
 
 import { useMemo, useState, type ReactNode } from "react";
-import {
-  LuArrowUp,
-  LuBell,
-  LuCalendarDays,
-  LuChartNoAxesColumnIncreasing,
-  LuCheck,
-  LuCheckCheck,
-  LuChevronDown,
-  LuChevronLeft,
-  LuChevronRight,
-  LuCircleCheck,
-  LuExternalLink,
-  LuFileText,
-  LuFilter,
-  LuFlag,
-  LuMail,
-  LuMapPinned,
-  LuSearch,
-  LuSettings,
-  LuTriangleAlert,
-  LuUserRound,
-  LuUserRoundPlus,
-} from "react-icons/lu";
+import { LuArrowUp, LuBell, LuCalendarDays, LuChartNoAxesColumnIncreasing, LuCheck,LuCheckCheck,LuChevronDown,
+  LuChevronLeft, LuChevronRight,LuCircleCheck, LuExternalLink,LuFileText,LuFilter,LuFlag,LuMail,
+  LuMapPinned, LuSearch, LuSettings, LuTriangleAlert,LuUserRound,LuUserRoundPlus,
+} from "@/components/ui/icons";
 
 type NotificationCategory = "Verification" | "Complaints" | "Documents" | "System Alerts" | "Reports" | "Field Inspections";
 type NotificationTab = "All Notifications" | "Unread" | "Verification" | "Complaints" | "Documents" | "System Alerts";

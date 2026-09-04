@@ -1,28 +1,9 @@
 "use client";
 
 import { useState, type FormEvent, type ReactNode } from "react";
-import {
-  LuBell,
-  LuBuilding2,
-  LuCamera,
-  LuCircleCheck,
-  LuFileClock,
-  LuHistory,
-  LuKeyRound,
-  LuLanguages,
-  LuLockKeyhole,
-  LuMail,
-  LuMapPin,
-  LuMonitor,
-  LuPalette,
-  LuPencil,
-  LuPhone,
-  LuSave,
-  LuSettings,
-  LuShieldCheck,
-  LuUserRound,
-  LuUserRoundCog,
-  LuX,
+import {LuBell,LuBuilding2,LuCamera,LuCircleCheck,LuFileClock,LuHistory,LuKeyRound,LuLanguages,
+  LuLockKeyhole,LuMail,LuMapPin,LuMonitor,LuPalette,LuPencil,LuPhone,LuSave,LuSettings, LuShieldCheck,
+  LuUserRound, LuUserRoundCog, LuX,
 } from "react-icons/lu";
 
 type ProfileTab = "Personal Information" | "Security" | "Preferences" | "Activity Log";

@@ -1,22 +1,9 @@
 "use client";
 
 import { useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
-import {
-  LuCalendarDays,
-  LuChevronDown,
-  LuChevronLeft,
-  LuChevronRight,
-  LuCircleCheck,
-  LuCircleX,
-  LuClock3,
-  LuEye,
-  LuLayers,
-  LuPencil,
-  LuPlus,
-  LuSearch,
-  LuTrash2,
-  LuX,
-} from "react-icons/lu";
+import { LuCalendarDays, LuChevronDown, LuChevronLeft, LuChevronRight, LuCircleCheck,
+   LuCircleX, LuClock3,LuEye,LuLayers, LuPencil,LuPlus,LuSearch,LuTrash2,LuX,
+} from "@/components/ui/icons";
 
 type SchemeStatus = "Active" | "Upcoming" | "Inactive";
 

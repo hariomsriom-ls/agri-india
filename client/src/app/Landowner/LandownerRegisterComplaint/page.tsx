@@ -1,25 +1,9 @@
 "use client";
 
 import { FormEvent, useMemo, useRef, useState } from "react";
-import {
-  FiCheckCircle,
-  FiChevronLeft,
-  FiChevronRight,
-  FiClock,
-  FiEye,
-  FiFile,
-  FiFileText,
-  FiInfo,
-  FiList,
-  FiMoreVertical,
-  FiPaperclip,
-  FiPlus,
-  FiSearch,
-  FiSend,
-  FiSettings,
-  FiTool,
-  FiXCircle,
-} from "react-icons/fi";
+import {FiCheckCircle,FiChevronLeft,FiChevronRight,FiClock,FiEye,FiFile,FiFileText,FiInfo,FiList,
+  FiMoreVertical,FiPaperclip,FiPlus,FiSearch,FiSend,FiSettings,FiTool,FiXCircle,
+} from "@/components/ui/icons";
 
 type ComplaintStatus = "Pending" | "Resolved" | "Rejected";
 type ComplaintCategory = "Payment Issues" | "Document Issues" | "Management Issues" | "Technical Issues" | "Other Issues";

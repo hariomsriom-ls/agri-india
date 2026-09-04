@@ -1,26 +1,10 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import {
-  LuArrowRight,
-  LuCalendar,
-  LuCalendarDays,
-  LuCircleCheck,
-  LuCircleCheckBig,
-  LuFilePlus2,
-  LuFileText,
-  LuGraduationCap,
-  LuHeadphones,
-  LuIndianRupee,
-  LuLandPlot,
-  LuMail,
-  LuPhone,
-  LuShieldCheck,
-  LuSprout,
-  LuTractor,
-  LuUserRound,
-  LuX,
-} from "react-icons/lu";
+import {LuArrowRight,LuCalendar,LuCalendarDays,LuCircleCheck,LuCircleCheckBig,LuFilePlus2,LuFileText,
+  LuGraduationCap,LuHeadphones,LuIndianRupee,LuLandPlot,LuMail,LuPhone,LuShieldCheck,LuSprout, LuTractor, 
+  LuUserRound,LuX,
+} from "@/components/ui/icons";
 
 type Task = {
   title: string;

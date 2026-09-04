@@ -2,18 +2,9 @@
 
 import { useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import {
-  LuArrowRight,
-  LuCalendarDays,
-  LuChartNoAxesColumnIncreasing,
-  LuChevronDown,
-  LuCircleAlert,
-  LuFileText,
-  LuHardHat,
-  LuMegaphone,
-  LuTriangleAlert,
-  LuUserRoundCheck,
-} from "react-icons/lu";
+import { LuArrowRight, LuCalendarDays, LuChartNoAxesColumnIncreasing, LuChevronDown,LuCircleAlert,
+  LuFileText,LuHardHat,LuMegaphone,LuTriangleAlert, LuUserRoundCheck,
+} from "@/components/ui/icons";
 
 type RequestStatus = "Pending" | "Under Review" | "Approved";
 type ComplaintStatus = "Open" | "In Progress" | "Resolved";

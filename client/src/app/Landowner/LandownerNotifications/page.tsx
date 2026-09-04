@@ -1,20 +1,10 @@
 "use client";
 
 import { ReactNode, useMemo, useState } from "react";
-import {
-  FiBell,
-  FiCheckCircle,
-  FiChevronLeft,
-  FiChevronRight,
-  FiFileText,
-  FiInfo,
-  FiMail,
-  FiMoreVertical,
-  FiSettings,
-  FiShield,
-} from "react-icons/fi";
-import { HiOutlineCurrencyRupee, HiOutlineMegaphone } from "react-icons/hi2";
-import { LuLeaf } from "react-icons/lu";
+import { HiOutlineCurrencyRupee, HiOutlineMegaphone , LuLeaf,FiBell,FiCheckCircle,FiChevronLeft,
+  FiChevronRight,FiFileText,FiInfo,FiMail,FiMoreVertical,FiSettings,FiShield,
+} from "@/components/ui/icons";
+
 
 type NotificationType = "Announcements" | "Land Updates" | "Payment Updates" | "Documents" | "System Alerts";
 type Filter = "All Notifications" | "Unread" | NotificationType;

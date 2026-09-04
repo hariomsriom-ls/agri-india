@@ -1,9 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { FiGrid, FiList, FiMapPin, FiMoreVertical, FiPlus, FiSearch, FiUsers } from "react-icons/fi";
-import { GiWheat } from "react-icons/gi";
-import { LuLandPlot, LuLeaf } from "react-icons/lu";
+import { FiGrid, FiList, FiMapPin, FiMoreVertical, FiPlus, FiSearch, FiUsers,GiWheat, LuLandPlot, LuLeaf  } from "@/components/ui/icons";
+
 
 type LandStatus = "Active" | "Pending" | "Inactive";
 type Land = { id: string; name: string; location: string; area: number; crop: string; workers: number; status: LandStatus; image: string };

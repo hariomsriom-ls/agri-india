@@ -1,24 +1,9 @@
 "use client";
 
 import { useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
-import {
-  LuArrowUpDown,
-  LuChevronDown,
-  LuChevronLeft,
-  LuChevronRight,
-  LuDownload,
-  LuEllipsisVertical,
-  LuEye,
-  LuFileText,
-  LuImage,
-  LuPlus,
-  LuSearch,
-  LuShield,
-  LuTrash2,
-  LuUpload,
-  LuUserRound,
-  LuX,
-} from "react-icons/lu";
+import {LuArrowUpDown,LuChevronDown,LuChevronLeft,LuChevronRight,LuDownload,LuEllipsisVertical,LuEye,
+  LuFileText,LuImage,LuPlus,LuSearch,LuShield,LuTrash2,LuUpload,LuUserRound,LuX,
+} from "@/components/ui/icons";
 
 type Category = "Identity" | "Land / Plot" | "Financial" | "Certificate" | "Other";
 type FileType = "PDF" | "JPG" | "PNG";

@@ -1,23 +1,9 @@
 "use client";
 
 import { useMemo, useState, type FormEvent, type ReactNode } from "react";
-import {
-  LuCalendarDays,
-  LuChevronDown,
-  LuChevronLeft,
-  LuChevronRight,
-  LuEye,
-  LuFileText,
-  LuIndianRupee,
-  LuLayers,
-  LuMapPin,
-  LuPencil,
-  LuPlus,
-  LuSearch,
-  LuSprout,
-  LuUserRound,
-  LuX,
-} from "react-icons/lu";
+import { LuCalendarDays, LuChevronDown, LuChevronLeft, LuChevronRight, LuEye, LuFileText, LuIndianRupee,
+   LuLayers, LuMapPin, LuPencil, LuPlus, LuSearch, LuSprout, LuUserRound,LuX,
+} from "@/components/ui/icons";
 
 type PlotStatus = "Used" | "Unused";
 
