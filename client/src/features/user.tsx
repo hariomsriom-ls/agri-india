@@ -59,7 +59,6 @@ interface UserState {
   data: User | null;
   loading: boolean;
   error: string | null;
-
 }
 
 const initialState: UserState = {
@@ -72,15 +71,10 @@ export const fetchUser = createAsyncThunk(
   "user/fetchUser",
   async (role: string, { rejectWithValue }) => {
     let apiCallUrl;
-    if (role === "worker") {
-      apiCallUrl = "/worker/get-user-details";
-    } else if (role === "landowner") {
-      apiCallUrl = "/landowner/get-user-details";
-    } else if (role === "authority") {
-      apiCallUrl = "/authority/get-user-details";
-    } else {
-      return rejectWithValue("Invalid user role");
-    }
+    if (role === "worker") {apiCallUrl = "/worker/get-user-details";}
+   else if (role === "landowner") {apiCallUrl = "/landowner/get-user-details"; }
+    else if (role === "authority") {apiCallUrl = "/authority/get-user-details"; }
+     else {return rejectWithValue("Invalid user role");}
     try {
       const response = await api.get(apiCallUrl, {withCredentials: true,}); 
       const storedUser = response.data.data.userData; 

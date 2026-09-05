@@ -1,14 +1,19 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {SideMenu, SideMenuItem} from "../ui/side-bar";
 import { MdDashboardCustomize , LuLandPlot, FaRegUserCircle, MdOutlineAdd, GiPayMoney, MdOutlineRequestPage,
      VscLayersActive, ImHistory, IoDocumentsSharp, MdNotifications, MdOutlineChat, MdReviews,
       GoReport } from "../ui/icons";
 import Card from "../ui/customizable-cards";
-
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { fetchUserPayments } from "@/features/landowner/paymenthistory";
 
 
 export function LandOwnerSideBar() {
+    const dispatch = useAppDispatch();
+     const role = useAppSelector((state) => state.auth.role);
+    
+
     const [active, setActive] = useState("");
     return(
             <div className = "max-w-xl mx-auto flex-col  w-full h-full overflow-hidden justify-items-start items-center bg-[#065035]">

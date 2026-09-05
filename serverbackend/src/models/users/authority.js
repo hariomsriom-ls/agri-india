@@ -16,10 +16,10 @@ const authoritySchema = new Schema({
     password: {type: String,required: [true,'password is required']},
     bankaccount: {type: Number, required: true },
     IFSCcode: {type: String,required: true},
-    landpayments: { type: Number,default: 0},
+    landpayments: { type: Schema.Types.ObjectId,ref: "Payments",default: 0},
     landleaseagreements: {type: String,default: "NONE"},
     landleasePeriod:{type: Number,default: 0},
-    workersalaryPayments: {type: Number,default: 0},
+    workersalaryPayments: {type: Schema.Types.ObjectId,ref: "Payments",default: 0},
     projectAssigned: [{ type: Schema.Types.ObjectId,ref: "project" }],
     refreshToken: {type: String
     }

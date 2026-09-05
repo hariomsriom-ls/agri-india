@@ -4,6 +4,7 @@ import { refreshAccessToken } from "../../controllers/user.controller/authority.
 import { acceptWorker, loginorganizationAuthority, logoutorganizationAuthority, registerAuthority, rejectWorker, showPendingWorkerList } from "../../controllers/user.controller/authority.controller.js";
 import { getUserDetails } from "../../services/getUserDetails.js";
 import{ organizationauthority } from "../../models/users/authority.js";
+import { getPaymentDetails } from "../../services/getPaymentDetails.js";
 
 const router = Router()
 
@@ -15,5 +16,6 @@ router.route("/reject-worker").post(rejectWorker)
 router.route("/worker-approvallist").post(showPendingWorkerList)
 router.route("/refresh-access-token").post(refreshAccessToken)
 router.route("/get-user-details").get(verifyJwt(organizationauthority), getUserDetails)
+router.route("/get-payment-details").get(verifyJwt(organizationauthority), getPaymentDetails)
 
 export default router

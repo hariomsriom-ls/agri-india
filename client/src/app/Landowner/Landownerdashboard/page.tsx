@@ -60,7 +60,11 @@ function EarningsOverview() {
 }
 
 const activity = [
-  { title: 'Payment received for “Green Valley Farm”', detail: "₹25,000 received from Authority", time: "10 min ago", icon: <FiCheckCircle />, style: "bg-emerald-50 text-emerald-600" },
+  { title: 'Payment received for “Green Valley Farm”', 
+    detail: "₹25,000 received from Authority", 
+    time: "10 min ago", 
+    icon: <FiCheckCircle />,
+     style: "bg-emerald-50 text-emerald-600" },
   { title: 'Document “Lease Agreement” uploaded', detail: "Document is under review", time: "1 hour ago", icon: <FiFileText />, style: "bg-violet-50 text-violet-600" },
   { title: "New worker assigned", detail: 'Ramesh Kumar assigned to “Sunrise Farm”', time: "2 hours ago", icon: <FiUsers />, style: "bg-amber-50 text-amber-500" },
   { title: "New message from Authority", detail: "Regarding land verification process", time: "3 hours ago", icon: <FiMessageSquare />, style: "bg-blue-50 text-blue-600" },
@@ -68,7 +72,26 @@ const activity = [
 ];
 
 function RecentActivity() {
-  return <SectionCard><div className="flex items-center justify-between"><h2 className="text-xl font-bold text-slate-900">Recent Activity</h2><button type="button" className="text-sm font-semibold text-emerald-700">View All</button></div><div className="mt-4 space-y-4">{activity.map((item) => <article key={item.title} className="flex items-center gap-4"><span className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl text-xl ${item.style}`}>{item.icon}</span><div className="min-w-0 flex-1"><h3 className="truncate text-sm font-bold">{item.title}</h3><p className="mt-1 truncate text-sm text-slate-500">{item.detail}</p></div><time className="shrink-0 text-xs text-slate-500">{item.time}</time></article>)}</div></SectionCard>;
+  return (
+  <SectionCard>
+    <div className="flex items-center justify-between">
+    <h2 className="text-xl font-bold text-slate-900">Recent Activity</h2>
+    <button type="button" className="text-sm font-semibold text-emerald-700">View All</button>
+    </div>
+    <div className="mt-4 space-y-4">
+      {activity.map((item) => <article key={item.title} className="flex items-center gap-4">
+        <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl text-xl ${item.style}`}>
+        {item.icon}
+        </span>
+          <div className="min-w-0 flex-1">
+        <h3 className="truncate text-sm font-bold">{item.title}</h3>
+        <p className="mt-1 truncate text-sm text-slate-500">{item.detail}</p>
+        </div>
+        <time className="shrink-0 text-xs text-slate-500">{item.time}</time>
+        </article>)}
+    </div>
+        </SectionCard>
+  );
 }
 
 function LandStatusOverview() {

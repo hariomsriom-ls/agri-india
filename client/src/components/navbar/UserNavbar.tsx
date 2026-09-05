@@ -14,8 +14,8 @@ export function UserNavbar() {
    console.log("User data in UserNavbar:", user);
    if(!role) {return <p>User role not found in user navbar page line no 15</p>} 
    
-    useEffect(() => {if (!user) {dispatch(fetchUser(role));}
-  }, [dispatch, user]);
+    useEffect(() => {if (!user) {dispatch(fetchUser(role));}}, [dispatch, user]);
+    
   if (loading) { return <p>Loading user...</p>; }
   if (error) { return <p className="text-red-600">{error}</p>; }
   if (!user) { return <p>User not found user navbar line 21</p>;}
@@ -39,7 +39,7 @@ export function UserNavbar() {
                 </div>
                 
                  <div className ="flex-1 flex justify-center items-start gap-8">
-                    <ProfileCard   name={user?.fullName || user?.username || "User"}
+                    <ProfileCard   name={user?.fullName || user?.userName || "User"}
                                 image={user?.profileImage || "images/profile.png"}
                                 id="123"/>
                  </div>

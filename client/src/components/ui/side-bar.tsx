@@ -20,16 +20,18 @@ interface SideMenuItemProps {
   item: string;
   active: string;
   href: string;
+
   setActive: React.Dispatch<React.SetStateAction<string>>;
 }
-export function SideMenuItem({ icon, item, active, setActive, href} : SideMenuItemProps){
+export function SideMenuItem({ icon, item, active, setActive, href,} : SideMenuItemProps){
     return(<Link href={href}>
     <div className="flex w-full h-13 justify-start overflow-y-auto overflow-hidden items-evenly rounded-lg">
          <span className="flex items-center justify-end px-3 w-16 h-12 text-3xl text-white">
     {icon}
   </span>
         <button className =" py-1 px-5 flex w-4/5 items-center justify-start text-gray-300 hover:text-white rounded-lg 
-        hover:bg-emerald-700 whitespace-nowrap">
+        hover:bg-emerald-700 whitespace-nowrap"
+        >
             {item}
             {active === item && (
                 <motion.div  
