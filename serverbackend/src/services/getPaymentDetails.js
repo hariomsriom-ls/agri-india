@@ -29,7 +29,7 @@ export const getPaymentDetails = async (req, res) => {
           throw new ApiError(400, "Invalid user role");
     }
 
-        const paymentQuery = Payment.aggregate([
+        const payment = await Payment.aggregate([
             {
               $match: {
                 PaymentTo: userId,
@@ -37,7 +37,7 @@ export const getPaymentDetails = async (req, res) => {
             },
             {
         $lookup: {
-      from: organizationauthority.collection.name,
+      from: "organizationauthority",
       localField: "PaymentFrom",
       foreignField: "_id",
       as: "PaymentFrom"
@@ -45,7 +45,7 @@ export const getPaymentDetails = async (req, res) => {
   }
         ])
          
-        const transactionQuery = Payment.aggregate([
+        const transaction = await Payment.aggregate([
             {
                 $match: {
                     PaymentFrom: userId,
@@ -60,11 +60,6 @@ export const getPaymentDetails = async (req, res) => {
     }
   }
         ])
-
-        const [payment, transaction] = await Promise.all([
-          paymentQuery,
-          transactionQuery,
-        ]);
 
         return res.status(200).json(
            new ApiResponse(200,  {PaymentData: payment, transactionData: transaction},"Payments fetched successfully",)
