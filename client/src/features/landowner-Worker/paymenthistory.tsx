@@ -2,7 +2,7 @@ import {createSlice, createAsyncThunk, PayloadAction} from "@reduxjs/toolkit";
 import api from "@/utils/services"; 
 import axios from "axios";
 
-export type PaymentStatus = "Paid" | "Pending" | "Failed";
+export type PaymentStatus = "Completed" | "Pending" | "Failed";
 
 export interface PaymentParty {
   _id: string;

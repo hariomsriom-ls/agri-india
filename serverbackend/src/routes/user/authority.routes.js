@@ -5,6 +5,7 @@ import { acceptWorker, loginorganizationAuthority, logoutorganizationAuthority, 
 import { getUserDetails } from "../../services/getUserDetails.js";
 import{ organizationauthority } from "../../models/users/authority.js";
 import { getPaymentDetails } from "../../services/getPaymentDetails.js";
+import { getReviews } from "../../services/getUserReviews.js";
 
 const router = Router()
 
@@ -17,5 +18,7 @@ router.route("/worker-approvallist").post(showPendingWorkerList)
 router.route("/refresh-access-token").post(refreshAccessToken)
 router.route("/get-user-details").get(verifyJwt(organizationauthority), getUserDetails)
 router.route("/get-payment-details").get(verifyJwt(organizationauthority), getPaymentDetails)
+router.route("/get-Review-details").get(verifyJwt(organizationauthority), getReviews)
+
 
 export default router

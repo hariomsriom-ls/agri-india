@@ -32,7 +32,7 @@ function EarningsChart({payments,
 const totals = Array<number>(12).fill(0);
 
     payments.forEach((payment)=>{
-        if(payment.paymentStatus !== "Paid"){
+        if(payment.paymentStatus !== "Completed"){
             return;
         }
         const paymentdate = new Date(payment.paymentdate);

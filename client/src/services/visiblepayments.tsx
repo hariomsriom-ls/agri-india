@@ -1,14 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type {
-  PaymentStatus,
-  UserPayment,
-} from "@/features/landowner-Worker/paymenthistory";
+import type {PaymentStatus,UserPayment} from "@/features/landowner-Worker/paymenthistory";
 
 export type PaymentFilter = "All" | PaymentStatus;
 
-function partyName(party: UserPayment["PaymentFrom"]) {
+function personName(party: UserPayment["PaymentFrom"]) {
   return Array.isArray(party) ? party[0]?.fullName ?? "" : "";
 }
 
@@ -26,8 +23,8 @@ export function useVisiblePayments(
         payment.transactionId,
         payment.paymentType,
         payment.paymentMethod,
-        partyName(payment.PaymentFrom),
-        partyName(payment.PaymentTo),
+        personName(payment.PaymentFrom),
+        personName(payment.PaymentTo),
       ]
         .filter(Boolean)
         .join(" ")

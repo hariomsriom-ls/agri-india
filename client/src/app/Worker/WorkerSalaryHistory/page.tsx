@@ -13,12 +13,11 @@ import { useFetchPayments } from "@/services/fetchPayments";
 export default function WorkerSalaryHistory() {
   const [search, setSearch] = useState("");
   const { role, payments, status, error } = useFetchPayments();
-  const { visiblePayments, filterStatus, setFilterStatus } =
-    useVisiblePayments(payments, search);
+  const { visiblePayments, filterStatus, setFilterStatus } =useVisiblePayments(payments, search);
     
 
 const statusClass: Record<PaymentStatus, string> = {
-  Paid: "bg-emerald-50 text-emerald-700",
+  Completed: "bg-emerald-50 text-emerald-700",
   Pending: "bg-amber-50 text-amber-700",
   Failed: "bg-red-50 text-red-600",
 };
@@ -27,17 +26,11 @@ const cards = [
  { label: "Total Earnings", value: "₹2,48,500", note: "All time earnings", color: "text-emerald-700", bg: "bg-lime-50", icon: GiWallet },]
    
 
-  if (!role) {
-    return <p>User role not found.</p>;
-  }
+  if (!role) {return <p>User not login.</p>;}
 
-  if (status === "idle" || status === "loading") {
-    return <p>Loading payments...</p>;
-  }
+  if (status === "idle" || status === "loading") {  return <p>Loading payments...</p>;}
 
-  if (status === "failed") {
-    return <p className="text-red-600">{error ?? "Failed to fetch payments."}</p>;
-  }
+  if (status === "failed") {return <p className="text-red-600">{error ?? "Failed to fetch payments."}</p>; }
 
   return (
     <div className="min-h-full bg-[#f7f9f8] px-4 py-6 text-slate-800 sm:px-7">
@@ -104,7 +97,7 @@ const cards = [
                 aria-label="Filter payments by status" 
                 className="h-11 appearance-none rounded-xl border border-slate-200 bg-white pl-11 pr-10 text-sm font-semibold outline-none focus:border-emerald-500">
                   <option>All</option>
-                  <option>Paid</option>
+                  <option>Completed</option>
                   <option>Pending</option>
                   <option>Failed</option>
                 </select>

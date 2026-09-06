@@ -17,11 +17,7 @@ export function useFetchPayments() {
     }
   }, [dispatch, role, status]);
 
-  return {
-    role,
-    payments,
-    status,
-    error,
+  return { role, payments, status, error,
     hasPayments: status === "success" && payments.length > 0,
   };
 }

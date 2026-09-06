@@ -9,6 +9,7 @@ import { MiniTrend, EarningsChart } from "@/components/cards/worker/worker-lando
 import { useVisiblePayments, type PaymentFilter } from "@/services/visiblepayments";
 import { useFetchPayments } from "@/services/fetchPayments";
 
+
 export default function LandownerEarnings() {
   const [search, setSearch] = useState("");
   const { role, payments, status, error } = useFetchPayments();
@@ -16,7 +17,7 @@ export default function LandownerEarnings() {
     useVisiblePayments(payments, search);
 
   const statusClass: Record<PaymentStatus, string> = {
-    Paid: "bg-emerald-50 text-emerald-700",
+    Completed: "bg-emerald-50 text-emerald-700",
     Pending: "bg-amber-50 text-amber-700",
     Failed: "bg-red-50 text-red-600",
   };
