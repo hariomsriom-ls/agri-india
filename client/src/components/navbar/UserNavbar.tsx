@@ -6,6 +6,7 @@ import  { SearchBar } from "../ui/searchbar"
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchUser } from "@/features/user"; 
 
+
 export function UserNavbar() {
     const [active, setActive] = useState("");
    const dispatch = useAppDispatch();

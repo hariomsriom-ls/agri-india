@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 
 const workerSchema = new Schema({
     _id: String,
+    role: {type: String,enum: ["worker"],default: "worker",immutable: true},
     fullName: {type: String,required: true,trim: true,index: true},
     address: {type: mongoose.Schema.Types.ObjectId,ref: "Address"},
     workingZone: {type: String,required: true,},
