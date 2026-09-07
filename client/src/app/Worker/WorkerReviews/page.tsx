@@ -6,7 +6,7 @@ import {FiCheckCircle,FiChevronLeft,FiChevronRight,FiClock,FiEye,FiMessageSquare
 } from "@/components/ui/icons";
 import { PageButton, SummaryCard, StarRating } from "@/components/cards/worker/worker-reviews";
 import { useFetchReviews } from "@/services/fetchReviews";
-
+import { useVisibleReviews } from "@/services/visibleReviews";
 
 export function workerReviews() {
   const { role,reviews,status,error,hasReviews,  } = useFetchReviews();
@@ -42,16 +42,7 @@ export default function WorkerReviews() {
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
   const [statusFilter, setStatusFilter] = useState("All Status");
   const fileRef = useRef<HTMLInputElement>(null);
-
-  const visibleReviews = useMemo(() => {
-    const term = search.trim().toLowerCase();
-    return reviews.filter((item) =>
-      (!term || [item.id, item.category, item.review].some((value) => value.toLowerCase().includes(term))) &&
-      (categoryFilter === "All Categories" || item.category === categoryFilter) &&
-      (statusFilter === "All Status" || item.status === statusFilter),
-    );
-  }, [categoryFilter, search, statusFilter]);
-
+ 
   function submitReview(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!rating || !category || !review.trim()) return;

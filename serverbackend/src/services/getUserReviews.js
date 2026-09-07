@@ -3,7 +3,7 @@ import {landowner} from "../models/users/landowner.js";
 import {organizationauthority} from "../models/users/authority.js";
 import {Review} from "../models/Reviws.js"
 import { ApiResponse, ApiError } from "../utils/ApiResponse.js";
-import {asyncHandler} from "../utils/asynchandler.js";
+import {asyncHandler} from "../utils/asyncHandler.js";
 import mongoose from "mongoose";
 
 const userModels = {

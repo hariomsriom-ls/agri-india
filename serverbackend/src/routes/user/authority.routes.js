@@ -19,6 +19,6 @@ router.route("/refresh-access-token").post(refreshAccessToken)
 router.route("/get-user-details").get(verifyJwt(organizationauthority), getUserDetails)
 router.route("/get-payment-details").get(verifyJwt(organizationauthority), getPaymentDetails)
 router.route("/get-Review-details").get(verifyJwt(organizationauthority), getReviews)
-
+router.route("/get-notifications").get(verifyJwt(organizationauthority), getNotifications)
 
 export default router

@@ -34,6 +34,8 @@ const initialState : UserReviewState = {
     deletingReviewId: null,
 };
 
+type UserRole = "worker" | "landowner" | "authority";
+
 export const fetchUserReview = createAsyncThunk<Reviews[],UserRole,{ rejectValue: string }>(
 "Reviews/fetchReviews",
 async(role, {rejectWithValue}) => {
@@ -47,7 +49,6 @@ async(role, {rejectWithValue}) => {
     }
 });
 
-type UserRole = "worker" | "landowner" | "authority";
 
 export const deleteUserReview = createAsyncThunk<string,{ reviewId: string; role: UserRole },{ rejectValue: string }>(
   "Reviews/deleteReview",

@@ -1,13 +1,13 @@
 import {configureStore} from "@reduxjs/toolkit";
 import userReducer from "../features/user";
 import authReducer from "../features/auth";
-import userPaymentReducer from "../features/landowner-Worker/paymenthistory"
+import UserPaymentReducer from "../features/landowner-Worker/paymenthistory"
 import UserReviewReducer from "@/features/landowner-Worker/reviewsdata";
-
+import UserNotification from "@/features/landowner-Worker/notificationdata";
 export const store = configureStore({
   reducer: {
-    user: userReducer, auth: authReducer, payments: userPaymentReducer, reviews: UserReviewReducer,
-    
+    user: userReducer, auth: authReducer, payments: UserPaymentReducer, reviews: UserReviewReducer,
+    notifications: UserNotification,
 
   }
 })

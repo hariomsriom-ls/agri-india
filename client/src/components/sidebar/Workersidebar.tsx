@@ -59,6 +59,13 @@ export function WorkersideBar() {
                     href="/Worker/WorkerDocuments"/>
 
                     <SideMenuItem
+                    icon={<MdNotifications />}
+                    item ="Notifications"
+                    active={active}
+                    setActive={setActive}
+                    href="/Worker/WorkerNotifications"/>
+
+                    <SideMenuItem
                     icon={<MdOutlineChat/>}
                     item ="Chat"
                     active={active}
