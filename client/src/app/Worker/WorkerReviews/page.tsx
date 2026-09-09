@@ -1,20 +1,15 @@
 "use client";
 
-import { FormEvent, useMemo, useRef, useState } from "react";
+import { type SubmitEvent, useMemo, useRef, useState } from "react";
 import {FiCheckCircle,FiChevronLeft,FiChevronRight,FiClock,FiEye,FiMessageSquare,FiMoreVertical,FiPaperclip,
   FiSearch,FiSend,FiSmile,FiStar,
 } from "@/components/ui/icons";
-import { PageButton, SummaryCard, StarRating } from "@/components/cards/worker/worker-reviews";
+import { PageButton, SummaryCard, StarRating } from "@/components/cards/worker/worker-pages-combination";
 import { useFetchReviews } from "@/services/fetchReviews";
 import { useVisibleReviews } from "@/services/visibleReviews";
-
-export function workerReviews() {
-  const { role,reviews,status,error,hasReviews,  } = useFetchReviews();
-    if (!role) {return <p>User role not found.</p>;}
-  if (status === "idle" || status === "loading") {return <p>Loading reviews...</p>; }
-  if (status === "failed") {return <p>{error}</p>;}
-  // function of mapping
-}
+import { type ReviewCategory, type ReviewStatus } from "@/features/landowner-Worker/reviewsdata";
+import api from "@/utils/services";
+import axios from "axios";
 
 const categoryStyles: Record<ReviewCategory, string> = {
   "Platform Experience": "bg-violet-50 text-violet-700",
@@ -37,21 +32,64 @@ export default function WorkerReviews() {
   const [suggestion, setSuggestion] = useState("");
   const [contact, setContact] = useState("no");
   const [attachment, setAttachment] = useState<File | null>(null);
-  const [submitted, setSubmitted] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
+  const submissionInFlight = useRef(false);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
   const [statusFilter, setStatusFilter] = useState("All Status");
   const fileRef = useRef<HTMLInputElement>(null);
  
-  function submitReview(event: FormEvent<HTMLFormElement>) {
+ const { role, reviews, error, status,hasReviews, totalReviews, pendingReviews, submittedReviews  } = useFetchReviews();
+  if (!role) {return <p>User role not found.</p>;}
+  if (status === "idle" || status === "loading") {return <p>Loading reviews...</p>; }
+  if (status === "failed") {return <p>{error}</p>;}
+
+ async function submitReview(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!rating || !category || !review.trim()) return;
-    setSubmitted(true);
-    setRating(0);
-    setCategory("");
-    setReview("");
-    setSuggestion("");
-    setAttachment(null);
+    if (submissionInFlight.current) return;
+    setSubmitted(false);
+    setSubmissionError(null);
+
+    const message = review.trim();
+    if (!category || !message) {
+      setSubmissionError("Please select a category and describe your complaint.");
+      return;
+    }
+    if (attachment) {
+      setSubmissionError("Attachments are not supported yet. Please remove the attachment to submit your complaint.");
+      return;
+    }
+
+    submissionInFlight.current = true;
+    setIsSubmitting(true);
+
+    try {
+      const response = await api.post<{ success: boolean; message?: string }>(
+        "/worker/post-reviews",
+        { category, message, date: new Date().toISOString() },
+      );
+
+      if (response.data?.success !== true) {
+        setSubmissionError(response.data?.message || "Failed to submit your complaint. Please try again.");
+        return;
+      }
+      setSubmitted(true);
+      setCategory("");
+      setReview("");
+      setAttachment(null);
+      if (fileRef.current) fileRef.current.value = "";
+    } catch (error) {
+      setSubmissionError(
+        axios.isAxiosError<{ message?: string }>(error)
+          ? error.response?.data?.message || "Unable to submit your complaint. Please try again."
+          : "An unexpected error occurred while submitting your complaint.",
+      );
+    } finally {
+      submissionInFlight.current = false;
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -73,24 +111,36 @@ export default function WorkerReviews() {
           </button>
           </div>}
 
+
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <SummaryCard label="Total Reviews"
+
+          <SummaryCard 
+          label="Total Reviews"
            value="5"
             note="All time" 
             icon={<FiStar />} 
             style="bg-violet-50 text-violet-700" />
+
           <SummaryCard 
           label="Suggestions Implemented" 
-          value="3" note="This year"
+          value="3" 
+          note="This year"
            icon={<FiCheckCircle />} 
            style="bg-emerald-50 text-emerald-600" />
+
           <SummaryCard 
           label="Pending Feedback"
            value="1"
             note="Awaiting response"
              icon={<FiClock />} 
              style="bg-amber-50 text-amber-600" />
-          <SummaryCard label="Your Impact Score" value="4.6/5" note="Thank you!" icon={<FiSmile />} style="bg-blue-50 text-blue-600" />
+
+          <SummaryCard 
+          label="Your Impact Score" 
+          value="4.6/5" 
+          note="Thank you!" 
+          icon={<FiSmile />} 
+          style="bg-blue-50 text-blue-600" />
         </section>
 
         <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1.05fr)_minmax(420px,.95fr)]">
@@ -228,7 +278,7 @@ export default function WorkerReviews() {
               </div>
               <div className="mt-3 divide-y divide-slate-100">
                 {reviews.slice(0, 3).map((item) => 
-                <article key={item.id} className="flex items-center gap-3 py-4">
+                <article key={item._id} className="flex items-center gap-3 py-4">
                   <div className="min-w-0 flex-1">
                     <StarRating rating={item.rating} />
                     <h3 className="mt-1 truncate text-sm font-bold text-slate-800">

@@ -31,13 +31,6 @@ export function WorkersideBar() {
                     href="/Worker/WorkerDashboard"/>
 
                      <SideMenuItem
-                     icon={<MdOutlineRequestPage/>}
-                    item ="Request"
-                    active={active}
-                    setActive={setActive}
-                    href="/Worker/WorkerRequest"/>
-
-                     <SideMenuItem
                      icon={<GrProjects/>}
                     item ="Projects"
                     active={active}

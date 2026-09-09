@@ -15,7 +15,18 @@ export function useFetchReviews() {
     }
   }, [dispatch, role, status]);
 
-  return { role, reviews, status, error,
-    hasReviews: status === "success" && reviews.length > 0,
+   const totalReviews = reviews.length;
+  const pendingReviews = reviews.filter((complaint) => complaint.status.toLowerCase() === "pending").length;
+  const submittedReviews = reviews.filter((complaint) => complaint.status.toLowerCase() === "Submitted").length;
+
+  return {
+    role,
+    reviews,
+    error,
+    status,
+    hasReviews: status === "success" && totalReviews > 0,
+    totalReviews,
+    pendingReviews,
+    submittedReviews,
   };
 }

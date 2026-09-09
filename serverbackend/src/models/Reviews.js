@@ -2,15 +2,15 @@ import mongoose, {Schema} from "mongoose"
 
 
 const reviewSchema = new Schema({
-ReviewFrom: {type: Schema.Types.ObjectId, refPath: "ReviewFromModel"},
-ReviewfromModel: {type: String,enum: ["landowner", "worker", "organizationauthority"]},
-  category: {type: String},
-  rating: {type: Number,},
-  title: {type: String, required: true},
-  review: String,
-  date: {type: Date, required: true},
+  // Worker IDs are strings; landowner and authority IDs are ObjectIds.
+  ReviewFrom: {type: Schema.Types.Mixed, required: true, refPath: "ReviewfromModel"},
+  ReviewfromModel: {type: String, required: true, enum: ["landowner", "worker", "authority", "organizationauthority"]},
+  category: {type: String, required: true, enum: ["Platform Experience", "Support & Service", "Feature Request", "General Feedback"]},
+  rating: {type: Number, required: true, min: 1, max: 5, validate: Number.isInteger},
+  review: {type: String, required: true, trim: true, maxlength: 1000},
+  suggestion: {type: String, trim: true, maxlength: 1000, default: ""},
+  contact: {type: Boolean, default: false},
   status: {type: String,enum: ["PENDING", "Submitted"],default: "PENDING"},
-  responses: {type:Number, }
 },{timestamps: true})
 
 

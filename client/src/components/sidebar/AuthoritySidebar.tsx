@@ -86,6 +86,20 @@ export function AuthoritySideBar() {
                     active={active}
                     setActive={setActive}
                     href="/Authority/authorityChat"/>
+
+                    <SideMenuItem
+                    icon={<MdReviews/>}
+                    item ="Communication"
+                    active={active}
+                    setActive={setActive}
+                    href="/Authority/authorityCommunications"/>
+
+                    <SideMenuItem
+                    icon={< TbReport/>}
+                    item ="Complaints"
+                    active={active}
+                    setActive={setActive}
+                    href="/Authority/authorityComplaints"/>
                 
                 <SideMenuItem
                 icon={<MdOutlinePolicy />}

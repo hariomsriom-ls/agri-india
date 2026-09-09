@@ -11,7 +11,7 @@ const userModels = {
   authority: organizationauthority,
 };
 
-export const getReviews = async (req, res) => {
+export const getNotifications = async (req, res) => {
 
   try {
     const User = req.user;

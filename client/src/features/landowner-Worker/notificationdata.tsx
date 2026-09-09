@@ -75,6 +75,6 @@ const UserNotificationSlice = createSlice({
 
     }
 )
-export const {setNotifications,clearNotifications,updateNotification,deleteNotification,markAllNotificationsRead} = UserNotificationSlice.actions
+export const {setNotifications,clearNotifications,updateNotification,deleteNotification} = UserNotificationSlice.actions
 
 export default UserNotificationSlice.reducer;

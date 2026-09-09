@@ -1,6 +1,7 @@
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import registrationValidations from "../../validations/registration.validations.js";
 import { pendingWorkerRegistration } from "../../models/users/pendingregistration.js";
+import { worker } from "../../models/users/workers.js";
 import { ApiResponse, ApiError } from "../../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import  {Address}  from "../../models/address/address.js";
@@ -51,6 +52,11 @@ const registerPendingWorker = asyncHandler(async(req, res) => {
     const existedRequest = await pendingWorkerRegistration.findOne({ $or: [{userName},{email},{mobileNumber}]  })
      if(existedRequest){
          throw new ApiError(409, "request already registered")
+         }
+
+    const existedWorker = await worker.findOne({ $or: [{userName},{email},{mobileNumber}]  })
+     if(existedWorker){
+         throw new ApiError(409, "Worker already exist")
          }
 
      let addressId = null;

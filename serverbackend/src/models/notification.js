@@ -5,7 +5,7 @@ const notificationSchema = new Schema({
     title: { type: String, required: true,},
     message: {type: String,required: true},
     Date: {type: Date},
-    unread: {type:boolean},
+    unread: {type: Boolean},
     notificationto: {type: Schema.Types.ObjectId, refPath: "NotificationToModel"},
     NotificationToModel: {type: String,enum: ["landowner", "worker", "organizationauthority"]},
     notificationfrom: {type: Schema.Types.ObjectId, refPath: "NotificationFromModel"},

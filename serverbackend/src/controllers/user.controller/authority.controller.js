@@ -7,14 +7,14 @@ import { ApiResponse, ApiError } from "../../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import { uploadOnCloudinary } from "../../utils/cloudinary.js";
 import { upload } from "../../middlewares/multer.middleware.js";
-import { organizationauthority } from "../../models/users/authority.js";
+import { authority } from "../../models/users/authority.js";
 import allowedauthorites from "../../models/record/allowedauthoritesrecord.js";
 import { userLogin, findUser} from "../../services/authorization.js"
 
 
 const generateAccessAndRefreshToken = async(organizationAuthorityId) => {
     try {
-        const organizationAuthority = await organizationauthority.findById(organizationAuthorityId)
+        const organizationAuthority = await authority.findById(organizationAuthorityId)
         
         const accessToken = organizationAuthority.generateAccessToken()
         const refreshToken = organizationAuthority.generateRefreshToken()
@@ -59,11 +59,11 @@ const registerAuthority = asyncHandler(async(req,res) => {
   const UserAddress = createAddress(address)
 
     
-  const organizationAuthority  = await organizationauthority
+  const organizationAuthority  = await authority
     .create({fullName, normalizedEmail, userName, password, contactNumber, Department,
         address: UserAddress._id, workingZone, bankaccount, IFSCcode})  
     
-const createdAuthority = await organizationauthority.findById(organizationAuthority._id)
+const createdAuthority = await authority.findById(organizationAuthority._id)
     .select("-password -refreshToken" )
      
     if(!createdAuthority){
@@ -84,7 +84,7 @@ const createdAuthority = await organizationauthority.findById(organizationAuthor
 
     const {accessToken, refreshToken} = await generateAccessAndRefreshToken(organizationAuthority._id)
 
-    const loggedInorganizationAuthority = await organizationauthority.findById(organizationAuthority._id)
+    const loggedInorganizationAuthority = await authority.findById(organizationAuthority._id)
     .select(" -password -refreshToken")
 
     const options ={
@@ -95,7 +95,7 @@ const createdAuthority = await organizationauthority.findById(organizationAuthor
     return res.status(200).cookie("acessToken", accessToken, options).cookie("refreshToken", refreshToken, options)
     .json(
         new ApiResponse(200,
-            {organizationauthority: loggedInorganizationAuthority,}, 
+            {authority: loggedInorganizationAuthority,}, 
             "authority logged in successfully"
     )
     )
@@ -103,7 +103,7 @@ const createdAuthority = await organizationauthority.findById(organizationAuthor
 
 
 const logoutorganizationAuthority = asyncHandler(async(req, res) => {
-    await organizationauthority.findByIdAndUpdate(
+    await authority.findByIdAndUpdate(
         req.organizationAuthority._id,
         {$set: {refreshToken: undefined}},
         {new: true}
@@ -127,7 +127,7 @@ const refreshAccessToken = asyncHandler(async (req, res)=>{
     try {
         const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET)
     
-        const organizationAuthority = await organizationauthority.findById(decodedToken?._id)
+        const organizationAuthority = await authority.findById(decodedToken?._id)
     
         if(!organizationAuthority){
             throw new ApiError(401," Invalid refresh token")

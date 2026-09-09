@@ -7,9 +7,9 @@ import { HiOutlineCurrencyRupee, HiOutlineMegaphone , LuLeaf,FiBell,FiCheckCircl
 import { useFetchNotifications } from "@/services/fetchNotification";
 import { useVisibleNotifications } from "@/services/visiblenotification";
 import { useAppDispatch } from "@/store/hooks";
-import { fetchUserNotification, markAllNotificationsRead, updateNotification,
-  type Filter, type Notification, type NotificationType,
+import { fetchUserNotification, updateNotification,type Filter, type Notification, type NotificationType,
 } from "@/features/landowner-Worker/notificationdata";
+import { SummaryCard, PageButton } from "@/components/cards/worker/worker-pages-combination";
 
 
 const filterItems: { label: Filter; icon: ReactNode; style: string }[] = [
@@ -30,25 +30,6 @@ const typeDesign: Record<NotificationType, { icon: ReactNode; style: string }> =
   "System Alerts": { icon: <FiShield />, style: "bg-violet-50 text-violet-600" },
 };
 
-  function SummaryCard({ label, value, note, icon, style,
-}: { label: string; value: string; note: string; icon: ReactNode; style: string;
-}) {
-  return (
-    <article className="flex min-h-28 items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className={`grid h-14 w-14 shrink-0 place-items-center rounded-xl text-2xl ${style}`}>
-        {icon}
-      </div>
-
-      <div>
-        <p className="text-xs font-semibold text-slate-600">{label}</p>
-        <p className="mt-1 text-2xl font-bold text-slate-950">{value}</p>
-        <p className="mt-1 text-[11px] text-slate-500">{note}</p>
-      </div>
-    </article>
-  );
-}
-
-
 function notificationTime(notification: Notification) {
   if (notification.time) return notification.time;
   const value = notification.Date ?? notification.createdAt;
@@ -56,20 +37,7 @@ function notificationTime(notification: Notification) {
   return date && !Number.isNaN(date.getTime()) ? date.toLocaleString() : "";
 }
 
-function PageButton({children,label,disabled,onClick,
-}: {children: ReactNode;label: string;disabled: boolean;onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      disabled={disabled}
-      onClick={onClick}
-      className="grid h-9 min-w-9 place-items-center rounded-lg border border-slate-200 bg-white px-2 font-semibold text-slate-500 disabled:cursor-not-allowed disabled:opacity-40" >
-      {children}
-    </button>
-  );
-}
+
 
 export default function WorkerNotifications() {
   const dispatch = useAppDispatch();
@@ -90,9 +58,6 @@ export default function WorkerNotifications() {
       || (category === "Unread" ? item.unread : item.type === category)).length;
   }
 
-  function markAllRead() {
-    dispatch(markAllNotificationsRead());
-  }
 
   if (!role) return <p className="p-6">Please sign in to view your notifications.</p>;
   if (status === "idle" || status === "loading") return <p className="p-6" role="status">Loading notifications...</p>;
@@ -172,7 +137,7 @@ export default function WorkerNotifications() {
             <div className="mt-4 space-y-2">
               <button
             type="button"
-            onClick={markAllRead}
+            onClick={() => dispatch(fetchUserNotification(role))}
             className="flex w-full items-center gap-3 rounded-lg p-2 text-left text-sm font-semibold hover:bg-slate-50">
               <span className="grid h-8 w-8 place-items-center rounded-lg bg-emerald-50 text-emerald-600">
               <FiMail />

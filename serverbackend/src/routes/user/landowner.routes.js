@@ -5,8 +5,9 @@ import { landowner } from "../../models/users/landowner.js";
 import { verifyJwt } from "../../middlewares/auth.middleware.js";
 import { refreshAccessToken } from "../../controllers/user.controller/landowner.controller.js";
 import { getUserDetails } from "../../services/getUserDetails.js";
-import { getPaymentDetails } from "../../services/getPaymentDetails.js";
-import { deleteReview, getReviews } from "../../services/getUserReviews.js";
+import { getPaymentDetails } from "../../controllers/payment.controller.js";
+import { deleteReview, getReviews, postReviews } from "../../controllers/reviews.controllers.js";
+import { getComplaints } from "../../controllers/complaint.controllers.js";
 const router = Router()
 
 router.route("/registerlandowner").post(registerLandOwner).patch( 
@@ -33,6 +34,9 @@ router.route("/landDetails").post(
 router.route("/get-user-details").get( verifyJwt(landowner), getUserDetails)
 router.route("/get-payment-details").get( verifyJwt(landowner), getPaymentDetails)
 router.route("/get-review-details").get( verifyJwt(landowner), getReviews)
+router.route("/post-Review").post( verifyJwt(landowner), postReviews)
+router.route("/post-reviews").post(verifyJwt(landowner), postReviews)
 router.route("/delete-review/:reviewId").delete( verifyJwt(landowner), deleteReview)
+router.route("/get-complaints").get( verifyJwt(landowner), getComplaints)
 
 export default router

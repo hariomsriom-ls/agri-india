@@ -57,4 +57,6 @@ authoritySchema.methods.generateRefreshToken = function(){
     )
 }
 
-export const organizationauthority = mongoose.model("authority", authoritySchema)
+export const authority = mongoose.model("authority", authoritySchema)
+// Keep existing imports working while controllers adopt the shorter export name.
+export { authority as organizationauthority };
