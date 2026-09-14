@@ -1,4 +1,4 @@
-import { asyncHandler } from "../../utils/asyncHandler.js";
+import { asyncHandler } from "../../utils/asynchandler.js";
 import { ApiError } from "../../utils/ApiResponse.js";
 import registrationValidations from "../../validations/registration.validations.js";
 import { pendingWorkerRegistration } from "../../models/users/pendingregistration.js";

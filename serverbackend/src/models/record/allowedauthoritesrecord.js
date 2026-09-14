@@ -20,7 +20,7 @@ const allowedAuthoritesSchema = new Schema({
       unique: true,
       trim: true,
     },
-},{timestaps: true})
+},{timestamps: true})
 
 const allowedauthorites = mongoose.model("allowedauthorites", allowedAuthoritesSchema);
 

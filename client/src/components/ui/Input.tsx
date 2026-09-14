@@ -12,6 +12,7 @@ interface InputFieldProps {
  value?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   readOnly?: boolean;
+  error?: string;
 }
 
 export function InputField({
@@ -24,7 +25,8 @@ export function InputField({
   className,
  value,
   onChange,
-  readOnly
+  readOnly,
+  error,
 }: InputFieldProps) {
   return (
     <div className="flex flex-col gap-2 w-full">
@@ -42,6 +44,9 @@ export function InputField({
         id={name}
         name={name}
         type={type}
+        aria-required={required}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? `${name}-error` : undefined}
         placeholder={placeholder}
         className={`w-full rounded-xl border border-gray-300 px-2 py-2 hover:bg-gray-100
                    outline-none transition 
@@ -51,6 +56,11 @@ export function InputField({
         onChange={onChange}
          readOnly={readOnly}
       />
+      {error && (
+        <span id={`${name}-error`} role="alert" className="text-red-400 text-xs">
+          {error}
+        </span>
+      )}
     </div>
   );
 }

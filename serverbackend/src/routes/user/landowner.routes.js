@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { loginLandOwner, logoutLandOwner, profileCompleteLandOwner, registerLandOwner, addLandDetails, changeCurrentPassword } from "../../controllers/user.controller/landowner.controller.js";
-import { upload } from "../../middlewares/multer.middleware.js";
+import { loginLandOwner, logoutLandOwner, registerLandOwner, addLandDetails, changeCurrentPassword } from "../../controllers/user.controller/landowner.controller.js";
+import { upload, profileImageUpload } from "../../middlewares/multer.middleware.js";
 import { landowner } from "../../models/users/landowner.js";
 import { verifyJwt } from "../../middlewares/auth.middleware.js";
 import { refreshAccessToken } from "../../controllers/user.controller/landowner.controller.js";
@@ -8,21 +8,14 @@ import { getUserDetails } from "../../services/getUserDetails.js";
 import { getPaymentDetails } from "../../controllers/payment.controller.js";
 import { deleteReview, getReviews, postReviews } from "../../controllers/reviews.controllers.js";
 import { getComplaints } from "../../controllers/complaint.controllers.js";
+import { getProjects } from "../../controllers/project.controllers.js";
+import multer from "multer";
+import { ApiError } from "../../utils/ApiResponse.js";
+import {uploaduserProfileImage} from "../../services/uploadProfileImage.js"
+import { profileUpdateUser } from "../../services/updateProfile.js";
 const router = Router()
 
-router.route("/registerlandowner").post(registerLandOwner).patch( 
-    verifyJwt(landowner),
-    upload.fields([
-        {
-            name: "image",
-            maxCount: 1
-        },
-        {
-            name: "governmentId",
-            maxCount: 1
-        }
-    ]),
-    profileCompleteLandOwner)
+router.route("/registerlandowner").post(registerLandOwner)
 router.route("/loginlandowner").post(loginLandOwner)
 router.route("/change-password").patch(verifyJwt(landowner), changeCurrentPassword)
 router.route("/logout").post(verifyJwt(landowner), logoutLandOwner)
@@ -38,5 +31,8 @@ router.route("/post-Review").post( verifyJwt(landowner), postReviews)
 router.route("/post-reviews").post(verifyJwt(landowner), postReviews)
 router.route("/delete-review/:reviewId").delete( verifyJwt(landowner), deleteReview)
 router.route("/get-complaints").get( verifyJwt(landowner), getComplaints)
+router.route("/get-projects").get(verifyJwt(landowner), getProjects("landowner"))
+router.route("/profile-image").patch(verifyJwt(landowner),profileImageUpload.single("image"),uploaduserProfileImage);
+router.route("/update-user-details").patch( verifyJwt(landowner), profileUpdateUser)
 
 export default router

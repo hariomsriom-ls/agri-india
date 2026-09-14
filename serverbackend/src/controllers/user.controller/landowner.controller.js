@@ -1,4 +1,4 @@
-import { asyncHandler } from "../../utils/asyncHandler.js";
+import { asyncHandler } from "../../utils/asynchandler.js";
 import registrationValidations from "../../validations/registration.validations.js";
 import { landowner } from "../../models/users/landowner.js"; 
 import {Address} from "../../models/address/address.js";
@@ -143,44 +143,7 @@ const refreshAccessToken = asyncHandler(async (req, res)=>{
 
 })
 
-const profileCompleteLandOwner = asyncHandler(async(req, res) => {
-    const {address, bankaccount, IFSCcode } = req.body
-    if(
-        [address, bankaccount, IFSCcode].some((fields) => field?.trim() === "")
-    ){
-        throw new ApiError(400, "all fields required")
-    }
-    const imageLocalPath = req.files?.image[0]?.path;
-    const governmentIdLocalPath = req.files?.governmentId[0]?.path;
 
-    const image = await uploadOnCloudinary(imageLocalPath)
-    const governmentId = await uploadOnCloudinary(governmentIdLocalPath)
-
-    const landOwnerId = req.landOwner?._id
-    const updateProfilelandOwner = await landowner.findByIdAndUpdate(landOwnerId,
-        {
-            $set: {
-                address, bankaccount, IFSCcode,
-                 image: image?.url || "",
-                 governmentId: governmentId.url || ""
-            },
-        },
-        {
-            new: true,
-            runValidators: false
-        }
-    ).select("-password -refreshToken");
-
-
-    if(!updateProfilelandOwner){
-        throw new ApiError(404,"landowner not found" )
-    }
-
-    return res.status(200).json(
-        new ApiResponse(200, updateProfilelandOwner, "details added successfully")
-    )
-
-})
 
 const changeCurrentPassword = asyncHandler(async(req,res) => {
     const {oldPassword, newPassword} = req.body
@@ -239,12 +202,15 @@ const addLandDetails = asyncHandler(async(req,res) => {
     )
 
 })
+
+
+
+
 export {
      registerLandOwner,
      loginLandOwner,
      logoutLandOwner,
      refreshAccessToken,
-     profileCompleteLandOwner,
      changeCurrentPassword,
      addLandDetails
      }

@@ -1,63 +1,24 @@
 "use client";
 import React, { useEffect } from "react";
-import {useForm, SubmitHandler} from "React-hook-form";
 import { InputField } from "@/components/ui/Input";
 import { useworkerRegistration } from "@/contexts/registration/workerProvider";
 import { useAuthorityRegistration } from "@/contexts/registration/authorityProvider";
 import { useLandownerRegistration } from "@/contexts/registration/landownerProvider";
 import { forwardRef, useImperativeHandle, useState } from "react";
-import {MdOutlineFileUpload } from "react-icons/md";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-/*
-type WorkerPersonalFormValues = {
-  fullName: string;
-  email: string;
-  mobileNumber: string;
-  DOB: string;
-  userName: string;
-  password: string;
-};
-
-const WorkerPersonalInfoSchema = z.object({
-  fullName: z.string().trim().min(1, "Name is required").min(2, "Name must be at least 2 characters").max(50, "Name must be at most 50 characters"),
-  email: z.string().trim().min(1, "Name is required").pipe(z.email({error:"Enter a valid email address"})),
-  mobileNumber: z.string().trim().min(1, "Name is required").regex(/^[6-9]\d{9}$/,{error: "Enter a valid 10-digit Indian mobile number"}),
-  DOB: z.string().min(1, { error: "Date of birth is required" }).refine((value) => !isNaN(Date.parse(value)), "Enter a valid date"),
-  userName: z.string().trim().min(4, "Username must be at least 4 characters"),
-  password: z.string().trim().min(8, "Password must be at least 8 characters").regex(/[A-Z]/, {error: "Password must contain at least one uppercase letter",})
-  .regex(/[^A-Za-z0-9\s]/, { error: "Password must contain at least one special character", }),
-});*/
+import {
+  personalInfoSchema, workerPersonalInfoSchema, authorityPersonalInfoSchema,
+  addressSchema, workerAddressSchema, bankSchema, workerImagesSchema,
+} from "@/validations/registration";
+import { useRegistrationStep } from "./useRegistrationStep";
 
 export interface WorkerPersonalInfoFormRef {
-  saveData: () => void;
+  saveData: () => boolean;
 }
 
 export const WorkerPersonalInfoForm = forwardRef<WorkerPersonalInfoFormRef>((props, ref) => {
   const { WorkerformData, UpdateWorkerformdata } = useworkerRegistration();
-  /*const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    getValues,
-    reset,
-  } = useForm<WorkerPersonalFormValues>({
-    resolver: zodResolver(WorkerPersonalInfoSchema),
-    defaultValues: {
-      fullName: WorkerformData.fullName || "",
-      email: WorkerformData.email || "",
-      mobileNumber: WorkerformData.mobileNumber || "",
-      DOB: WorkerformData.DOB || "",
-      userName: WorkerformData.userName || "",
-      password: WorkerformData.password || "",
-    },
-  });*/
-      const [stepData, setStepData] = useState({
-         name: "", email: "", mobile: "", dob: "", username: "", password: "",
-});
-    useEffect(() => {
-    setStepData({
+
+      const { stepData, setStepData, errors, validate } = useRegistrationStep(workerPersonalInfoSchema, {
         name: WorkerformData.fullName || "",
         email: WorkerformData.email || "",
         mobile: WorkerformData.mobileNumber || "",
@@ -65,79 +26,62 @@ export const WorkerPersonalInfoForm = forwardRef<WorkerPersonalInfoFormRef>((pro
         username: WorkerformData.userName || "",
         password: WorkerformData.password || "",
     });
-    }, []);
 
-  /*useEffect(() => {
-    reset({
-      fullName: WorkerformData.fullName || "",
-      email: WorkerformData.email || "",
-      mobileNumber: WorkerformData.mobileNumber || "",
-      DOB: WorkerformData.DOB || "",
-      userName: WorkerformData.userName || "",
-      password: WorkerformData.password || "",
-    });
-  }, []);*/
-
- /* useImperativeHandle(ref, () => ({
-    saveData: () => {
-      const values = getValues();
-      UpdateWorkerformdata({
-        fullName: values.fullName,
-        mobileNumber: values.mobileNumber,
-        email: values.email,
-        DOB: values.DOB,
-        password: values.password,
-        userName: values.userName,
-      });
-    },
-  }));*/
-     useImperativeHandle(ref, ()=>({
+    useImperativeHandle(ref, () => ({
         saveData: () => {
+            const values = validate();
+            if (!values) return false;
             UpdateWorkerformdata({
-                fullName: stepData.name,
-                mobileNumber: stepData.mobile,
-                email: stepData.email, 
-                DOB: stepData.dob,
-                password: stepData.password,
-                userName: stepData.username, 
+                fullName: values.name,
+                mobileNumber: values.mobile,
+                email: values.email,
+                DOB: values.dob,
+                password: values.password,
+                userName: values.username,
             });
+            return true;
         },
-     }),[stepData]);
-         return (
+    }));
+    return (
         <>
             <h1 className="text-4xl text-white absolute top-5 right-30">
                 Worker Information
             </h1>
             <div className="grid grid-cols-2 gap-5 mt-8">
-               
+
               <InputField
                  label="Full Name"
                  labelclassName="text-white"
-                value={stepData.name}
+                error={errors.name}
+                 value={stepData.name}
                  onChange={(e) => {setStepData({ ...stepData, name: e.target.value }) }}
                  name="WorkerName"
                  placeholder="Enter Full Name"
                  className="text-white hover:text-black"
                   required />
-                            
+
              <InputField
+                 type="email"
                  label="Email"
                  labelclassName="text-white"
                  name="WorkerEmail"
                  placeholder="Enter Registered Email"
                  className="text-white hover:text-black"
-                value={stepData.email}
+                error={errors.email}
+                 value={stepData.email}
                  onChange={(e) => { setStepData({ ...stepData, email: e.target.value })}}
 
-                  />
-                            
+                  required />
+
              <InputField
+                 type="tel"
                  label="Contact Number"
                  labelclassName="text-white"
                  name="WorkerNumber"
                  placeholder="Enter Contact Number"
                  className="text-white hover:text-black"
-                value={stepData.mobile}
+                error={errors.mobile}
+                 value={stepData.mobile}
                  onChange={(e) => {setStepData({ ...stepData, mobile: e.target.value })}}
                  required />
 
@@ -148,26 +92,30 @@ export const WorkerPersonalInfoForm = forwardRef<WorkerPersonalInfoFormRef>((pro
                  name="WorkerDob"
                  placeholder="YYYY-MM-DD"
                  className="text-white hover:text-black [color-scheme:dark]"
+                 error={errors.dob}
                  value={stepData.dob}
                  onChange={(e) => {setStepData({ ...stepData, dob: e.target.value })  }}
                  required />
-            
+
               <InputField
                 label="Username"
                 labelclassName="text-white"
                 name="WorkerUsername"
                 placeholder="Enter Username"
                 className="text-white hover:text-black"
-               value={stepData.username}
+               error={errors.username}
+                 value={stepData.username}
                  onChange={(e) => {setStepData({ ...stepData, username: e.target.value }) }}
                  required />
-            
+
              <InputField
+                 type="password"
                  label="Password"
                  labelclassName="text-white"
                  name="WorkerPassword"
                  placeholder="Enter strong password"
                  className="text-white hover:text-black"
+                 error={errors.password}
                  value={stepData.password}
                  onChange={(e) => {setStepData({ ...stepData, password: e.target.value }) }}
                   required />
@@ -175,127 +123,12 @@ export const WorkerPersonalInfoForm = forwardRef<WorkerPersonalInfoFormRef>((pro
         </>
     );
 });
-
- /* return (
-    <>
-      <h1 className="text-4xl text-white absolute top-5 right-30">
-        Worker Information
-      </h1>
-
-      <div className="grid grid-cols-2 gap-5 mt-8">
-
-        <div className="flex flex-col gap-1">
-          <InputField
-            label="Full Name"
-            labelclassName="text-white"
-            placeholder="Enter Full Name"
-            className="text-white hover:text-black"
-            required 
-            {/*...register("fullName")
-          />
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <InputField
-            label="Email"
-            labelclassName="text-white"
-            placeholder="Enter Registered Email"
-            className="text-white hover:text-black"
-            {/*...register("email")}
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <InputField
-            label="Contact Number"
-            labelclassName="text-white"
-            placeholder="Enter 10-digit mobile number"
-            className="text-white hover:text-black"
-            required
-            {/*...register("mobileNumber", {
-              required: "Mobile number is required",
-              pattern: {
-                value: /^[6-9]\d{9}$/,
-                message: "Enter a valid 10-digit Indian mobile number",
-              },
-            })}
-          />
-          {errors.mobileNumber && (
-            <span className="text-red-400 text-xs mt-1">{errors.mobileNumber.message}</span>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <InputField
-            label="Date of Birth"
-            labelclassName="text-white"
-            type="date"
-            placeholder="YYYY-MM-DD"
-            className="text-white hover:text-black [color-scheme:dark]"
-            required
-            {...register("DOB", {
-              required: "Date of birth is required",
-            })}
-          />
-          {errors.DOB && (
-            <span className="text-red-400 text-xs mt-1">{errors.DOB.message}</span>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <InputField
-            label="Username"
-            labelclassName="text-white"
-            placeholder="Enter Username"
-            className="text-white hover:text-black"
-            required
-            {...register("userName", {
-              required: "Username is required",
-              minLength: { value: 3, message: "Username must be at least 3 characters" },
-              pattern: {
-                value: /^[a-zA-Z0-9_]+$/,
-                message: "Only letters, numbers, and underscores allowed",
-              },
-            })}
-          />
-          {errors.userName && (
-            <span className="text-red-400 text-xs mt-1">{errors.userName.message}</span>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <InputField
-            label="Password"
-            labelclassName="text-white"
-            type="password"
-            placeholder="Enter strong password (min 8 chars)"
-            className="text-white hover:text-black"
-            required
-            {...register("password", {
-              required: "Password is required",
-              minLength: { value: 8, message: "Password must be at least 8 characters" },
-            })}
-          />
-          {errors.password && (
-            <span className="text-red-400 text-xs mt-1">{errors.password.message}</span>
-          )}
-        </div>
-
-      </div>
-    </>
-  );
-});*/
 WorkerPersonalInfoForm.displayName = "WorkerPersonalInfoForm";
 
-
-export interface WorkerAddressFormRef {saveData: () => void;}
+export interface WorkerAddressFormRef {saveData: () => boolean;}
 export const WorkerAddressForm = forwardRef<WorkerAddressFormRef>((props, ref)=> {
     const { WorkerformData, UpdateWorkerformdata} = useworkerRegistration();
-    const [stepData, setStepData] = useState({
-        houseno: "", landmark: "", country: "", city: "", district: "", state: "", pincode: "", street: "",
-
-    })
-     useEffect(() => {
-    setStepData({
+    const { stepData, setStepData, errors, validate } = useRegistrationStep(workerAddressSchema, {
                 houseno: WorkerformData.houseno  || "",
                 street: WorkerformData.street || "",
                 landmark: WorkerformData.landmark || "",
@@ -305,27 +138,29 @@ export const WorkerAddressForm = forwardRef<WorkerAddressFormRef>((props, ref)=>
                 state: WorkerformData.state || "",
                 pincode: WorkerformData.pincode || ""
     });
-    }, []);
 
-    useImperativeHandle(ref,()=>({
-        saveData: ()=>{
+    useImperativeHandle(ref, () => ({
+        saveData: () => {
+            const values = validate();
+            if (!values) return false;
             UpdateWorkerformdata({
-                houseno: stepData.houseno,
-                street: stepData.street,
-                landmark: stepData.landmark,
-                country: stepData.country,
-                city: stepData.city,
-                district: stepData.district,
-                state: stepData.state,
-                pincode: stepData.pincode
-            })
-        }
-    }),[stepData])
+                houseno: values.houseno,
+                street: values.street,
+                landmark: values.landmark,
+                country: values.country,
+                city: values.city,
+                district: values.district,
+                state: values.state,
+                pincode: values.pincode
+            });
+            return true;
+        },
+    }));
     return (
         <>
             <h1 className="text-4xl text-white absolute top-5 right-30">
                 Worker Information
-            </h1> 
+            </h1>
             <div className="grid grid-cols-2 gap-5 mt-8">
                <InputField
                   label="House No/Flat no/ Road no"
@@ -333,56 +168,62 @@ export const WorkerAddressForm = forwardRef<WorkerAddressFormRef>((props, ref)=>
                   name="woHouseno"
                   placeholder="Enter House no"
                   className="text-white hover:text-black"
-                  value={stepData.houseno}
+                  error={errors.houseno}
+                 value={stepData.houseno}
                  onChange={(e)=> setStepData({ ...stepData, houseno: e.target.value })}
 
-                   />
+                   required />
                    <InputField
                  label="Street"
                  labelclassName="text-white"
                   name="wostreet"
                  placeholder="Enter nearby landmark"
                  className="text-white hover:text-black"
+                 error={errors.street}
                  value={stepData.street}
                  onChange={(e)=> setStepData({ ...stepData, street: e.target.value })}
-                 />
-               
+                 required />
+
                  <InputField
                  label="Land Mark"
                  labelclassName="text-white"
                   name="wolandmark"
                  placeholder="Enter nearby landmark"
                  className="text-white hover:text-black"
+                 error={errors.landmark}
                  value={stepData.landmark}
                  onChange={(e)=> setStepData({ ...stepData, landmark: e.target.value })}
-                 />
-               
+                 required />
+
                   <InputField
                  label="Country"
                  labelclassName="text-white"
                  name="wocountry"
                  placeholder="Enter House no"
                  className="text-white hover:text-black"
+                 error={errors.country}
                  value={stepData.country}
                  onChange={(e)=> setStepData({ ...stepData, country: e.target.value })}
                  required />
-            
+
               <InputField
                 label="city"
                 labelclassName="text-white"
                 name="Workercity"
                 placeholder="Enter city"
                 className="text-white hover:text-black"
-                value={stepData.city}
+                error={errors.city}
+                 value={stepData.city}
                  onChange={(e)=> setStepData({ ...stepData, city: e.target.value })}
                  required />
-            
+
              <InputField
                  label="district"
                  labelclassName="text-white"
                  name="Workerdistrict"
                  placeholder="district"
                  className="text-white hover:text-black"
+                 error={errors.district}
                  value={stepData.district}
                  onChange={(e)=> setStepData({ ...stepData, district: e.target.value })}
                   required />
@@ -393,16 +234,18 @@ export const WorkerAddressForm = forwardRef<WorkerAddressFormRef>((props, ref)=>
                 name="Workerstate"
                 placeholder="Enter state"
                 className="text-white hover:text-black"
-                value={stepData.state}
+                error={errors.state}
+                 value={stepData.state}
                  onChange={(e)=> setStepData({ ...stepData, state: e.target.value })}
                  required />
-            
+
              <InputField
                  label="pincode"
                  labelclassName="text-white"
                  name="Workerpincode"
                  placeholder="Enter pincode"
                  className="text-white hover:text-black"
+                 error={errors.pincode}
                  value={stepData.pincode}
                  onChange={(e)=> setStepData({ ...stepData, pincode: e.target.value })}
                   required />
@@ -411,31 +254,30 @@ export const WorkerAddressForm = forwardRef<WorkerAddressFormRef>((props, ref)=>
         </>
     );
 });
+WorkerAddressForm.displayName = "WorkerAddressForm";
 
-
-export interface WorkerBankFormRef{ saveData: ()=> void;}
+export interface WorkerBankFormRef{ saveData: () => boolean;}
 export const WorkerBankForm = forwardRef<WorkerBankFormRef>((props, ref)=>{
     const{ WorkerformData, UpdateWorkerformdata}= useworkerRegistration();
-    const[stepData, setStepData] = useState({
-        bankAccount: "", IfscCode: "", Workingzone: ""
-    })
-    useEffect(() => {
-    setStepData({
+    const { stepData, setStepData, errors, validate } = useRegistrationStep(bankSchema, {
                 bankAccount: WorkerformData.bankaccount  || "",
                 IfscCode: WorkerformData.IFSCcode || "",
                 Workingzone: WorkerformData.workingZone || "",
-                
+
     });
-    }, []);
-    useImperativeHandle(ref, ()=>({
-        saveData: ()=>{
+
+    useImperativeHandle(ref, () => ({
+        saveData: () => {
+            const values = validate();
+            if (!values) return false;
             UpdateWorkerformdata({
-                bankaccount: stepData.bankAccount,
-                IFSCcode: stepData.IfscCode,
-                workingZone: stepData.Workingzone
-            })
-        }
-    }),[stepData])
+                bankaccount: values.bankAccount,
+                IFSCcode: values.IfscCode,
+                workingZone: values.Workingzone
+            });
+            return true;
+        },
+    }));
     return (
         <>
             <h1 className="text-4xl text-white absolute top-5 right-30">
@@ -448,16 +290,18 @@ export const WorkerBankForm = forwardRef<WorkerBankFormRef>((props, ref)=>{
                  name="Workeraccount"
                  placeholder="Enter Bank Account Number"
                  className="text-white hover:text-black"
+                 error={errors.bankAccount}
                  value={stepData.bankAccount}
                  onChange={(e)=>setStepData({...stepData, bankAccount: e.target.value})}
                   required />
-                            
+
              <InputField
                  label="Ifsc Code"
                  labelclassName="text-white"
                  name="WorkerIfscCode"
                  placeholder="Enter ifsc code"
                  className="text-white hover:text-black"
+                 error={errors.IfscCode}
                  value={stepData.IfscCode}
                  onChange={(e)=> setStepData({...stepData, IfscCode: e.target.value})}
                   required />
@@ -468,103 +312,101 @@ export const WorkerBankForm = forwardRef<WorkerBankFormRef>((props, ref)=>{
                  name="Workerworkingzone"
                  placeholder="Ente working zone"
                  className="text-white hover:text-black"
+                 error={errors.Workingzone}
                  value={stepData.Workingzone}
                  onChange={(e)=> setStepData({...stepData, Workingzone : e.target.value})}
                   required />
-                            
+
             </div>
         </>
     );
 });
+WorkerBankForm.displayName = "WorkerBankForm";
 
-export interface WorkerImageFormRef{ saveData: ()=> void;}
-export const WorkerImageForm = forwardRef<WorkerImageFormRef>((props, ref)=>{
-    const{ WorkerformData, UpdateWorkerformdata}= useworkerRegistration();
-    const[image, setImage] = useState<File | null>(null);
-    const[imagePreview, setImagePreview] = useState<string>("");
-    const[governmentid, setgovernmentid] = useState<File | null>(null);
-    const[governmentidPreview, setgovernmentidPreview] = useState<string>("");
-    const handleImageChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if(!file) return;
-        setImage(file);
-        const PreviewUrl = URL.createObjectURL(file);
-        setImagePreview(PreviewUrl);
-        UpdateWorkerformdata({image: file});
-    }
-    const handledocumentimageChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if(!file) return;
-        setgovernmentid(file);
-        const PreviewUrl = URL.createObjectURL(file);
-        setgovernmentidPreview(PreviewUrl);
-        UpdateWorkerformdata({governmentid: file});
-    }
-    
+export interface WorkerImageFormRef { saveData: () => boolean; }
+
+function ImageUploadField({ name, label, file, error, onChange }: {
+    name: string;
+    label: string;
+    file: File | null;
+    error?: string;
+    onChange: (file: File | null) => void;
+}) {
+    const [preview, setPreview] = useState(() => file ? URL.createObjectURL(file) : "");
+
+    useEffect(() => {
+        return () => { if (preview) URL.revokeObjectURL(preview); };
+    }, [preview]);
+
+    return (
+        <div className="flex min-w-0 flex-col gap-3 text-white">
+            <label htmlFor={name}>{label}<span className="text-red-500 ml-1">*</span></label>
+            <div className="h-40 border-2 border-white/50 rounded-xl overflow-hidden">
+                {preview && (
+                    // Local file previews use a temporary blob URL.
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={preview} alt={`${label} preview`} className="w-full h-full object-contain" />
+                )}
+            </div>
+            <input
+                id={name}
+                name={name}
+                type="file"
+                accept="image/jpeg,image/png"
+                aria-required="true"
+                aria-invalid={Boolean(error)}
+                aria-describedby={`${name}-help${error ? ` ${name}-error` : ""}`}
+                className="w-full bg-gray-200 text-black p-2 rounded"
+                onChange={(event) => {
+                    const selectedFile = event.target.files?.[0] ?? null;
+                    onChange(selectedFile);
+                    setPreview(selectedFile && ["image/jpeg", "image/jpg", "image/png"].includes(selectedFile.type)
+                        ? URL.createObjectURL(selectedFile) : "");
+                }}
+            />
+            <p id={`${name}-help`} className="text-xs text-gray-300">JPG or PNG, up to 10 MB{file ? ` ? ${file.name}` : ""}</p>
+            {error && <p id={`${name}-error`} role="alert" className="text-red-400 text-xs">{error}</p>}
+        </div>
+    );
+}
+
+export const WorkerImageForm = forwardRef<WorkerImageFormRef>((props, ref) => {
+    const { WorkerformData, UpdateWorkerformdata } = useworkerRegistration();
+    const { stepData, setStepData, errors, validate } = useRegistrationStep<{
+        image: File | null;
+        governmentid: File | null;
+    }>(workerImagesSchema, {
+        image: WorkerformData.image,
+        governmentid: WorkerformData.governmentid,
+    });
+
+    useImperativeHandle(ref, () => ({
+        saveData: () => {
+            const values = validate();
+            if (!values) return false;
+            UpdateWorkerformdata(values);
+            return true;
+        },
+    }));
 
     return (
         <>
-            <h1 className="text-4xl text-white absolute top-5 right-30">
-                Worker Information
-            </h1>
-            <div className="grid grid-cols-2 gap-2 mt-8 h-full ">
-            <div className="w-1/2 h-1/3">
-            <div className="w-7/10 h-full bg-black ml-20  border-2 border-white/50">
-            {imagePreview && (
-                <img 
-                src={imagePreview} 
-                alt="Image Preview"
-                className="w-full h-full object-cover rounded-xs"
-             />)}
-            </div>
-              <input
-              name="WorkerImage"
-              className="bg-gray-200 hover:bg-gray-500 text-black py-2 px-4 rounded mt-5"
-              type = "file"
-              accept="image/*"
-              onChange={handleImageChange}
-               />
-            <button
-            className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded mt-5 ml-20 w-full">
-                Save Image
-            </button>
-             </div>
-             <div className="w-1/2 h-1/3 ">
-             <div className="w-7/10 h-full bg-black border-2 border-white/50  ml-15">
-             {governmentidPreview && (
-                <img 
-                src={governmentidPreview} 
-                alt="Government ID Preview"
-                className="w-full h-full object cover rounded-xs"
-                />
-             )}
-             </div>
-               <input 
-              name = "WorkerGovermentImage"
-              className="bg-gray-200 hover:bg-gray-500 text-black py-2 px-4 rounded mt-5 "
-              type = "file"
-              accept="image/*"
-              onChange={handledocumentimageChange}
-               />
-             <button
-            className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded mt-5 ml-15 w-full">
-                Save Government ID
-            </button>
-             </div>   
+            <h1 className="text-4xl text-white absolute top-5 right-30">Worker Information</h1>
+            <div className="grid grid-cols-2 gap-5 mt-8">
+                <ImageUploadField name="WorkerImage" label="Profile image" file={stepData.image}
+                    error={errors.image} onChange={(image) => setStepData({ ...stepData, image })} />
+                <ImageUploadField name="WorkerGovernmentImage" label="Government ID image" file={stepData.governmentid}
+                    error={errors.governmentid} onChange={(governmentid) => setStepData({ ...stepData, governmentid })} />
             </div>
         </>
     );
 });
+WorkerImageForm.displayName = "WorkerImageForm";
 
-
-export interface AuthorityPersonalInfoFormRef{ saveData: ()=> void;}
+export interface AuthorityPersonalInfoFormRef{ saveData: () => boolean;}
 export const AuthorityPersonalInfoForm= forwardRef<AuthorityPersonalInfoFormRef>((props, ref)=>{
      const{AuthorityformData, UpdateAuthorityformdata}= useAuthorityRegistration();
-    const[stepData, setStepData] = useState({
-          name: "", email: "", mobile: "", authorityid: "", username: "", password: "", department: ""
-    });
-     useEffect(() => {
-    setStepData({
+    const { stepData, setStepData, errors, validate } = useRegistrationStep(authorityPersonalInfoSchema, {
         name: AuthorityformData.fullName || "",
         email: AuthorityformData.email || "",
         mobile: AuthorityformData.mobilenumber || "",
@@ -573,21 +415,23 @@ export const AuthorityPersonalInfoForm= forwardRef<AuthorityPersonalInfoFormRef>
         password: AuthorityformData.password || "",
         department: AuthorityformData.department || "",
     });
-    }, []);
 
-    useImperativeHandle(ref, ()=>({
-        saveData: ()=>{
+    useImperativeHandle(ref, () => ({
+        saveData: () => {
+            const values = validate();
+            if (!values) return false;
             UpdateAuthorityformdata({
-                fullName: stepData.name,
-                mobilenumber: stepData.mobile,
-                email: stepData.email, 
-                authorityId: stepData.authorityid,
-                department: stepData.department,
-                password: stepData.password,
-                username: stepData.username,
+                fullName: values.name,
+                mobilenumber: values.mobile,
+                email: values.email,
+                authorityId: values.authorityid,
+                department: values.department,
+                password: values.password,
+                username: values.username,
             });
-        }}
-    ),[stepData]);
+            return true;
+        },
+    }));
     return (
         <>
             <h1 className="text-4xl text-white absolute top-5 right-30">
@@ -600,46 +444,54 @@ export const AuthorityPersonalInfoForm= forwardRef<AuthorityPersonalInfoFormRef>
                  name="auName"
                  placeholder="Enter Full Name"
                  className="text-white hover:text-black"
+                 error={errors.name}
                  value={stepData.name}
                  onChange={(e) => {setStepData({ ...stepData, name: e.target.value }) }}
                   required />
-                            
+
              <InputField
+                 type="email"
                  label="Email"
                  labelclassName="text-white"
                  name="auEmail"
                  placeholder="Enter Registered Email"
                  className="text-white hover:text-black"
+                 error={errors.email}
                  value={stepData.email}
                  onChange={(e) => {setStepData({ ...stepData,email : e.target.value }) }}
                   required />
-                            
+
              <InputField
+                 type="tel"
                  label="Contact Number"
                  labelclassName="text-white"
                  name="auNumber"
                  placeholder="Enter Contact Number"
                  className="text-white hover:text-black"
+                 error={errors.mobile}
                  value={stepData.mobile}
                  onChange={(e) => {setStepData({ ...stepData, mobile: e.target.value }) }}
                  required />
-            
+
               <InputField
                 label="Username"
                 labelclassName="text-white"
                 name="auUsername"
                 placeholder="Enter Username"
                 className="text-white hover:text-black"
-                value={stepData.username}
+                error={errors.username}
+                 value={stepData.username}
                  onChange={(e) => {setStepData({ ...stepData, username: e.target.value }) }}
                  required />
-            
+
              <InputField
+                 type="password"
                  label="Password"
                  labelclassName="text-white"
                  name="auPassword"
                  placeholder="Enter strong password"
                  className="text-white hover:text-black"
+                 error={errors.password}
                  value={stepData.password}
                  onChange={(e) => {setStepData({ ...stepData, password: e.target.value }) }}
                   required />
@@ -650,16 +502,18 @@ export const AuthorityPersonalInfoForm= forwardRef<AuthorityPersonalInfoFormRef>
                  name="audepartment"
                  placeholder="Enter your department"
                  className="text-white hover:text-black"
+                 error={errors.department}
                  value={stepData.department}
                  onChange={(e) => {setStepData({ ...stepData, department: e.target.value }) }}
                   required />
-            
+
             <InputField
                  label="Authority Id"
                  labelclassName="text-white"
                  name="auid"
                  placeholder="Enter your id"
                  className="text-white hover:text-black"
+                 error={errors.authorityid}
                  value={stepData.authorityid}
                  onChange={(e) => {setStepData({ ...stepData,authorityid : e.target.value }) }}
                   required />
@@ -667,17 +521,12 @@ export const AuthorityPersonalInfoForm= forwardRef<AuthorityPersonalInfoFormRef>
         </>
     );
 });
+AuthorityPersonalInfoForm.displayName = "AuthorityPersonalInfoForm";
 
-
-export interface AuthorityAddressFormRef{ saveData: ()=> void;}
+export interface AuthorityAddressFormRef{ saveData: () => boolean;}
 export const AuthorityAddressForm = forwardRef<AuthorityAddressFormRef>((props, ref)=>  {
         const {AuthorityformData, UpdateAuthorityformdata} = useAuthorityRegistration();
-    const [stepData, setStepData] = useState({
-        houseno: "", landmark: "", country: "", city: "", district: "", state: "", pincode: ""
-
-    })
-     useEffect(() => {
-    setStepData({
+    const { stepData, setStepData, errors, validate } = useRegistrationStep(addressSchema, {
                 houseno: AuthorityformData.houseno  || "",
                 landmark: AuthorityformData.landmark || "",
                 country: AuthorityformData.country || "",
@@ -686,21 +535,23 @@ export const AuthorityAddressForm = forwardRef<AuthorityAddressFormRef>((props, 
                 state: AuthorityformData.state || "",
                 pincode: AuthorityformData.pincode || ""
     });
-    }, []);
 
-    useImperativeHandle(ref,()=>({
-        saveData: ()=>{
+    useImperativeHandle(ref, () => ({
+        saveData: () => {
+            const values = validate();
+            if (!values) return false;
             UpdateAuthorityformdata({
-                houseno: stepData.houseno,
-                landmark: stepData.landmark,
-                country: stepData.country,
-                city: stepData.city,
-                district: stepData.district,
-                state: stepData.state,
-                pincode: stepData.pincode
-            })
-        }
-    }),[stepData])
+                houseno: values.houseno,
+                landmark: values.landmark,
+                country: values.country,
+                city: values.city,
+                district: values.district,
+                state: values.state,
+                pincode: values.pincode
+            });
+            return true;
+        },
+    }));
     return (
         <>
             <h1 className="text-4xl text-white absolute top-5 right-30">
@@ -713,46 +564,51 @@ export const AuthorityAddressForm = forwardRef<AuthorityAddressFormRef>((props, 
                   name="auHouseno"
                   placeholder="Enter House no"
                   className="text-white hover:text-black"
-                   value={stepData.houseno}
+                   error={errors.houseno}
+                 value={stepData.houseno}
                  onChange={(e) => {setStepData({ ...stepData,houseno : e.target.value }) }}
-                   />
-               
+                   required />
+
                  <InputField
                  label="Land Mark"
                  labelclassName="text-white"
                   name="aulandmark"
                  placeholder="Enter nearby landmark"
                  className="text-white hover:text-black"
-                  value={stepData.landmark}
+                  error={errors.landmark}
+                 value={stepData.landmark}
                  onChange={(e) => {setStepData({ ...stepData, landmark: e.target.value }) }}
                   required />
-               
+
                   <InputField
                  label="Country"
                  labelclassName="text-white"
                  name="aucountry"
                  placeholder="Enter House no"
                  className="text-white hover:text-black"
-                  value={stepData.country}
+                  error={errors.country}
+                 value={stepData.country}
                  onChange={(e) => {setStepData({ ...stepData, country: e.target.value }) }}
                  required />
-            
+
               <InputField
                 label="city"
                 labelclassName="text-white"
                 name="aucity"
                 placeholder="Enter city"
                 className="text-white hover:text-black"
+                 error={errors.city}
                  value={stepData.city}
                  onChange={(e) => {setStepData({ ...stepData, city: e.target.value }) }}
                  required />
-            
+
              <InputField
                  label="district"
                  labelclassName="text-white"
                  name="audistrict"
                  placeholder="district"
-                  value={stepData.district}
+                  error={errors.district}
+                 value={stepData.district}
                  onChange={(e) => {setStepData({ ...stepData, district: e.target.value }) }}
                  className="text-white hover:text-black"
                   required />
@@ -763,17 +619,19 @@ export const AuthorityAddressForm = forwardRef<AuthorityAddressFormRef>((props, 
                 name="austate"
                 placeholder="Enter state"
                 className="text-white hover:text-black"
+                 error={errors.state}
                  value={stepData.state}
                  onChange={(e) => {setStepData({ ...stepData, state: e.target.value }) }}
                  required />
-            
+
              <InputField
                  label="pincode"
                  labelclassName="text-white"
                  name="aupincode"
                  placeholder="pincode"
                  className="text-white hover:text-black"
-                  value={stepData.pincode}
+                  error={errors.pincode}
+                 value={stepData.pincode}
                  onChange={(e) => {setStepData({ ...stepData, pincode: e.target.value }) }}
                   required />
 
@@ -781,31 +639,30 @@ export const AuthorityAddressForm = forwardRef<AuthorityAddressFormRef>((props, 
         </>
     );
 });
+AuthorityAddressForm.displayName = "AuthorityAddressForm";
 
-
-export interface AuthorityBankFormRef{ saveData: ()=> void;}
+export interface AuthorityBankFormRef{ saveData: () => boolean;}
 export const AuthorityBankForm = forwardRef<AuthorityBankFormRef>((props, ref)=>{
     const{ AuthorityformData, UpdateAuthorityformdata}= useAuthorityRegistration();
-    const[stepData, setStepData] = useState({
-        bankAccount: "", IfscCode: "", Workingzone: ""
-    })
-    useEffect(() => {
-    setStepData({
+    const { stepData, setStepData, errors, validate } = useRegistrationStep(bankSchema, {
                 bankAccount: AuthorityformData.bankaccount  || "",
                 IfscCode: AuthorityformData.IFSCcode || "",
                 Workingzone: AuthorityformData.workingZone || "",
-                
+
     });
-    }, []);
-    useImperativeHandle(ref, ()=>({
-        saveData: ()=>{
+
+    useImperativeHandle(ref, () => ({
+        saveData: () => {
+            const values = validate();
+            if (!values) return false;
             UpdateAuthorityformdata({
-                bankaccount: stepData.bankAccount,
-                IFSCcode: stepData.IfscCode,
-                workingZone: stepData.Workingzone
-            })
-        }
-    }),[stepData])
+                bankaccount: values.bankAccount,
+                IFSCcode: values.IfscCode,
+                workingZone: values.Workingzone
+            });
+            return true;
+        },
+    }));
     return (
         <>
             <h1 className="text-4xl text-white absolute top-5 right-30">
@@ -818,17 +675,19 @@ export const AuthorityBankForm = forwardRef<AuthorityBankFormRef>((props, ref)=>
                  name="auaccount"
                  placeholder="Enter Bank Account Number"
                  className="text-white hover:text-black"
-                  value={stepData.bankAccount}
+                  error={errors.bankAccount}
+                 value={stepData.bankAccount}
                  onChange={(e) => {setStepData({ ...stepData, bankAccount: e.target.value }) }}
                   required />
-                            
+
              <InputField
                  label="Ifsc Code"
                  labelclassName="text-white"
                  name="WorkerIfscCode"
                  placeholder="Enter ifsc code"
                  className="text-white hover:text-black"
-                  value={stepData.IfscCode}
+                  error={errors.IfscCode}
+                 value={stepData.IfscCode}
                  onChange={(e) => {setStepData({ ...stepData, IfscCode: e.target.value }) }}
                   required />
 
@@ -838,49 +697,42 @@ export const AuthorityBankForm = forwardRef<AuthorityBankFormRef>((props, ref)=>
                  name="auworkingzone"
                  placeholder=" Enter working zone"
                  className="text-white hover:text-black"
-                  value={stepData.Workingzone}
+                  error={errors.Workingzone}
+                 value={stepData.Workingzone}
                  onChange={(e) => {setStepData({ ...stepData, Workingzone: e.target.value }) }}
                   required />
-                            
+
             </div>
         </>
     );
 });
+AuthorityBankForm.displayName = "AuthorityBankForm";
 
-
-export interface LandownerFormRef { saveData: () => void; }
+export interface LandownerFormRef { saveData: () => boolean; }
 export const LandownerForm = forwardRef<LandownerFormRef>((props, ref) => {
     const { LandownerformData, UpdateLandownerformdata } = useLandownerRegistration();
-    const [stepData, setStepData] = useState({
-        name: "",
-        email: "",
-        mobile: "",
-        username: "",
-        password: "",
-    });
-
-    useEffect(() => {
-        setStepData({
+    const { stepData, setStepData, errors, validate } = useRegistrationStep(personalInfoSchema, {
             name: LandownerformData.fullName || "",
             email: LandownerformData.email || "",
             mobile: LandownerformData.mobileNumber || "",
             username: LandownerformData.userName || "",
             password: LandownerformData.password || "",
         });
-    }, [LandownerformData]);
 
     useImperativeHandle(ref, () => ({
         saveData: () => {
+            const values = validate();
+            if (!values) return false;
             UpdateLandownerformdata({
-                fullName: stepData.name,
-                email: stepData.email,
-                mobileNumber: stepData.mobile,
-                userName: stepData.username,
-                password: stepData.password,
+                fullName: values.name,
+                email: values.email,
+                mobileNumber: values.mobile,
+                userName: values.username,
+                password: values.password,
             });
+            return true;
         },
-    }), [stepData, UpdateLandownerformdata]);
-
+    }));
     return (
         <>
             <h1 className="text-4xl text-white absolute top-5 right-30">
@@ -893,44 +745,50 @@ export const LandownerForm = forwardRef<LandownerFormRef>((props, ref) => {
                     name="landownerName"
                     placeholder="Enter Full Name"
                     className="text-white hover:text-black"
-                    value={stepData.name}
+                    error={errors.name}
+                 value={stepData.name}
                     onChange={(e) => setStepData({ ...stepData, name: e.target.value })}
-                    required 
+                    required
                 />
-                            
+
                 <InputField
+                 type="email"
                     label="Email"
                     labelclassName="text-white"
                     name="landownerEmail"
                     placeholder="Enter Registered Email"
                     className="text-white hover:text-black"
-                    value={stepData.email}
+                    error={errors.email}
+                 value={stepData.email}
                     onChange={(e) => setStepData({ ...stepData, email: e.target.value })}
-                    required 
+                    required
                 />
-                            
+
                 <InputField
+                 type="tel"
                     label="Contact Number"
                     labelclassName="text-white"
                     name="landownerNumber"
                     placeholder="Enter Contact Number"
                     className="text-white hover:text-black"
-                    value={stepData.mobile}
+                    error={errors.mobile}
+                 value={stepData.mobile}
                     onChange={(e) => setStepData({ ...stepData, mobile: e.target.value })}
-                    required 
+                    required
                 />
-            
+
                 <InputField
                     label="Username"
                     labelclassName="text-white"
                     name="landownerUsername"
                     placeholder="Enter Username"
                     className="text-white hover:text-black"
-                    value={stepData.username}
+                    error={errors.username}
+                 value={stepData.username}
                     onChange={(e) => setStepData({ ...stepData, username: e.target.value })}
-                    required 
+                    required
                 />
-            
+
                 <InputField
                     label="Password"
                     labelclassName="text-white"
@@ -938,24 +796,21 @@ export const LandownerForm = forwardRef<LandownerFormRef>((props, ref) => {
                     name="landownerPassword"
                     placeholder="Enter strong password"
                     className="text-white hover:text-black"
-                    value={stepData.password}
+                    error={errors.password}
+                 value={stepData.password}
                     onChange={(e) => setStepData({ ...stepData, password: e.target.value })}
-                    required 
+                    required
                 />
             </div>
         </>
     );
 });
+LandownerForm.displayName = "LandownerForm";
 
-export interface LandownerAddressFormRef{ saveData: ()=> void;}
+export interface LandownerAddressFormRef{ saveData: () => boolean;}
 export const LandownerAddressForm = forwardRef<LandownerAddressFormRef>((props, ref)=>  {
     const {LandownerformData, UpdateLandownerformdata} = useLandownerRegistration();
-    const [stepData, setStepData] = useState({
-        houseno: "", landmark: "", country: "", city: "", district: "", state: "", pincode: ""
-
-    })
-     useEffect(() => {
-    setStepData({
+    const { stepData, setStepData, errors, validate } = useRegistrationStep(addressSchema, {
                 houseno: LandownerformData.houseno  || "",
                 landmark: LandownerformData.landmark || "",
                 country: LandownerformData.country || "",
@@ -964,21 +819,23 @@ export const LandownerAddressForm = forwardRef<LandownerAddressFormRef>((props, 
                 state: LandownerformData.state || "",
                 pincode: LandownerformData.pincode || ""
     });
-    }, []);
 
-    useImperativeHandle(ref,()=>({
-        saveData: ()=>{
+    useImperativeHandle(ref, () => ({
+        saveData: () => {
+            const values = validate();
+            if (!values) return false;
             UpdateLandownerformdata({
-                houseno: stepData.houseno,
-                landmark: stepData.landmark,
-                country: stepData.country,
-                city: stepData.city,
-                district: stepData.district,
-                state: stepData.state,
-                pincode: stepData.pincode
-            })
-        }
-    }),[stepData])
+                houseno: values.houseno,
+                landmark: values.landmark,
+                country: values.country,
+                city: values.city,
+                district: values.district,
+                state: values.state,
+                pincode: values.pincode
+            });
+            return true;
+        },
+    }));
     return (
         <>
             <h1 className="text-4xl text-white absolute top-5 right-30">
@@ -991,46 +848,51 @@ export const LandownerAddressForm = forwardRef<LandownerAddressFormRef>((props, 
                   name="loHouseno"
                   placeholder="Enter House no"
                   className="text-white hover:text-black"
-                   value={stepData.houseno}
+                   error={errors.houseno}
+                 value={stepData.houseno}
                  onChange={(e) => {setStepData({ ...stepData,houseno : e.target.value }) }}
-                   />
-               
+                   required />
+
                  <InputField
                  label="Land Mark"
                  labelclassName="text-white"
                   name="lolandmark"
                  placeholder="Enter nearby landmark"
                  className="text-white hover:text-black"
-                  value={stepData.landmark}
+                  error={errors.landmark}
+                 value={stepData.landmark}
                  onChange={(e) => {setStepData({ ...stepData, landmark: e.target.value }) }}
                   required />
-               
+
                   <InputField
                  label="Country"
                  labelclassName="text-white"
                  name="locountry"
                  placeholder="Enter House no"
                  className="text-white hover:text-black"
-                  value={stepData.country}
+                  error={errors.country}
+                 value={stepData.country}
                  onChange={(e) => {setStepData({ ...stepData, country: e.target.value }) }}
                  required />
-            
+
               <InputField
                 label="city"
                 labelclassName="text-white"
                 name="locity"
                 placeholder="Enter city"
                 className="text-white hover:text-black"
+                 error={errors.city}
                  value={stepData.city}
                  onChange={(e) => {setStepData({ ...stepData, city: e.target.value }) }}
                  required />
-            
+
              <InputField
                  label="district"
                  labelclassName="text-white"
                  name="lodistrict"
                  placeholder="district"
-                  value={stepData.district}
+                  error={errors.district}
+                 value={stepData.district}
                  onChange={(e) => {setStepData({ ...stepData, district: e.target.value }) }}
                  className="text-white hover:text-black"
                   required />
@@ -1041,17 +903,19 @@ export const LandownerAddressForm = forwardRef<LandownerAddressFormRef>((props, 
                 name="lostate"
                 placeholder="Enter state"
                 className="text-white hover:text-black"
+                 error={errors.state}
                  value={stepData.state}
                  onChange={(e) => {setStepData({ ...stepData, state: e.target.value }) }}
                  required />
-            
+
              <InputField
                  label="pincode"
                  labelclassName="text-white"
                  name="lopincode"
                  placeholder="pincode"
                  className="text-white hover:text-black"
-                  value={stepData.pincode}
+                  error={errors.pincode}
+                 value={stepData.pincode}
                  onChange={(e) => {setStepData({ ...stepData, pincode: e.target.value }) }}
                   required />
 
@@ -1059,3 +923,4 @@ export const LandownerAddressForm = forwardRef<LandownerAddressFormRef>((props, 
         </>
     );
 });
+LandownerAddressForm.displayName = "LandownerAddressForm";

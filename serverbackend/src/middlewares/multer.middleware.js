@@ -30,3 +30,18 @@ export const upload = multer({ storage,
   cb(null, true);
   }
 });
+
+export const profileImageUpload = multer({
+  dest: ".uploads/profile-images",
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+    files: 1,
+  },
+  fileFilter: (_req, file, cb) => {
+    if (!["image/jpeg", "image/png"].includes(file.mimetype)) {
+      return cb(new ApiError(400, "Choose a JPG or PNG image"));
+    }
+
+    cb(null, true);
+  },
+});

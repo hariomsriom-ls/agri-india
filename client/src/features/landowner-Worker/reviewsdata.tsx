@@ -14,7 +14,7 @@ export interface Reviews {
   category: ReviewCategory;
   rating: number;
   title: string;
-  review: string | UserReview[];
+  review: string;
   date: string;
   status: ReviewStatus;
   responses: number;

@@ -6,7 +6,7 @@ import {FiCheckCircle,FiChevronLeft,FiChevronRight,FiClock,FiEye,FiMessageSquare
 } from "@/components/ui/icons";
 import { PageButton, SummaryCard, StarRating } from "@/components/cards/worker/worker-pages-combination";
 import { useFetchReviews } from "@/services/fetchReviews";
-import { useVisibleReviews } from "@/services/visibleReviews";
+import { useVisibleReviews, type CategoryFilter, type StatusFilter } from "@/services/visibleReviews";
 import { type ReviewCategory, type ReviewStatus } from "@/features/landowner-Worker/reviewsdata";
 import api from "@/utils/services";
 import axios from "axios";
@@ -32,19 +32,20 @@ export default function WorkerReviews() {
   const [suggestion, setSuggestion] = useState("");
   const [contact, setContact] = useState("no");
   const [attachment, setAttachment] = useState<File | null>(null);
-    const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionError, setSubmissionError] = useState<string | null>(null);
   const submissionInFlight = useRef(false);
   const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("All Categories");
-  const [statusFilter, setStatusFilter] = useState("All Status");
   const fileRef = useRef<HTMLInputElement>(null);
- 
- const { role, reviews, error, status,hasReviews, totalReviews, pendingReviews, submittedReviews  } = useFetchReviews();
+  
+   const { role, reviews, error, status,hasReviews, totalReviews, pendingReviews, submittedReviews  } = useFetchReviews();
   if (!role) {return <p>User role not found.</p>;}
   if (status === "idle" || status === "loading") {return <p>Loading reviews...</p>; }
   if (status === "failed") {return <p>{error}</p>;}
+
+  const {visibleReviews, categoryFilter, setCategoryFilter, statusFilter, setStatusFilter} = useVisibleReviews(reviews, search);
+ 
 
  async function submitReview(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -116,31 +117,24 @@ export default function WorkerReviews() {
 
           <SummaryCard 
           label="Total Reviews"
-           value="5"
+           value={String(totalReviews)}
             note="All time" 
             icon={<FiStar />} 
             style="bg-violet-50 text-violet-700" />
 
           <SummaryCard 
           label="Suggestions Implemented" 
-          value="3" 
+          value={String(submittedReviews)}
           note="This year"
            icon={<FiCheckCircle />} 
            style="bg-emerald-50 text-emerald-600" />
 
           <SummaryCard 
           label="Pending Feedback"
-           value="1"
+           value={String(pendingReviews)}
             note="Awaiting response"
              icon={<FiClock />} 
              style="bg-amber-50 text-amber-600" />
-
-          <SummaryCard 
-          label="Your Impact Score" 
-          value="4.6/5" 
-          note="Thank you!" 
-          icon={<FiSmile />} 
-          style="bg-blue-50 text-blue-600" />
         </section>
 
         <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1.05fr)_minmax(420px,.95fr)]">
@@ -295,7 +289,7 @@ export default function WorkerReviews() {
                   {item.date}
                 </time>
                 <button type="button" 
-                aria-label={`View ${item.id}`} 
+                aria-label={`View ${item._id}`} 
                 className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-slate-200 text-slate-500">
                   <FiEye />
                 </button>
@@ -321,14 +315,14 @@ export default function WorkerReviews() {
                 </label>
                 <select 
                 value={categoryFilter} 
-                onChange={(event) => setCategoryFilter(event.target.value)} 
+                onChange={(event) => setCategoryFilter(event.target.value as CategoryFilter)} 
                 className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm">
                   <option>All Categories</option>
                 {Object.keys(categoryStyles).map((item) => <option key={item}>{item}</option>)}
                 </select>
                 <select 
                 value={statusFilter} 
-                onChange={(event) => setStatusFilter(event.target.value)} 
+                onChange={(event) => setStatusFilter(event.target.value as StatusFilter)} 
                 className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm">
                   <option>All Status</option>
                   <option>Published</option>
@@ -358,9 +352,9 @@ export default function WorkerReviews() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {visibleReviews.map((item) => <tr key={item.id} 
+                  {visibleReviews.map((item) => <tr key={item._id} 
                   className="hover:bg-slate-50/70">
-                    <td className="whitespace-nowrap px-5 py-4 text-xs font-semibold">{item.id}</td>
+                    <td className="whitespace-nowrap px-5 py-4 text-xs font-semibold">{item._id}</td>
                     <td className="px-5 py-4">
                       <span className={`whitespace-nowrap rounded-md px-2.5 py-1 text-xs font-semibold ${categoryStyles[item.category]}`}>
                         {item.category}
@@ -386,12 +380,12 @@ export default function WorkerReviews() {
                       <td className="px-5 py-4">
                         <div className="flex gap-2">
                           <button type="button" 
-                          aria-label={`View ${item.id}`} 
+                          aria-label={`View ${item._id}`} 
                           className="grid h-9 w-9 place-items-center rounded-lg border border-slate-200 text-slate-500">
                             <FiEye />
                             </button>
                             <button type="button" 
-                            aria-label={`More actions for ${item.id}`} 
+                            aria-label={`More actions for ${item._id}`} 
                             className="grid h-9 w-9 place-items-center rounded-lg border border-slate-200 text-slate-500">
                               <FiMoreVertical />
                               </button>

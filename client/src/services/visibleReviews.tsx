@@ -14,7 +14,7 @@ export function useVisibleReviews(reviews: Reviews[], search: string) {
     const term = search.trim().toLowerCase();
 
     return reviews.filter((item) => {
-      const reviewText = typeof item.review === "string"? item.review: item.review.map((reviewer) => reviewer.fullName).join(" ");
+      const reviewText = typeof item.review === "string";
 
       const searchableText = [
         item._id,

@@ -39,59 +39,23 @@ export default function Form() {
   const LandownerAddressFormRef = useRef<LandownerAddressFormRef>(null);
 
   const totalSteps = selectedRole === "worker"? 5 : selectedRole === "authority" ? 4 : selectedRole === "landowner" ? 3 : 1;
-    const next = async() => {
-    if (step === 2) {
-      switch (selectedRole) {
-        case "landowner":{
-        // const isSaved= await LandownerPersonalInfoRef.current?.saveData();
-        // if(!isSaved) return;
-         LandownerPersonalInfoRef.current?.saveData();
-          setshowForm(false);
-          setShowReview(true);
-          break;}
-        case "worker":{
-         // const isSaved = await WorkerpersonalInfoRef.current?.saveData();
-          //if(!isSaved) return;
-          WorkerpersonalInfoRef.current?.saveData();
-          console.log("Worker data", WorkerformData);
-          break;}
-        case "authority":
-          AuthoritypersonalInfoRef.current?.saveData();
-          break;
-      }
-    }
-     else if (step === 3) {
-      switch (selectedRole) {
-        case "worker":
-          WorkerAddressFormRef.current?.saveData();
-           console.log("Worker data", WorkerformData);
-          break;
-        case "authority":
-          AuthorityAddressFormRef.current?.saveData();
-          break;
-      }
-    } 
-    else if (step === 4) {
-      switch (selectedRole) {
-        case "worker":
-          WorkerBankFormRef.current?.saveData();
-          break;
-        case "authority":
-          AuthorityBankFormRef.current?.saveData();
-          setshowForm(false);
-          setShowReview(true);
-          break;
-      } }
-      else if (step === 5) {
-        switch( selectedRole) {
-          case "worker":
-            WorkerImageFormRef.current?.saveData();
-            setshowForm(false);
-            setShowReview(true);
-            break;
-    }}
+  const next = () => {
+    if (!selectedRole) return;
 
-    if (step < totalSteps || (selectedRole === "landowner" && step === 1)) {
+    if (step > 1) {
+      const forms = selectedRole === "worker"
+        ? [WorkerpersonalInfoRef, WorkerAddressFormRef, WorkerBankFormRef, WorkerImageFormRef]
+        : selectedRole === "authority"
+          ? [AuthoritypersonalInfoRef, AuthorityAddressFormRef, AuthorityBankFormRef]
+          : [LandownerPersonalInfoRef, LandownerAddressFormRef];
+
+      if (!forms[step - 2]?.current?.saveData()) return;
+    }
+
+    if (step === totalSteps) {
+      setshowForm(false);
+      setShowReview(true);
+    } else {
       setStep((prev) => prev + 1);
     }
   };
@@ -180,27 +144,22 @@ export default function Form() {
     <>
       {showForm && (
         <div className="flex h-28/30 w-25/30 bg-linear-to-b from-black/30 to-black/50 justify-center items-center rounded-lg">
-          <Card className="h-83/100 w-8/10 rounded-3xl shadow-2xl bg-linear-to-b from-black/50 to-black/80 relative">
+          <Card className="h-83/100 w-8/10 rounded-3xl shadow-2xl bg-linear-to-b from-black/50 to-black/80 relative flex flex-col">
             <div className="pb-2">
               <div className="flex gap-3">
                 {Array.from({ length: totalSteps }).map((_, index) => (
                   <div
                     key={index}
-                    className={`w-8 h-8 rounded-full border ${
-                      index < step
-                        ? "bg-green-500 border-green-500"
-                        : "border-white/20"
-                    }`}
+            className={`w-8 h-8 rounded-full border ${ index < step ? "bg-green-500 border-green-500": "border-white/20" }`}
                   />
                 ))}
               </div>
-              <p className="text-green-400 text-sm">
-                {" "}
-                Step {step} of {totalSteps}{" "}
-              </p>
+              <p className="text-green-400 text-sm"> {" "}Step {step} of {totalSteps}{" "}</p>
             </div>
 
-            {renderForm()}
+            <div className="min-h-0 flex-1 overflow-y-auto pb-5 mb-20">
+              {renderForm()}
+            </div>
 
             {step > 1 && (
               <div className="absolute bottom-5 left-5">
@@ -235,7 +194,7 @@ export default function Form() {
             setShowReview(false);
             setshowForm(true);
           }}
-          reduceStep={() => setStep((prev) => prev - 1)}
+          reduceStep={() => setStep(totalSteps)}
           onSubmit={() => {
             setShowReview(false);
             handleSubmit();

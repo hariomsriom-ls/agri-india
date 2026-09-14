@@ -12,7 +12,7 @@ export function UserNavbar() {
    const dispatch = useAppDispatch();
    const role = useAppSelector((state) => state.auth.role);
    const { data: user, loading, error,} = useAppSelector((state) => state.user);
-   console.log("User data in UserNavbar:", user);
+   //console.log("User data in UserNavbar:", user);
    if(!role) {return <p>User role not found in user navbar page line no 15</p>} 
    
     useEffect(() => {if (!user) {dispatch(fetchUser(role));}}, [dispatch, user]);

@@ -9,6 +9,7 @@ type ProfileCardProps = {
   children: React.ReactNode;
   editable?: boolean;
   button?: React.ReactNode;
+  onEdit?: () => void;
 };
 
 const ProfileCard = ({
@@ -16,6 +17,7 @@ const ProfileCard = ({
   children,
   editable = false,
   button,
+   onEdit,
 }: ProfileCardProps) => {
      return (
         <Card className="border bg-white shadow-sm">
@@ -23,7 +25,9 @@ const ProfileCard = ({
         <h3 className="font-semibold text-gray-900">{title}</h3>
 
         {editable && (
-          <button className="flex items-center gap-1 rounded-md border px-3 py-1.5 text-xs text-gray-600 transition hover:bg-gray-50">
+          <button 
+          onClick={onEdit}
+          className="flex items-center gap-1 rounded-md border px-3 py-1.5 text-xs text-gray-600 transition hover:bg-gray-50">
             <CiEdit size={14} />
             Edit
           </button>
@@ -43,25 +47,4 @@ type EditableFieldProps = {
 };
 
 
-const EditableField = ({
-  label,
-  value,
-}: EditableFieldProps) => {
-  return (
-    <div className="flex items-center justify-between py-2">
-      <span className="text-sm text-gray-500">{label}</span>
-
-      <div className="flex items-center gap-5">
-        <span className="text-sm font-medium text-gray-800">
-          {value}
-        </span>
-
-        <button className="text-xs font-medium text-green-600 hover:text-green-700">
-          Change
-        </button>
-      </div>
-    </div>
-  );
-};
-
-export { ProfileCard, EditableField };
+export { ProfileCard, };

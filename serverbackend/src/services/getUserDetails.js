@@ -1,40 +1,42 @@
 import {worker} from "../models/users/workers.js";
 import {landowner} from "../models/users/landowner.js";
-import {organizationauthority} from "../models/users/authority.js";
+import {authority} from "../models/users/authority.js";
 import { ApiResponse, ApiError } from "../utils/ApiResponse.js";
 
 const userModels = {
   worker: worker,
   landowner: landowner,
-  authority: organizationauthority,
+  authority: authority,
 };
 
 export const getUserDetails = async (req, res) => {
 
   try {
-    // These values should be attached by authentication middleware
 
-    const User = req.user;
-    const userId = User?._id;
-    const role = User?.role;
+      const userId = req.user?._id;
+    const role = req.user?.role;
 
-    if (!userId || !role) {
-      throw new ApiError(401, "Unauthorized request");
-    }
+    if (!userId || !role) {throw new ApiError(401, "Unauthorized request");}
 
-    const UserModel = userModels[role.toLowerCase()];
+    const UserModel = userModels[role];
 
-    if (!UserModel) {
-      throw new ApiError(400, "Invalid user role");
-    }
-
-    const user = await UserModel.findById(userId).select("-password -refreshToken -__v");
+    if (!UserModel) {throw new ApiError(400, "Invalid user role");}
     
-    if (!user) {throw new ApiError(404, "User not found")}
+    
+    const user = await UserModel.findById(userId).select("-password -refreshToken -__v")
+  .populate({
+    path: "address",
+    populate: [
+      { path: "district", select: "name" },
+      { path: "state", select: "name" },
+    ],
+  });
+  if (!user) {throw new ApiError(404, "User not found")}
     return res.status(200).json(
        new ApiResponse(200,  {userData:user},"User details fetched successfully",)
      );
   } catch (error) {
+    next(error);
     throw new ApiError(404, "Failed to fetch user details", error);
     
   }

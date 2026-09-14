@@ -7,7 +7,7 @@ import { HiOutlineCurrencyRupee, HiOutlineMegaphone , LuLeaf,FiBell,FiCheckCircl
 import { useFetchNotifications } from "@/services/fetchNotification";
 import { useVisibleNotifications } from "@/services/visiblenotification";
 import { useAppDispatch } from "@/store/hooks";
-import { fetchUserNotification, markAllNotificationsRead, updateNotification, type Filter, type Notification, type NotificationType,} from "@/features/landowner-Worker/notificationdata";
+import { fetchUserNotification, updateNotification, type Filter, type Notification, type NotificationType,} from "@/features/landowner-Worker/notificationdata";
 
 
 const filterItems: { label: Filter; icon: ReactNode; style: string }[] = [

@@ -5,26 +5,13 @@ import {LuBell,LuBuilding2,LuCamera,LuCircleCheck,LuFileClock,LuHistory,LuKeyRou
   LuLockKeyhole,LuMail,LuMapPin,LuMonitor,LuPalette,LuPencil,LuPhone,LuSave,LuSettings, LuShieldCheck,
   LuUserRound, LuUserRoundCog, LuX,
 } from "react-icons/lu";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { updateUser } from "@/features/user";
+import { useLocationDropdowns } from "@/hooks/useLocationDropdowns";
+import { address } from "framer-motion/client";
 
 type ProfileTab = "Personal Information" | "Security" | "Preferences" | "Activity Log";
 
-type ProfileData = {
-  fullName: string;
-  email: string;
-  phone: string;
-  department: string;
-  district: string;
-  designation: string;
-};
-
-const initialProfile: ProfileData = {
-  fullName: "Anita Sharma",
-  email: "anita.sharma@agri.gov.in",
-  phone: "+91 98765 43210",
-  department: "Department of Agriculture",
-  district: "Bhopal",
-  designation: "District Authority",
-};
 
 const tabs: Array<{ label: ProfileTab; icon: ReactNode }> = [
   { label: "Personal Information", icon: <LuUserRound aria-hidden="true" /> },
@@ -33,13 +20,7 @@ const tabs: Array<{ label: ProfileTab; icon: ReactNode }> = [
   { label: "Activity Log", icon: <LuFileClock aria-hidden="true" /> },
 ];
 
-function Field({
-  label,
-  value,
-  editing,
-  onChange,
-  type = "text",
-}: {
+function Field({label,value,editing,onChange,type = "text",}: {
   label: string;
   value: string;
   editing: boolean;
@@ -94,8 +75,6 @@ function SettingsRow({ icon, title, description, action }: { icon: ReactNode; ti
 
 export default function AuthorityProfile() {
   const [activeTab, setActiveTab] = useState<ProfileTab>("Personal Information");
-  const [profile, setProfile] = useState<ProfileData>(initialProfile);
-  const [draft, setDraft] = useState<ProfileData>(initialProfile);
   const [editing, setEditing] = useState(false);
   const [saved, setSaved] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState("");
@@ -103,28 +82,18 @@ export default function AuthorityProfile() {
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [smsNotifications, setSmsNotifications] = useState(false);
   const [compactView, setCompactView] = useState(false);
+ const storedUser = useAppSelector((state) => state.user.data);
+  const dispatch = useAppDispatch();
+   const user = storedUser
 
-  function startEditing() {
-    setDraft(profile);
-    setEditing(true);
-    setSaved(false);
-  }
+     if(!user) {return <p>User data not found in LandownerProfile page line no 32</p>;}
+  if(user.role !== "landowner") {return <p>User is not a landowner in LandownerProfile page line no 33</p>;}
 
   function cancelEditing() {
     setDraft(profile);
     setEditing(false);
   }
 
-  function saveProfile(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setProfile(draft);
-    setEditing(false);
-    setSaved(true);
-  }
-
-  function updateDraft(field: keyof ProfileData, value: string) {
-    setDraft((current) => ({ ...current, [field]: value }));
-  }
 
   function chooseAvatar(file: File | undefined) {
     if (!file) return;
@@ -176,17 +145,17 @@ export default function AuthorityProfile() {
                     <input type="file" accept="image/*" className="sr-only" onChange={(event) => chooseAvatar(event.target.files?.[0])} />
                   </label>
                 </div>
-                <h2 className="mt-4 text-[18px] font-bold text-slate-950">{profile.fullName}</h2>
-                <p className="mt-0.5 text-[12px] font-medium text-slate-500">{profile.designation}</p>
+                <h2 className="mt-4 text-[18px] font-bold text-slate-950">{user.fullName}</h2>
+                <p className="mt-0.5 text-[12px] font-medium text-slate-500">{user.role}</p>
               </div>
 
               <dl className="mt-5 overflow-hidden rounded-xl border border-slate-100 bg-white px-3 text-[12px] shadow-[0_3px_14px_rgba(15,23,42,0.025)]">
                 {[
                   ["Authority ID", "AGRIIN1234"],
-                  ["Department", profile.department],
-                  ["District", `${profile.district}, Madhya Pradesh`],
-                  ["Email", profile.email],
-                  ["Phone", profile.phone],
+                  ["Department", user.],
+                  ["District", `${user.address.district}, Madhya Pradesh`],
+                  ["Email", user.email],
+                  ["Phone", user.contactNumber],
                   ["Joining Date", "12 Jan 2024"],
                 ].map(([label, value]) => (
                   <div key={label} className="grid grid-cols-[125px_minmax(0,1fr)] border-b border-slate-100 py-3 last:border-b-0">
@@ -197,7 +166,7 @@ export default function AuthorityProfile() {
               </dl>
             </aside>
 
-            <form onSubmit={saveProfile} className="p-6 lg:p-7">
+            <form onSubmit={handleSave} className="p-6 lg:p-7">
               <div className="mb-5 flex min-h-11 items-center justify-end gap-2">
                 {saved && !editing && (
                   <span className="mr-auto inline-flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2 text-[11px] font-semibold text-emerald-700">

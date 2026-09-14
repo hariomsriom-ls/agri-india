@@ -303,9 +303,3 @@ const { complaints, totalComplaints, pendingComplaints, resolvedComplaints, reje
     </div>
   );
 }
-
-
-
-
-
-
