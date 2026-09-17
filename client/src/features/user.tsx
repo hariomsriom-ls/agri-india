@@ -97,7 +97,10 @@ export const fetchUser = createAsyncThunk(
 };
     } catch (error) {if (axios.isAxiosError(error)) {return rejectWithValue(error.response?.data?.message || "Failed to fetch user" );}
       return rejectWithValue("Unexpected error");
-    } });
+    }
+  }, {
+      condition: (_, { getState }) => !(getState() as { user: UserState }).user.loading,
+    });
 
  type UpdateUserArgs = {
   role: User["role"];
@@ -140,6 +143,9 @@ export const updateUser = createAsyncThunk(
 export const uploadProfileImage = createAsyncThunk< string, UploadProfileImageArgs, { rejectValue: string }>(
   "user/uploadProfileImage",
   async ({file, role},{ rejectWithValue }) => {
+    if (!file.size) {
+      return rejectWithValue("Choose a non-empty image");
+    }
     if (!["image/jpeg", "image/png"].includes(file.type)) {
       return rejectWithValue("Choose a JPG or PNG image");
     }
@@ -177,7 +183,7 @@ const userSlice = createSlice({
   reducers: {
     setUser: (state, action: PayloadAction<User>) => {state.data = action.payload; },
 
-    clearUser: (state) => { state.data = null;state.loading = false;state.error = null;},
+    clearUser: (state) => { state.data = null;state.loading = false;state.error = null;state.imageUploading = false;state.imageError = null;},
    },
   extraReducers: (builder) => {builder
       .addCase(fetchUser.pending, (state) => { state.loading = true; state.error = null;})

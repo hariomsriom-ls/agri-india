@@ -5,25 +5,12 @@ import { HiOutlineCurrencyRupee, LuLeaf,FiAlertCircle,FiCheckCircle,FiChevronDow
   FiFileText,FiMessageSquare,FiUser,FiUsers, FiPlusCircle 
 } from "@/components/ui/icons";
 
-import {
-  LandownerActivePlotcard,
-  LandownerActiveServicecard,
-  LandownerTotalIncomecard,
-  LandownerTotalPlotcard,
-} from "@/components/cards/landowner/landowner-dashboard";
 
 
 export default function LandownerDashboard() {
   return (
     <div className="min-h-full overscroll-none bg-[#f7f9f8] p-4 text-slate-800 sm:p-6">
       <div className="mx-auto max-w-[1600px]">
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <LandownerTotalPlotcard />
-          <LandownerActivePlotcard />
-          <LandownerTotalIncomecard />
-          <LandownerActiveServicecard />
-        </div>
-
         <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1.65fr)_minmax(360px,1fr)]">
           <EarningsOverview />
           <RecentActivity />
@@ -42,7 +29,9 @@ export default function LandownerDashboard() {
 }
 
 function SectionCard({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <section className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ${className}`}>{children}</section>;
+  return (
+  <section className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ${className}`}>{children}</section>
+  );
 }
 
 function EarningsOverview() {
@@ -52,9 +41,31 @@ function EarningsOverview() {
 
   return (
     <SectionCard>
-      <div className="flex items-center justify-between gap-3"><h2 className="text-xl font-bold text-slate-900">Earnings Overview</h2><button type="button" className="flex h-10 items-center gap-3 rounded-lg border border-slate-200 px-4 text-sm font-semibold">This Month <FiChevronDown /></button></div>
-      <div className="mt-3 flex gap-6 text-sm text-slate-500"><span className="flex items-center gap-2"><i className="h-0.5 w-9 bg-emerald-700" />This Month</span><span className="flex items-center gap-2"><i className="h-0.5 w-9 border-t-2 border-dashed border-emerald-300" />Last Month</span></div>
-      <div className="mt-2 overflow-x-auto"><svg viewBox="0 0 960 275" className="h-72 min-w-[760px] w-full" aria-label="Monthly earnings comparison chart" role="img">{[0, 25, 50, 75, 100, 125, 150].map((value) => <g key={value}><line x1="35" x2="930" y1={225 - value * 1.25} y2={225 - value * 1.25} stroke="#e5e7eb" /><text x="27" y={230 - value * 1.25} textAnchor="end" className="fill-slate-500 text-[11px]">{value ? `₹${value}K` : "₹0"}</text></g>)}<polyline points={line(lastMonth)} fill="none" stroke="#9bcdb8" strokeWidth="3" strokeDasharray="8 7" /><polyline points={line(thisMonth)} fill="none" stroke="#15803d" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /><circle cx="665" cy="69" r="7" fill="#15803d" stroke="white" strokeWidth="3" /><rect x="510" y="10" width="140" height="62" rx="10" fill="white" stroke="#e5e7eb" /><text x="530" y="35" className="fill-slate-500 text-[12px]">20 May 2024</text><text x="530" y="59" className="fill-slate-900 text-[15px] font-bold">● ₹1,28,500</text>{["1 May", "5 May", "10 May", "15 May", "20 May", "25 May", "30 May"].map((label, index) => <text key={label} x={55 + index * 145} y="257" textAnchor="middle" className="fill-slate-500 text-[11px]">{label}</text>)}</svg></div>
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-xl font-bold text-slate-900">Earnings Overview</h2>
+        <button type="button" className="flex h-10 items-center gap-3 rounded-lg border border-slate-200 px-4 text-sm font-semibold">This Month <FiChevronDown /></button>
+      </div>
+      <div className="mt-3 flex gap-6 text-sm text-slate-500">
+        <span className="flex items-center gap-2">
+          <i className="h-0.5 w-9 bg-emerald-700" />
+        This Month</span>
+        <span className="flex items-center gap-2">
+          <i className="h-0.5 w-9 border-t-2 border-dashed border-emerald-300" />
+        Last Month</span>
+      </div>
+      <div className="mt-2 overflow-x-auto">
+        <svg viewBox="0 0 960 275" className="h-72 min-w-[760px] w-full" aria-label="Monthly earnings comparison chart" role="img">
+          {[0, 25, 50, 75, 100, 125, 150].map((value) => <g key={value}><line x1="35" x2="930" y1={225 - value * 1.25} y2={225 - value * 1.25} stroke="#e5e7eb" />
+          <text x="27" y={230 - value * 1.25} textAnchor="end" className="fill-slate-500 text-[11px]">{value ? `₹${value}K` : "₹0"}</text></g>)}
+          <polyline points={line(lastMonth)} fill="none" stroke="#9bcdb8" strokeWidth="3" strokeDasharray="8 7" />
+          <polyline points={line(thisMonth)} fill="none" stroke="#15803d" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          <circle cx="665" cy="69" r="7" fill="#15803d" stroke="white" strokeWidth="3" />
+          <rect x="510" y="10" width="140" height="62" rx="10" fill="white" stroke="#e5e7eb" />
+          <text x="530" y="35" className="fill-slate-500 text-[12px]">20 May 2024</text>
+          <text x="530" y="59" className="fill-slate-900 text-[15px] font-bold">● ₹1,28,500</text>
+          {["1 May", "5 May", "10 May", "15 May", "20 May", "25 May", "30 May"].map((label, index) => <text key={label} x={55 + index * 145} y="257" textAnchor="middle" className="fill-slate-500 text-[11px]">{label}</text>)}
+        </svg>
+      </div>
     </SectionCard>
   );
 }
@@ -95,11 +106,42 @@ function RecentActivity() {
 }
 
 function LandStatusOverview() {
-  return <SectionCard><h2 className="text-xl font-bold text-slate-900">Land Status Overview</h2><div className="mt-7 flex flex-col items-center gap-6 sm:flex-row xl:flex-col 2xl:flex-row"><div className="grid h-44 w-44 shrink-0 place-items-center rounded-full" style={{ background: "conic-gradient(#4caf5a 0 75%, #ffb51b 75% 100%)" }}><div className="grid h-28 w-28 place-items-center rounded-full bg-white text-center"><span><strong className="block text-3xl text-slate-950">4</strong><small className="text-slate-500">Total Lands</small></span></div></div><div className="w-full space-y-4 text-sm"><Legend color="bg-green-600" label="Active" value="3 (75%)" /><Legend color="bg-amber-400" label="Pending" value="1 (25%)" /><Legend color="bg-red-500" label="Inactive" value="0 (0%)" /><Legend color="bg-blue-600" label="Under Maintenance" value="0 (0%)" /></div></div><Link href="/Landowner/LandownerMyLands" className="mx-auto mt-6 flex h-11 max-w-52 items-center justify-center gap-3 rounded-lg border border-slate-200 text-sm font-semibold text-emerald-700 hover:bg-emerald-50">View All Lands <FiChevronRight /></Link></SectionCard>;
+  return (
+  <SectionCard>
+    <h2 className="text-xl font-bold text-slate-900">Land Status Overview</h2>
+    <div className="mt-7 flex flex-col items-center gap-6 sm:flex-row xl:flex-col 2xl:flex-row">
+      <div className="grid h-44 w-44 shrink-0 place-items-center rounded-full" style={{ background: "conic-gradient(#4caf5a 0 75%, #ffb51b 75% 100%)" }}>
+        <div className="grid h-28 w-28 place-items-center rounded-full bg-white text-center">
+          <span>
+            <strong className="block text-3xl text-slate-950">4</strong>
+            <small className="text-slate-500">Total Lands</small>
+          </span>
+        </div>
+      </div>
+      <div className="w-full space-y-4 text-sm">
+        <Legend color="bg-green-600" label="Active" value="3 (75%)" />
+        <Legend color="bg-amber-400" label="Pending" value="1 (25%)" />
+        <Legend color="bg-red-500" label="Inactive" value="0 (0%)" />
+        <Legend color="bg-blue-600" label="Under Maintenance" value="0 (0%)" />
+      </div>
+    </div>
+    <Link href="/Landowner/LandownerMyLands" 
+    className="mx-auto mt-6 flex h-11 max-w-52 items-center justify-center gap-3 rounded-lg border border-slate-200 text-sm font-semibold text-emerald-700 hover:bg-emerald-50">
+      View All Lands 
+    <FiChevronRight />
+    </Link>
+  </SectionCard>
+  );
 }
 
 function Legend({ color, label, value }: { color: string; label: string; value: string }) {
-  return <div className="flex items-center gap-3"><i className={`h-3 w-3 rounded-full ${color}`} /><span className="flex-1 text-slate-600">{label}</span><strong className="text-slate-600">{value}</strong></div>;
+  return (
+  <div className="flex items-center gap-3">
+    <i className={`h-3 w-3 rounded-full ${color}`} />
+    <span className="flex-1 text-slate-600">{label}</span>
+    <strong className="text-slate-600">{value}</strong>
+  </div>
+  );
 }
 
 const lands = [
@@ -110,7 +152,26 @@ const lands = [
 ];
 
 function TopPerformingLands() {
-  return <SectionCard><div className="flex items-center justify-between"><h2 className="text-xl font-bold text-slate-900">Top Performing Lands</h2><button type="button" className="text-sm font-semibold text-emerald-700">View All</button></div><div className="mt-5 space-y-4">{lands.map((land) => <article key={land.name} className="flex items-center gap-3"><div className="h-12 w-14 shrink-0 rounded-lg bg-cover bg-center" style={{ backgroundImage: `url(${land.image})` }} /><div className="min-w-0 flex-1"><h3 className="truncate text-sm font-bold">{land.name}</h3><p className="mt-1 text-sm text-slate-500">{land.detail}</p></div><div className="text-right"><strong className="text-sm">{land.earnings}</strong><p className="mt-1 text-xs text-slate-500">Earnings</p></div></article>)}</div></SectionCard>;
+  return (
+  <SectionCard>
+    <div className="flex items-center justify-between">
+      <h2 className="text-xl font-bold text-slate-900">Top Performing Lands</h2>
+      <button type="button" className="text-sm font-semibold text-emerald-700">View All</button>
+    </div>
+    <div className="mt-5 space-y-4">{lands.map((land) => <article key={land.name} className="flex items-center gap-3">
+      <div className="h-12 w-14 shrink-0 rounded-lg bg-cover bg-center" style={{ backgroundImage: `url(${land.image})` }} />
+      <div className="min-w-0 flex-1">
+        <h3 className="truncate text-sm font-bold">{land.name}</h3>
+        <p className="mt-1 text-sm text-slate-500">{land.detail}</p>
+      </div>
+      <div className="text-right">
+        <strong className="text-sm">{land.earnings}</strong>
+        <p className="mt-1 text-xs text-slate-500">Earnings</p>
+      </div>
+      </article>)}
+    </div>
+  </SectionCard>
+  );
 }
 
 const reminders = [
@@ -120,7 +181,23 @@ const reminders = [
 ];
 
 function UpcomingReminders() {
-  return <SectionCard><div className="flex items-center justify-between"><h2 className="text-xl font-bold text-slate-900">Upcoming Reminders</h2><button type="button" className="text-sm font-semibold text-emerald-700">View All</button></div><div className="mt-4 divide-y divide-slate-100">{reminders.map((item) => <article key={item.title} className="flex items-center gap-4 py-4"><span className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl text-xl ${item.style}`}>{item.icon}</span><div className="min-w-0 flex-1"><h3 className="truncate text-sm font-bold">{item.title}</h3><p className="mt-1 text-sm text-slate-500">{item.due}</p></div><span className={`shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold ${item.badge}`}>{item.left}</span></article>)}</div></SectionCard>;
+  return (
+  <SectionCard>
+    <div className="flex items-center justify-between">
+      <h2 className="text-xl font-bold text-slate-900">Upcoming Reminders</h2>
+      <button type="button" className="text-sm font-semibold text-emerald-700">View All</button>
+    </div>
+    <div className="mt-4 divide-y divide-slate-100">{reminders.map((item) => <article key={item.title} className="flex items-center gap-4 py-4">
+      <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl text-xl ${item.style}`}>{item.icon}</span>
+      <div className="min-w-0 flex-1">
+        <h3 className="truncate text-sm font-bold">{item.title}</h3>
+        <p className="mt-1 text-sm text-slate-500">{item.due}</p>
+      </div>
+      <span className={`shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold ${item.badge}`}>{item.left}</span>
+      </article>)}
+    </div>
+  </SectionCard>
+  );
 }
 
 const quickLinks = [
@@ -133,5 +210,14 @@ const quickLinks = [
 ];
 
 function QuickAccess() {
-  return <SectionCard className="mt-5"><h2 className="text-xl font-bold text-slate-900">Quick Access</h2><div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">{quickLinks.map((item) => <Link key={item.label} href={item.href} className="flex items-center gap-3 rounded-xl border border-slate-200 p-3 text-sm font-semibold transition hover:-translate-y-0.5 hover:shadow-sm"><span className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl text-xl ${item.style}`}>{item.icon}</span>{item.label}</Link>)}</div></SectionCard>;
+  return (
+  <SectionCard className="mt-5">
+    <h2 className="text-xl font-bold text-slate-900">Quick Access</h2>
+    <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
+      {quickLinks.map((item) => <Link key={item.label} href={item.href} className="flex items-center gap-3 rounded-xl border border-slate-200 p-3 text-sm font-semibold transition hover:-translate-y-0.5 hover:shadow-sm">
+    <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl text-xl ${item.style}`}>{item.icon}</span>
+    {item.label}</Link>)}
+    </div>
+  </SectionCard>
+  );
 }

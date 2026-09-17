@@ -3,6 +3,7 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import api from "@/utils/services";
+import { clearAuth, setAuth } from "@/features/auth";
 
 export type ProjectUserRole = "worker" | "landowner" | "authority";
 
@@ -24,16 +25,20 @@ interface UserProjectState {
   data: UserProject[];
   status: "idle" | "loading" | "success" | "failed";
   error: string | null;
+  role: ProjectUserRole | null;
+  currentRequestId: string | null;
 }
 
 const initialState: UserProjectState = {
   data: [],
   status: "idle",
   error: null,
+  role: null,
+  currentRequestId: null,
 };
 
 export const fetchUserProjects = createAsyncThunk<
-  UserProject[], ProjectUserRole, { rejectValue: string }
+  UserProject[], ProjectUserRole, { rejectValue: string; state: { projects: UserProjectState } }
 >("Projects/fetchProjects", async (role, { rejectWithValue }) => {
   try {
     const response = await api.get<{ data: { ProjectData: UserProject[] } }>(
@@ -47,6 +52,11 @@ export const fetchUserProjects = createAsyncThunk<
     }
     return rejectWithValue("Unexpected error occurred while fetching projects");
   }
+}, {
+  condition: (role, { getState }) => {
+    const state = getState().projects;
+    return state.status !== "loading" || state.role !== role;
+  },
 });
 
 const userProjectSlice = createSlice({
@@ -66,16 +76,25 @@ const userProjectSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchUserProjects.pending, (state) => {
+      .addCase(clearAuth, () => initialState)
+      .addCase(setAuth, () => initialState)
+      .addCase(fetchUserProjects.pending, (state, action) => {
+        if (state.role !== action.meta.arg) state.data = [];
+        state.role = action.meta.arg;
+        state.currentRequestId = action.meta.requestId;
         state.status = "loading";
         state.error = null;
       })
       .addCase(fetchUserProjects.fulfilled, (state, action) => {
+        if (state.currentRequestId !== action.meta.requestId) return;
+        state.currentRequestId = null;
         state.status = "success";
         state.data = action.payload;
         state.error = null;
       })
       .addCase(fetchUserProjects.rejected, (state, action) => {
+        if (state.currentRequestId !== action.meta.requestId) return;
+        state.currentRequestId = null;
         state.status = "failed";
         state.error = action.payload ?? "Failed to fetch projects";
       });

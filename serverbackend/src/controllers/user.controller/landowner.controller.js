@@ -1,4 +1,4 @@
-import { asyncHandler } from "../../utils/asynchandler.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
 import registrationValidations from "../../validations/registration.validations.js";
 import { landowner } from "../../models/users/landowner.js"; 
 import {Address} from "../../models/address/address.js";
@@ -8,6 +8,12 @@ import { uploadOnCloudinary } from "../../utils/cloudinary.js";
 import { upload } from "../../middlewares/multer.middleware.js";
 import { userLogin, findUser } from "../../services/authorization.js";
 
+const tokenCookieOptions = () => ({
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+});
+
 export const generateAccessAndRefreshToken = async(landownerId) => {
     try {
         const landOwner = await landowner.findById(landownerId)
@@ -16,7 +22,7 @@ export const generateAccessAndRefreshToken = async(landownerId) => {
         const refreshToken = landOwner.generateRefreshToken()
 
         landOwner.refreshToken = refreshToken
-        landOwner.save({ validateBeforeSave: false})
+        await landOwner.save({ validateBeforeSave: false})
         return {accessToken, refreshToken}
         
     } catch (error) {
@@ -76,10 +82,7 @@ const loginLandOwner = asyncHandler(async(req, res) => {
 
     const loggedInlandOwner = await landowner.findById(landOwner._id).select(" -password -refreshToken")
 
-    const options ={
-        httpOnly: true,
-        secure: true
-    }
+    const options = tokenCookieOptions();
     return res.status(200).cookie("accessToken", accessToken, options).cookie("refreshToken", refreshToken, options)
     .json( new ApiResponse(200, {landowner: loggedInlandOwner}, "landowner logged in successfully" ) )
 })
@@ -87,62 +90,44 @@ const loginLandOwner = asyncHandler(async(req, res) => {
 const logoutLandOwner = asyncHandler(async(req, res) => {
     await landowner.findByIdAndUpdate(
         req.user?._id,
-        {$set: {refreshToken: undefined}},
+        {$unset: {refreshToken: 1}},
         {new: true}
     )
-    const options ={
-        httpOnly: true,
-        secure: true
-    }
+    const options = tokenCookieOptions();
     return res.status(200).clearCookie("accessToken", options).clearCookie("refreshToken", options)
     .json(new ApiResponse(200, {}, "user logged out"))
 
 })
 
 const refreshAccessToken = asyncHandler(async (req, res)=>{
-    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
-    console.log("Cookies:", req.cookies.refreshToken);
-    console.log("Token:", incomingRefreshToken);
+    const incomingRefreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
 
     if(!incomingRefreshToken){
         throw new ApiError(401, "Unauthorized request")
     }
+    let decodedToken;
     try {
-        const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET)
-    
-        const landOwner = await landowner.findById(decodedToken?._id)
-    
-        if(!landOwner){
-            throw new ApiError(401," Invalid refresh token")
-        }
-        console.log("landownerRefreshToken:",landOwner.refreshToken);
-        if(incomingRefreshToken !== landOwner?.refreshToken){
-            throw new ApiError (401," refresh token is expired or used")
-        }
-    
-        const options = {
-            httpOnly: true,
-            secure: true
-        }
-    
-       const {accessToken, newrefreshToken} = await generateAccessAndRefreshToken(landOwner._id)
-    
-       return res.status(200).cookie("accessToken",accessToken, options).cookie("newrefreshToken", newrefreshToken, options)
-       .json(
-        new ApiResponse(
-            200,
-            {accessToken, refreshToken: newrefreshToken},
-            "Access token refreshed"
-        )
-       )
+        decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
     } catch (error) {
-        throw new ApiError(401, error?.message || "Invalid refresh token")
-        console.log(error)
+        if (["TokenExpiredError", "JsonWebTokenError", "NotBeforeError"].includes(error.name)) {
+            throw new ApiError(401, "Session expired. Please sign in again");
+        }
+        throw error;
     }
-
-
-})
-
+    if (typeof decodedToken?._id !== "string" || !decodedToken._id) {
+        throw new ApiError(401, "Invalid refresh token");
+    }
+    const landOwner = await landowner.findById(decodedToken._id);
+    if (!landOwner || incomingRefreshToken !== landOwner.refreshToken) {
+        throw new ApiError(401, "Session expired. Please sign in again");
+    }
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(landOwner._id);
+    const options = tokenCookieOptions();
+    return res.status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(new ApiResponse(200, { accessToken, refreshToken }, "Access token refreshed"));
+});
 
 
 const changeCurrentPassword = asyncHandler(async(req,res) => {
@@ -165,45 +150,6 @@ const changeCurrentPassword = asyncHandler(async(req,res) => {
     return res.status(200).json(new ApiResponse(200, {}, "Password changed successfully"))
 })
 
-const addLandDetails = asyncHandler(async(req,res) => {
-    const {landArea, landCity, landLocation, } = req.body
-     if(
-        [landArea, landCity, landLocation].some((fields) => field?.trim() === "")
-    ){
-        throw new ApiError(400, "all fields required")
-    }
-    const landDocumentsLocalPath = req.files?.landDocuments[0]?.path;
-     if (!landDocumentsLocalPath) {
-    throw new ApiError(400, "land Documents file is required");
-  }
-
-    const landDocuments = await uploadOnCloudinary(landDocumentsLocalPath)
-    const landOwnerId = req.landOwner?._id
-
-     const newLandOflandOwner = await landowner.findByIdAndUpdate(landOwnerId,
-        {
-            $set: {
-                 landArea, landCity, landLocation,
-                 landDocuments: landDocuments?.url || "",
-                 
-            },
-        },
-        {
-            new: true,
-            runValidators: false
-        }
-    ).select("-password -refreshToken");
-    if(!newLandOflandOwner){
-        throw new ApiError(404,"landowner not found" )
-    }
-
-    return res.status(200).json(
-        new ApiResponse(200, newLandOflandOwner, "details added successfully")
-    )
-
-})
-
-
 
 
 export {
@@ -212,5 +158,4 @@ export {
      logoutLandOwner,
      refreshAccessToken,
      changeCurrentPassword,
-     addLandDetails
      }

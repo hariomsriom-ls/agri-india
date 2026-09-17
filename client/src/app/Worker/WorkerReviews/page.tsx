@@ -19,6 +19,8 @@ const categoryStyles: Record<ReviewCategory, string> = {
 };
 
 const statusStyles: Record<ReviewStatus, string> = {
+  PENDING: "bg-amber-50 text-amber-700",
+  Submitted: "bg-emerald-50 text-emerald-700",
   Published: "bg-emerald-50 text-emerald-700",
   "Under Review": "bg-amber-50 text-amber-700",
   Responded: "bg-blue-50 text-blue-700",

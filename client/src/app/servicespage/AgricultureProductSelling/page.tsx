@@ -4,39 +4,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { FaFacebookF, FaInstagram, FaLinkedin, FaYoutube } from "react-icons/fa";
-import {
-  LuArrowRight,
-  LuBadgeCheck,
-  LuBanknote,
-  LuChevronDown,
-  LuCircleDollarSign,
-  LuClipboardList,
-  LuCreditCard,
-  LuHeart,
-  LuLeaf,
-  LuMapPin,
-  LuMinus,
-  LuPlus,
-  LuSearch,
-  LuShieldCheck,
-  LuShoppingBasket,
-  LuShoppingCart,
-  LuSprout,
-  LuSquarePen,
-  LuTrash2,
-  LuTruck,
-  LuUsersRound,
-  LuX,
-} from "react-icons/lu";
+import { LuArrowRight,LuChevronDown,  LuLeaf, LuMapPin,  LuPlus, LuSearch, LuShieldCheck,  LuSprout,LuSquarePen,LuTrash2,
+   LuUsersRound,LuX,LuBadgeCheck,LuBanknote,LuCircleDollarSign,LuClipboardList,LuCreditCard,LuHeart,LuMinus, 
+   LuShoppingBasket,LuShoppingCart,LuTruck,
+
+} from "@/components/ui/icons";
 
 const categories = [
-  { name: "Grains", image: "wheat.webp", alt: "Harvested wheat grains" },
-  { name: "Pulses", image: "lentils.webp", alt: "Dried lentils" },
-  { name: "Fruits", image: "apples.webp", alt: "Fresh apples" },
-  { name: "Vegetables", image: "potatoes.webp", alt: "Freshly harvested potatoes" },
-  { name: "Oilseeds", image: "sunflower.webp", alt: "Sunflower seeds" },
-  { name: "Spices", image: "spices.webp", alt: "A selection of aromatic spices" },
-  { name: "Dry Fruits", image: "nuts.webp", alt: "Nuts and almonds" },
+  { name: "Grains", image: "wheat.png", alt: "Harvested wheat grains" },
+  { name: "Pulses", image: "lentils.png", alt: "Dried lentils" },
+  { name: "Fruits", image: "apples.png", alt: "Fresh apples" },
+  { name: "Vegetables", image: "potatoes.png", alt: "Freshly harvested potatoes" },
+  { name: "Oilseeds", image: "sunflower.png", alt: "Sunflower seeds" },
+  { name: "Spices", image: "spices.png", alt: "A selection of aromatic spices" },
+  { name: "Dry Fruits", image: "nuts.png", alt: "Nuts and almonds" },
   { name: "Dairy & Others", image: "dairy.webp", alt: "Fresh milk and dairy products" },
 ] as const;
 
@@ -54,12 +35,12 @@ type Product = {
 };
 
 const products: Product[] = [
-  { id: "wheat", name: "Wheat Grains", seller: "Sharma Farms", location: "Karnal, Haryana", category: "Grains", price: 2100, unit: "quintal", image: "wheat.webp", imageAlt: "Golden wheat grains" },
-  { id: "rice", name: "Basmati Rice", seller: "GreenFields", location: "Amritsar, Punjab", category: "Grains", price: 3800, unit: "quintal", image: "rice.webp", imageAlt: "Uncooked white rice grains" },
-  { id: "lentils", name: "Masoor Dal", seller: "Singh Agro", location: "Indore, Madhya Pradesh", category: "Pulses", price: 6200, unit: "quintal", image: "lentils.webp", imageAlt: "Dried red lentils" },
-  { id: "apples", name: "Fresh Apples", seller: "HimFall Orchards", location: "Shimla, Himachal Pradesh", category: "Fruits", price: 80, unit: "kg", image: "apples.webp", imageAlt: "Fresh red apples" },
-  { id: "potatoes", name: "Potatoes", seller: "Kisan Produce Co.", location: "Agra, Uttar Pradesh", category: "Vegetables", price: 25, unit: "kg", image: "potatoes.webp", imageAlt: "Fresh potatoes ready for sale" },
-  { id: "sunflower", name: "Sunflower Seeds", seller: "Patel Farms", location: "Ujjain, Madhya Pradesh", category: "Oilseeds", price: 5500, unit: "quintal", image: "sunflower.webp", imageAlt: "Striped sunflower seeds in their shells" },
+  { id: "wheat", name: "Wheat Grains", seller: "Sharma Farms", location: "Karnal, Haryana", category: "Grains", price: 2100, unit: "quintal", image: "wheat.png", imageAlt: "Golden wheat grains" },
+  { id: "rice", name: "Basmati Rice", seller: "GreenFields", location: "Amritsar, Punjab", category: "Grains", price: 3800, unit: "quintal", image: "rice.png", imageAlt: "Uncooked white rice grains" },
+  { id: "lentils", name: "Masoor Dal", seller: "Singh Agro", location: "Indore, Madhya Pradesh", category: "Pulses", price: 6200, unit: "quintal", image: "lentils.png", imageAlt: "Dried red lentils" },
+  { id: "apples", name: "Fresh Apples", seller: "HimFall Orchards", location: "Shimla, Himachal Pradesh", category: "Fruits", price: 80, unit: "kg", image: "apples.png", imageAlt: "Fresh red apples" },
+  { id: "potatoes", name: "Potatoes", seller: "Kisan Produce Co.", location: "Agra, Uttar Pradesh", category: "Vegetables", price: 25, unit: "kg", image: "potatoes.png", imageAlt: "Fresh potatoes ready for sale" },
+  { id: "sunflower", name: "Sunflower Seeds", seller: "Patel Farms", location: "Ujjain, Madhya Pradesh", category: "Oilseeds", price: 5500, unit: "quintal", image: "sunflower.png", imageAlt: "Striped sunflower seeds in their shells" },
 ];
 
 const highlights = [
@@ -423,7 +404,7 @@ export default function AgricultureProductSellingPage() {
             className="inline-flex items-center gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
               <LuSprout className="h-14 w-12 text-[#e0efdc]" strokeWidth={1.5} aria-hidden="true" />
             <span>
-              <span className="block text-2xl font-bold tracking-tight text-white">AgriBazaar</span>
+              <span className="block text-2xl font-bold tracking-tight text-white">AgriIndia</span>
               <span className="mt-1 block text-xs">From Our Fields to Your Future.</span>
               </span>
               </Link>

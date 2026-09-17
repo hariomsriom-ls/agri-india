@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import api from "@/utils/services";
 import axios from "axios"
 
-export type ReviewStatus = "Published" | "Under Review" | "Responded";
+export type ReviewStatus = "PENDING" | "Submitted" | "Published" | "Under Review" | "Responded";
 export type ReviewCategory = "Platform Experience" | "Support & Service" | "Feature Request" | "General Feedback";
 export interface UserReview {
   _id: string;
@@ -13,11 +13,13 @@ export interface Reviews {
   _id: string;
   category: ReviewCategory;
   rating: number;
-  title: string;
+  title?: string;
   review: string;
-  date: string;
+  date?: string;
+  createdAt?: string;
+  updatedAt?: string;
   status: ReviewStatus;
-  responses: number;
+  responses?: number;
 }
 
 interface UserReviewState {
@@ -34,7 +36,7 @@ const initialState : UserReviewState = {
     deletingReviewId: null,
 };
 
-type UserRole = "worker" | "landowner" | "authority";
+export type UserRole = "worker" | "landowner" | "authority";
 
 export const fetchUserReview = createAsyncThunk<Reviews[],UserRole,{ rejectValue: string }>(
 "Reviews/fetchReviews",
@@ -70,7 +72,7 @@ const UserReviewSlice = createSlice({
     initialState,
     reducers: {
         setReview: (state,action:PayloadAction<Reviews[]>) => {state.data = action.payload;},
-        clearReview: (state) =>{state.data = [], state.status ="idle"; state.error = null;},
+        clearReview: (state) =>{state.data = []; state.status ="idle"; state.error = null;},
         UpdateReview: (state,action:PayloadAction<Partial<Reviews>>)=>{
             const index = state.data.findIndex((review)=>review._id === action.payload._id);
             if(index!==-1){

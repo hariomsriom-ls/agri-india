@@ -11,6 +11,7 @@ import { getComplaints } from "../../controllers/complaint.controllers.js";
 import { getProjects } from "../../controllers/project.controllers.js";
 import {uploaduserProfileImage} from "../../services/uploadProfileImage.js"
 import { upload, profileImageUpload } from "../../middlewares/multer.middleware.js";
+import { getLandRecords, verifyLand } from "../../controllers/record.controller,js/landRecord.controller.js";
 const router = Router()
 
 router.route("/register-authority").post(registerAuthority)
@@ -30,5 +31,7 @@ router.route("/post-Review").post(verifyJwt(authority), postReviews)
 router.route("/post-reviews").post(verifyJwt(authority), postReviews)
 router.route("/delete-Review/:reviewId").delete(verifyJwt(authority), deleteReview)
 router.route("/profile-image").patch(verifyJwt(authority),profileImageUpload.single("image"),uploaduserProfileImage);
+router.route("/get-land-records").get(verifyJwt(authority), getLandRecords)
+router.route("/verify-land-records/:landrecordId").patch(verifyJwt(authority), verifyLand)
 
 export default router

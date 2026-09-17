@@ -2,16 +2,13 @@
 
 import React from "react";
 import { ReactNode } from "react";
-import { motion } from "framer-motion";
-import Link from "next/link";
-import Image from "next/image";
 
 interface MenuProps {
   children: ReactNode;
 }
 export function Menu({ children }: MenuProps){
    return(
-    <div className="flex-8 flex gap-10 bg-gray-120" >
+    <div className="order-3 mt-2 flex w-full items-center justify-between gap-1 border-t border-[#e1ebe6] sm:justify-center sm:gap-5 lg:order-2 lg:mt-0 lg:w-auto lg:flex-1 lg:gap-4 lg:border-0 xl:gap-6" >
         {children}
         </div>
    );
@@ -22,14 +19,13 @@ interface MenuItemProps {
   setActive: React.Dispatch<React.SetStateAction<string>>;
 }
 export function MenuItem({ item, active, setActive } : MenuItemProps){
-    return(<div className="flex w-full h-full justify-evenly items-center ">
-        <button className =" flex py-1 px-4 items-center justify-center  text-black rounded-lg 
-        hover:bg-gray-300 hover:text-white">
+    return(<div className="flex shrink-0 items-center justify-center self-stretch">
+        <button type="button" onClick={() => setActive(item)} aria-pressed={active === item}
+        className={`relative flex items-center justify-center rounded-sm px-1 py-4 text-[11px] font-medium whitespace-nowrap transition-colors hover:text-[#23773d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700 sm:px-2 sm:text-xs lg:py-7 ${active === item ? "text-[#23773d]" : "text-[#34413a]"}`}>
             {item}
             {active === item && (
-                <motion.div  
-                layoutId ="underline"
-                className ="absolute left-0 right-0 -bottom-1 h-0.5 bg-blue-600"
+                <span aria-hidden="true"
+                className="absolute inset-x-1 bottom-1 h-0.5 rounded-full bg-[#4b8b5e] lg:bottom-4"
                 />
 
             )}

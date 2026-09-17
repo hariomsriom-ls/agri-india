@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useState, type FormEvent, type ReactNode, type ChangeEvent ,useRef, useEffect} from "react";
 import {LuBell,LuBuilding2,LuCamera,LuCircleCheck,LuFileClock,LuHistory,LuKeyRound,LuLanguages,
   LuLockKeyhole,LuMail,LuMapPin,LuMonitor,LuPalette,LuPencil,LuPhone,LuSave,LuSettings, LuShieldCheck,
   LuUserRound, LuUserRoundCog, LuX,
 } from "react-icons/lu";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { updateUser } from "@/features/user";
+import { fetchUser, updateUser, uploadProfileImage } from "@/features/user";
 import { useLocationDropdowns } from "@/hooks/useLocationDropdowns";
 import { address } from "framer-motion/client";
 
@@ -24,7 +24,7 @@ function Field({label,value,editing,onChange,type = "text",}: {
   label: string;
   value: string;
   editing: boolean;
-  onChange: (value: string) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   type?: "text" | "email" | "tel";
 }) {
   return (
@@ -34,7 +34,7 @@ function Field({label,value,editing,onChange,type = "text",}: {
         type={type}
         value={value}
         readOnly={!editing}
-        onChange={(event) => onChange(event.target.value)}
+        onChange={onChange}
         className={`h-11 w-full rounded-lg border px-3 text-[13px] font-medium text-slate-700 outline-none transition ${
           editing
             ? "border-emerald-300 bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
@@ -76,28 +76,94 @@ function SettingsRow({ icon, title, description, action }: { icon: ReactNode; ti
 export default function AuthorityProfile() {
   const [activeTab, setActiveTab] = useState<ProfileTab>("Personal Information");
   const [editing, setEditing] = useState(false);
+   const [formData, setFormData] = useState<Record<string, string>>({});
   const [saved, setSaved] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState("");
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const [imageSaved, setImageSaved] = useState(false);
+  const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [smsNotifications, setSmsNotifications] = useState(false);
   const [compactView, setCompactView] = useState(false);
- const storedUser = useAppSelector((state) => state.user.data);
+ const { data: storedUser, loading, error, imageUploading, imageError } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
-   const user = storedUser
+   const role = useAppSelector((state) => state.auth.role);
+   const user = storedUser;
 
-     if(!user) {return <p>User data not found in LandownerProfile page line no 32</p>;}
-  if(user.role !== "landowner") {return <p>User is not a landowner in LandownerProfile page line no 33</p>;}
+     if(!user) {return <p>User data not found in authority page line no 32</p>;}
+  if(user.role !== "authority") {return <p>User is not a authority page line no 33</p>;}
 
   function cancelEditing() {
-    setDraft(profile);
     setEditing(false);
+  } 
+
+  function startEditing(){
+    setEditing(true);
   }
-
-
   function chooseAvatar(file: File | undefined) {
     if (!file) return;
     setAvatarUrl(URL.createObjectURL(file));
+  }
+
+ function handleChange( event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    const { name, value } = event.currentTarget;
+    setFormData((previous) => ({...previous,[name]: value, }));
+  }
+
+useEffect(() => {
+      if (role === "authority" && !storedUser && !loading && !error) {
+        void dispatch(fetchUser("authority"));
+      }
+    }, [dispatch, role, storedUser, loading, error]);
+
+ async function handleSave(){
+    if (!storedUser) {alert("Please log in to save your profile."); 
+      return;
+    }
+    const addressChanged = ["city", "district", "state", "pinCode"].some((field) => formData[field] !== undefined);
+const updatedData = {
+  fullName: formData.fullName ?? storedUser.fullName,
+  userName: formData.userName ?? storedUser.userName,
+  email: formData.email ?? storedUser.email,
+  contactNumber: formData.contactNumber ?? storedUser.contactNumber,
+
+  ...(addressChanged
+    ? {
+        address: {
+          city: formData.city ?? storedUser.address?.city ?? "",
+          district:formData.district ?? storedUser.address?.district ?? "",
+          state: formData.state ?? storedUser.address?.state ?? "",
+          pinCode:formData.pinCode ?? storedUser.address?.pinCode ?? "",
+        },
+      }
+    : {}),
+};
+  
+    try {
+    await dispatch(
+      updateUser({
+        role: storedUser.role,
+        updatedData,
+      })
+    ).unwrap();
+      setFormData({});
+      setEditing(false);
+        } catch (error) {
+    alert( typeof error === "string"? error: "Failed to save your profile. Please try again.");
+  }
+}
+
+async function handleProfileImageChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.currentTarget.files?.[0];
+    event.currentTarget.value = "";
+    if (!file || imageUploading || storedUser?.role !== "authority") return;
+    setImageSaved(false);
+    const result = await dispatch(uploadProfileImage({ file, role: "landowner" }));
+    if (uploadProfileImage.fulfilled.match(result)) {
+      setFailedImageUrl(null);
+      setImageSaved(true);
+    }
   }
 
   return (
@@ -142,20 +208,19 @@ export default function AuthorityProfile() {
                   {!avatarUrl && "AS"}
                   <label className="absolute bottom-0 right-0 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-4 border-white bg-emerald-900 text-sm text-white shadow-md hover:bg-emerald-800" aria-label="Change profile picture">
                     <LuCamera aria-hidden="true" />
-                    <input type="file" accept="image/*" className="sr-only" onChange={(event) => chooseAvatar(event.target.files?.[0])} />
                   </label>
                 </div>
-                <h2 className="mt-4 text-[18px] font-bold text-slate-950">{user.fullName}</h2>
-                <p className="mt-0.5 text-[12px] font-medium text-slate-500">{user.role}</p>
+                <h2 className="mt-4 text-[18px] font-bold text-slate-950">{user?.fullName}</h2>
+                <p className="mt-0.5 text-[12px] font-medium text-slate-500">{user?.role}</p>
               </div>
 
               <dl className="mt-5 overflow-hidden rounded-xl border border-slate-100 bg-white px-3 text-[12px] shadow-[0_3px_14px_rgba(15,23,42,0.025)]">
                 {[
                   ["Authority ID", "AGRIIN1234"],
-                  ["Department", user.],
-                  ["District", `${user.address.district}, Madhya Pradesh`],
-                  ["Email", user.email],
-                  ["Phone", user.contactNumber],
+                  ["Department", user?.email],
+                  ["District", `${user?.address.district}, Madhya Pradesh`],
+                  ["Email", user?.email],
+                  ["Phone", user?.contactNumber],
                   ["Joining Date", "12 Jan 2024"],
                 ].map(([label, value]) => (
                   <div key={label} className="grid grid-cols-[125px_minmax(0,1fr)] border-b border-slate-100 py-3 last:border-b-0">
@@ -176,17 +241,22 @@ export default function AuthorityProfile() {
                 )}
                 {editing ? (
                   <>
-                    <button type="button" onClick={cancelEditing} className="inline-flex h-11 items-center gap-2 rounded-lg border border-slate-200 bg-white px-5 text-[12px] font-semibold text-slate-600 hover:bg-slate-50">
+                    <button type="button" 
+                    onClick={cancelEditing} 
+                    className="inline-flex h-11 items-center gap-2 rounded-lg border border-slate-200 bg-white px-5 text-[12px] font-semibold text-slate-600 hover:bg-slate-50">
                       <LuX aria-hidden="true" />
                       Cancel
                     </button>
-                    <button type="submit" className="inline-flex h-11 items-center gap-2 rounded-lg bg-emerald-700 px-5 text-[12px] font-semibold text-white shadow-sm hover:bg-emerald-800">
+                    <button type="submit" 
+                    className="inline-flex h-11 items-center gap-2 rounded-lg bg-emerald-700 px-5 text-[12px] font-semibold text-white shadow-sm hover:bg-emerald-800">
                       <LuSave aria-hidden="true" />
                       Save Changes
                     </button>
                   </>
                 ) : (
-                  <button type="button" onClick={startEditing} className="inline-flex h-11 items-center gap-2 rounded-lg bg-emerald-700 px-5 text-[13px] font-semibold text-white shadow-md shadow-emerald-900/15 hover:bg-emerald-800">
+                  <button type="button" 
+                  onClick={startEditing} 
+                  className="inline-flex h-11 items-center gap-2 rounded-lg bg-emerald-700 px-5 text-[13px] font-semibold text-white shadow-md shadow-emerald-900/15 hover:bg-emerald-800">
                     <LuPencil aria-hidden="true" />
                     Edit Profile
                   </button>
@@ -194,16 +264,28 @@ export default function AuthorityProfile() {
               </div>
 
               <div className="space-y-4">
-                <Field label="Full Name" value={draft.fullName} editing={editing} onChange={(value) => updateDraft("fullName", value)} />
-                <Field label="Email Address" value={draft.email} type="email" editing={editing} onChange={(value) => updateDraft("email", value)} />
-                <Field label="Phone Number" value={draft.phone} type="tel" editing={editing} onChange={(value) => updateDraft("phone", value)} />
+                <Field label="Full Name"
+                 value={formData.fullName ??user?.fullName?? ""}
+                  editing={editing}
+                   onChange={handleChange} 
+                   />
+                <Field label="Email Address" 
+                value={formData.email ??user?.email?? ""} 
+                type="email" editing={editing} 
+                onChange={handleChange} 
+                />
+                <Field label="Phone Number" 
+                value={formData.contactNumber ??user?.contactNumber?? ""} 
+                type="tel" 
+                editing={editing} 
+                onChange={handleChange} />
 
                 <label className="block">
                   <span className="mb-2 block text-[13px] font-semibold text-slate-500">Department</span>
                   <select
-                    value={draft.department}
+                    value={formData.department ??user?.email?? ""}
                     disabled={!editing}
-                    onChange={(event) => updateDraft("department", event.target.value)}
+                    onChange={handleChange}
                     className={`h-11 w-full rounded-lg border px-3 text-[13px] font-medium text-slate-700 outline-none transition ${editing ? "border-emerald-300 bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100" : "cursor-default border-slate-200 bg-white opacity-100 shadow-sm"}`}
                   >
                     <option>Department of Agriculture</option>
@@ -212,21 +294,11 @@ export default function AuthorityProfile() {
                   </select>
                 </label>
 
-                <Field label="District" value={draft.district} editing={editing} onChange={(value) => updateDraft("district", value)} />
-
-                <label className="block">
-                  <span className="mb-2 block text-[13px] font-semibold text-slate-500">Designation</span>
-                  <select
-                    value={draft.designation}
-                    disabled={!editing}
-                    onChange={(event) => updateDraft("designation", event.target.value)}
-                    className={`h-11 w-full rounded-lg border px-3 text-[13px] font-medium text-slate-700 outline-none transition ${editing ? "border-emerald-300 bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100" : "cursor-default border-slate-200 bg-white opacity-100 shadow-sm"}`}
-                  >
-                    <option>District Authority</option>
-                    <option>Regional Authority</option>
-                    <option>State Administrator</option>
-                  </select>
-                </label>
+                <Field 
+                label="District" 
+                value={formData.district ??user?.address.district?? ""} 
+                editing={editing} 
+                onChange={handleChange} />
               </div>
             </form>
           </section>
@@ -235,13 +307,43 @@ export default function AuthorityProfile() {
         {activeTab === "Security" && (
           <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-[0_10px_30px_rgba(15,46,34,0.05)]">
             <div className="mb-4 flex items-center gap-3">
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-2xl text-emerald-700"><LuShieldCheck aria-hidden="true" /></span>
-              <div><h2 className="text-[17px] font-bold text-slate-900">Account Security</h2><p className="mt-1 text-[11px] text-slate-500">Manage your password and sign-in protection.</p></div>
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-2xl text-emerald-700">
+                <LuShieldCheck aria-hidden="true" />
+              </span>
+              <div>
+                <h2 className="text-[17px] font-bold text-slate-900">Account Security</h2>
+                <p className="mt-1 text-[11px] text-slate-500">Manage your password and sign-in protection.</p>
+              </div>
             </div>
             <div className="divide-y divide-slate-100">
-              <SettingsRow icon={<LuKeyRound aria-hidden="true" />} title="Password" description="Last changed 36 days ago" action={<button type="button" className="rounded-lg border border-emerald-600 px-4 py-2 text-[11px] font-semibold text-emerald-700 hover:bg-emerald-50">Change Password</button>} />
-              <SettingsRow icon={<LuShieldCheck aria-hidden="true" />} title="Two-factor authentication" description="Add an extra layer of security to your account" action={<Toggle enabled={twoFactorEnabled} onChange={() => setTwoFactorEnabled((current) => !current)} label="Toggle two-factor authentication" />} />
-              <SettingsRow icon={<LuMonitor aria-hidden="true" />} title="Active sessions" description="Two recognized devices are currently signed in" action={<button type="button" className="rounded-lg border border-slate-200 px-4 py-2 text-[11px] font-semibold text-slate-600 hover:bg-slate-50">Manage</button>} />
+              <SettingsRow 
+              icon={<LuKeyRound aria-hidden="true" />}
+               title="Password" description="Last changed 36 days ago" 
+               action={
+               <button 
+               type="button" 
+               className="rounded-lg border border-emerald-600 px-4 py-2 text-[11px] font-semibold text-emerald-700 hover:bg-emerald-50">
+                Change Password
+                </button>
+              } />
+              <SettingsRow 
+              icon={<LuShieldCheck aria-hidden="true" />} 
+              title="Two-factor authentication" description="Add an extra layer of security to your account" 
+              action={
+              <Toggle enabled={twoFactorEnabled} 
+              onChange={() => setTwoFactorEnabled((current) => !current)} 
+              label="Toggle two-factor authentication" />
+              } />
+              <SettingsRow 
+              icon={<LuMonitor aria-hidden="true" />} 
+              title="Active sessions"
+               description="Two recognized devices are currently signed in" 
+               action={
+               <button type="button" 
+               className="rounded-lg border border-slate-200 px-4 py-2 text-[11px] font-semibold text-slate-600 hover:bg-slate-50">
+                Manage
+                </button>
+              } />
             </div>
           </section>
         )}
@@ -253,10 +355,35 @@ export default function AuthorityProfile() {
               <div><h2 className="text-[17px] font-bold text-slate-900">Preferences</h2><p className="mt-1 text-[11px] text-slate-500">Customize notifications and your workspace.</p></div>
             </div>
             <div className="divide-y divide-slate-100">
-              <SettingsRow icon={<LuMail aria-hidden="true" />} title="Email notifications" description="Receive verification and complaint updates by email" action={<Toggle enabled={emailNotifications} onChange={() => setEmailNotifications((current) => !current)} label="Toggle email notifications" />} />
-              <SettingsRow icon={<LuPhone aria-hidden="true" />} title="SMS notifications" description="Receive urgent authority alerts on your phone" action={<Toggle enabled={smsNotifications} onChange={() => setSmsNotifications((current) => !current)} label="Toggle SMS notifications" />} />
-              <SettingsRow icon={<LuPalette aria-hidden="true" />} title="Compact dashboard" description="Show more information in a condensed layout" action={<Toggle enabled={compactView} onChange={() => setCompactView((current) => !current)} label="Toggle compact dashboard" />} />
-              <SettingsRow icon={<LuLanguages aria-hidden="true" />} title="Language" description="Choose the language used across the authority portal" action={<select className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-[11px] font-semibold text-slate-600"><option>English</option><option>Hindi</option><option>Marathi</option></select>} />
+              <SettingsRow 
+              icon={<LuMail aria-hidden="true" />} 
+              title="Email notifications" description="Receive verification and complaint updates by email"
+               action={<Toggle enabled={emailNotifications} 
+               onChange={() => setEmailNotifications((current) => !current)} 
+               label="Toggle email notifications" />} />
+            <SettingsRow icon={<LuPhone aria-hidden="true" />} 
+            title="SMS notifications" 
+            description="Receive urgent authority alerts on your phone" 
+            action={<Toggle enabled={smsNotifications} 
+            onChange={() => setSmsNotifications((current) => !current)} 
+            label="Toggle SMS notifications" />} />
+
+            <SettingsRow 
+            icon={<LuPalette aria-hidden="true" />} 
+            title="Compact dashboard" 
+            description="Show more information in a condensed layout" 
+            action={<Toggle enabled={compactView} 
+            onChange={() => setCompactView((current) => !current)} label="Toggle compact dashboard" />} />
+              <SettingsRow 
+              icon={<LuLanguages aria-hidden="true" />} 
+              title="Language" 
+              description="Choose the language used across the authority portal" 
+              action={
+              <select className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-[11px] font-semibold text-slate-600">
+                <option>English</option>
+                <option>Hindi</option>
+                <option>Marathi</option>
+              </select>} />
             </div>
           </section>
         )}

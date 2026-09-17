@@ -1,5 +1,4 @@
 "use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -296,7 +295,7 @@ export default function EquipmentRentingPage() {
 
   return (
     <>
-      <title>Agricultural Equipment Rental | AgriEquip</title>
+      <title>Agricultural Equipment Rental | AgriIndia</title>
       <meta name="description" content="Explore tractors, tillage equipment, seed drills and harvesters for rent. Find the right machinery for your farm and estimate your rental costs." />
       <main className="overflow-x-clip bg-white font-sans text-[#14201e]">
         <section aria-labelledby="equipment-heading" className="relative isolate overflow-hidden bg-[#f2f4e8]">
@@ -378,7 +377,38 @@ export default function EquipmentRentingPage() {
 
         <section aria-labelledby="rental-benefits-heading" className="mx-auto max-w-[1440px] px-6 pb-11 pt-7 sm:px-10 lg:px-12"><h2 id="rental-benefits-heading" className="text-2xl font-extrabold tracking-tight">Why Rent Instead of Buy?</h2><div className="mt-6 grid gap-x-8 gap-y-7 sm:grid-cols-2 lg:grid-cols-4">{benefits.map(({ title, description, icon: Icon }) => <article key={title} className="flex items-start gap-5"><span className="flex h-[76px] w-[76px] shrink-0 items-center justify-center rounded-full bg-[#e1eed8] text-[#296b3c]"><Icon className="h-9 w-9" strokeWidth={2} aria-hidden="true" /></span><div className="pt-2"><h3 className="text-base font-bold leading-5">{title}</h3><p className="mt-1.5 max-w-48 text-sm leading-5 text-[#6e7869]">{description}</p></div></article>)}</div></section>
 
-        <footer className="bg-white"><div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-7 px-6 pb-7 pt-5 sm:px-10 lg:flex-row lg:gap-6 lg:px-12"><Link href="/" aria-label="AgriEquip home" className={`flex shrink-0 items-center gap-2.5 rounded-sm ${focusRing}`}><LuSprout className="h-12 w-10 text-[#2b773e]" strokeWidth={1.8} aria-hidden="true" /><span><span className="block text-2xl font-bold tracking-tight">AgriEquip</span><span className="mt-0.5 block text-xs text-[#71806a]">Tools for a Better Tomorrow.</span></span></Link><nav aria-label="Footer navigation" className="flex flex-wrap justify-center gap-x-7 gap-y-3 text-xs text-[#606d62]"><Link href="/#about" className={`hover:text-[#277443] ${focusRing}`}>About Us</Link><Link href="/servicespage/warehouseStorage" className={`hover:text-[#277443] ${focusRing}`}>For Landowners</Link><a href="#explore-equipment" className={`hover:text-[#277443] ${focusRing}`}>Equipments</a><a href="#how-it-works" className={`hover:text-[#277443] ${focusRing}`}>How It Works</a><button type="button" onClick={() => setActiveDialog({ type: "contact" })} className={`hover:text-[#277443] ${focusRing}`}>Contact</button></nav><div className="flex shrink-0 items-center gap-6"><div aria-hidden="true" className="flex items-center gap-4 text-[#424e50]"><FaLinkedin className="h-4 w-4" /><FaTwitter className="h-4 w-4" /><FaFacebookF className="h-4 w-4" /><FaInstagram className="h-4 w-4" /><FaYoutube className="h-4 w-4" /></div><p className="flex items-center gap-4 border-l border-[#dce5d8] pl-6 text-xs leading-5 text-[#657760]"><LuLeaf className="h-9 w-9 shrink-0 text-[#276e3a]" aria-hidden="true" /><span>Farming Forward<br />Together.</span></p></div></div></footer>
+        <footer className="bg-linear-to-br from-[#174a2e] to-[#0c3824] text-[#d5e4d5]">
+          <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-7 px-6 pb-7 pt-5 sm:px-10 lg:flex-row lg:gap-6 lg:px-12">
+            <Link href="/" aria-label="AgriEquip home" className={`flex shrink-0 items-center gap-2.5 rounded-sm ${focusRing}`}>
+            <LuSprout className="h-12 w-10 text-[#2b773e]" strokeWidth={1.8} aria-hidden="true" />
+            <span>
+              <span className="block text-2xl font-bold tracking-tight">AgriIndia</span>
+              <span className="mt-0.5 block text-xs text-white">Tools for a Better Tomorrow.</span>
+              </span>
+            </Link>
+            <nav aria-label="Footer navigation" className="flex flex-wrap justify-center gap-x-7 gap-y-3 text-xs text-[#606d62]">
+              <Link href="/#about" className={`text-sm font-semibold text-white hover:text-[#277443] ${focusRing}`}>About Us</Link>
+              <Link href="/servicespage/warehouseStorage" className={`text-sm font-semibold text-white hover:text-[#277443] ${focusRing}`}>For Landowners</Link>
+              <a href="#explore-equipment" className={`text-sm font-semibold text-white hover:text-[#277443] ${focusRing}`}>Equipments</a>
+              <a href="#how-it-works" className={`text-sm font-semibold text-white hover:text-[#277443] ${focusRing}`}>How It Works</a>
+              <button type="button" onClick={() => setActiveDialog({ type: "contact" })} 
+              className={`text-sm font-semibold text-white  hover:text-[#277443] ${focusRing}`}>Contact</button>
+              </nav>
+              <div className="flex shrink-0 items-center gap-6">
+                <div aria-hidden="true" className="flex items-center gap-4 text-[#424e50]">
+                  <FaLinkedin className="h-4 w-4 text-white" />
+                  <FaTwitter className="h-4 w-4 text-white" />
+                  <FaFacebookF className="h-4 w-4 text-white" />
+                  <FaInstagram className="h-4 w-4 text-white" />
+                  <FaYoutube className="h-4 w-4 text-white" />
+                  </div>
+                  <p className="flex items-center gap-4 border-l border-[#dce5d8] pl-6 text-xs leading-5 text-white">
+                    <LuLeaf className="h-9 w-9 shrink-0 text-white" aria-hidden="true" />
+                    <span>Farming Forward<br />Together.</span>
+                    </p>
+                    </div>
+                    </div>
+                    </footer>
       </main>
 
       <dialog ref={dialogRef} aria-labelledby="equipment-dialog-heading" onCancel={() => setActiveDialog(null)} onClose={() => setActiveDialog(null)} onClick={(event) => { if (event.target === event.currentTarget) setActiveDialog(null); }} className="fixed inset-0 m-auto max-h-[90dvh] w-[calc(100%_-_2rem)] max-w-xl overflow-y-auto rounded-2xl border-0 bg-white p-0 font-sans text-[#263e2d] shadow-2xl backdrop:bg-[#102a1c]/65 backdrop:backdrop-blur-sm">

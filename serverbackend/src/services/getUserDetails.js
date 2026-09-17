@@ -9,7 +9,7 @@ const userModels = {
   authority: authority,
 };
 
-export const getUserDetails = async (req, res) => {
+export const getUserDetails = async (req, res, next) => {
 
   try {
 
@@ -37,7 +37,6 @@ export const getUserDetails = async (req, res) => {
      );
   } catch (error) {
     next(error);
-    throw new ApiError(404, "Failed to fetch user details", error);
     
   }
 };

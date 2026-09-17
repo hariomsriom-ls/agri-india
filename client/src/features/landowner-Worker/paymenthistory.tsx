@@ -1,6 +1,9 @@
 import {createSlice, createAsyncThunk, PayloadAction} from "@reduxjs/toolkit";
 import api from "@/utils/services"; 
 import axios from "axios";
+import { clearAuth, setAuth } from "@/features/auth";
+
+export type PaymentRole = "worker" | "landowner" | "authority";
 
 export type PaymentStatus = "Completed" | "Pending" | "Failed";
 
@@ -26,21 +29,25 @@ interface UserPaymentState {
   data: UserPayment[];
   status: "idle" | "loading" | "success" | "failed";
   error: string | null;
+  role: PaymentRole | null;
+  currentRequestId: string | null;
 }
 
 const initialState: UserPaymentState = {
   data: [],
   status: "idle",
   error: null,
+  role: null,
+  currentRequestId: null,
 };
 
 export const fetchUserPayments = createAsyncThunk<
   UserPayment[],
-  string,
-  { rejectValue: string }
+  PaymentRole,
+  { rejectValue: string; state: { payments: UserPaymentState } }
 >(
   "payment/fetchUserPayments",
-  async (role: string, { rejectWithValue }) => {
+  async (role, { rejectWithValue }) => {
     let apiCallUrl;
     if (role === "worker") {
       apiCallUrl = "/worker/get-payment-details";
@@ -53,13 +60,24 @@ export const fetchUserPayments = createAsyncThunk<
     }
     try {
       const response = await api.get(apiCallUrl, {withCredentials: true,});
-      const receivedPayments: UserPayment[] = response.data.data.PaymentData ?? [];
-      const paymentsSent: UserPayment[] = response.data.data.transactionData ?? [];
+      type ApiPayment = Omit<UserPayment, "paymentStatus"> & { paymentStatus: PaymentStatus | "Paid" };
+      const receivedPayments: ApiPayment[] = response.data.data.PaymentData ?? [];
+      const paymentsSent: ApiPayment[] = response.data.data.transactionData ?? [];
 
-      return [...receivedPayments, ...paymentsSent];
+      // Salary/earnings pages show incoming payments, not money the user sent.
+      const payments = role === "authority" ? [...receivedPayments, ...paymentsSent] : receivedPayments;
+      return payments.map((payment): UserPayment => ({
+        ...payment,
+        paymentStatus: payment.paymentStatus === "Paid" ? "Completed" : payment.paymentStatus,
+      })).sort((left, right) => new Date(right.paymentdate).getTime() - new Date(left.paymentdate).getTime());
     } catch (error) {if (axios.isAxiosError(error)) {return rejectWithValue(error.response?.data?.message || "Failed to fetch payments" );}
       return rejectWithValue("Unexpected error");
-    } });
+    } }, {
+      condition: (role, { getState }) => {
+        const state = getState().payments;
+        return state.status !== "loading" || state.role !== role;
+      },
+    });
 
 
 const userPaymentSlice = createSlice({
@@ -75,12 +93,31 @@ const userPaymentSlice = createSlice({
              }
              },
 
-    clearUserPayments: (state) => { state.data = []; state.status="idle"; state.error = null;},
+    clearUserPayments: () => initialState,
    },
   extraReducers: (builder) => {builder
-      .addCase(fetchUserPayments.pending, (state) => { state.status = "loading"; state.error = null;})
-      .addCase(fetchUserPayments.fulfilled, (state, action) => {state.status = "success"; state.data = action.payload;})
-      .addCase(fetchUserPayments.rejected, (state, action) => { state.status = "failed"; state.error = action.payload as string; });
+      .addCase(clearAuth, () => initialState)
+      .addCase(setAuth, () => initialState)
+      .addCase(fetchUserPayments.pending, (state, action) => {
+        if (state.role !== action.meta.arg) state.data = [];
+        state.role = action.meta.arg;
+        state.currentRequestId = action.meta.requestId;
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(fetchUserPayments.fulfilled, (state, action) => {
+        if (state.currentRequestId !== action.meta.requestId) return;
+        state.currentRequestId = null;
+        state.status = "success";
+        state.data = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchUserPayments.rejected, (state, action) => {
+        if (state.currentRequestId !== action.meta.requestId) return;
+        state.currentRequestId = null;
+        state.status = "failed";
+        state.error = action.payload ?? "Failed to fetch payments";
+      });
   },
 });
 

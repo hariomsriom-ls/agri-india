@@ -1,47 +1,22 @@
 import mongoose, {Schema} from "mongoose"
 
 const landRecordSchema = new Schema ({
-    landareaUndertaken: {
-        type: Number,
-        required: true
-    },
-    cultivationStatus: {
-        type: String,
-        required: true
-    },
-    authorityAssigned: {
-      type: Schema.Types.ObjectId,
-      ref: "organization",
-      required: true
-    },
-    rentPeriod: {
-        type: Number
-    },
-    equipmentAssigned: [{
-        type: Schema.Types.ObjectId,
-        ref: "equipment"
-}],
-     landowner: {
-        type: Schema.Types.ObjectId,
-        ref: "landowner"
-     },
-     materialUsed: [{
-        type: String,
-        required: true
-     }],
-     productOutput: {
-        type: Number
-     },
-     productDetails: {
-        type: Object,
-     },
-     rentdetails: {
-        type: Object
-     },
-     landquality: {
-        type: String,
-        required: true
-     }
+    landStatus: {type: String, default: "Pending"},
+    authorityAssigned: { type: Schema.Types.ObjectId, ref: "authority",},
+    rentPeriod: {type: Number},
+    equipmentAssigned: [{type: Schema.Types.ObjectId,ref: "equipment"}],
+     landowner: {type: Schema.Types.ObjectId,ref: "landowner", required: "true"},
+     materialUsed: [{type: String}],
+     productOutput: {type: Number},
+     productDetails: {type: Object,},
+     landquality: {type: String, },
+      landArea: {type: Number,required: true},
+      landCity: {type: String,required: true},
+      landLocation: {type: String,required: true},
+      landDocuments: {type: String,required: true},
+      landRentPayments: { type: Number,},
+      landLeaseAgreements: {type: String, },
+      cultivationPeriod:{type: Number, },
 
 },{timestamps: true})
 

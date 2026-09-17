@@ -17,13 +17,6 @@ const landownerSchema = new Schema({
     bankaccount: { type: Number, },
     IFSCcode: {type: String,},
     landID: [{ type: Schema.Types.ObjectId, ref: "landRecord",}],
-    landArea: {type: Number,},
-    landCity: {type: String,},
-    landLocation: {type: String,},
-    landDocuments: {type: String,},
-    landRentPayments: { type: Number,},
-    landLeaseAgreements: {type: String, },
-    cultivationPeriod:{type: Number, },
     refreshToken: {type: String }
 },{ timestamps: true })
 

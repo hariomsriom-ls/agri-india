@@ -1,13 +1,13 @@
 "use client";
 
-import { ReactNode, useMemo, useState } from "react";
+import { type ReactNode, useState } from "react";
 import { HiOutlineCurrencyRupee, HiOutlineMegaphone , LuLeaf,FiBell,FiCheckCircle,FiChevronLeft,
   FiChevronRight,FiFileText,FiInfo,FiMail,FiMoreVertical,FiSettings,FiShield,
 } from "@/components/ui/icons";
 import { useFetchNotifications } from "@/services/fetchNotification";
 import { useVisibleNotifications } from "@/services/visiblenotification";
 import { useAppDispatch } from "@/store/hooks";
-import { fetchUserNotification, updateNotification, type Filter, type Notification, type NotificationType,} from "@/features/landowner-Worker/notificationdata";
+import { markAllNotificationsRead, updateNotification, type Filter, type Notification, type NotificationType,} from "@/features/landowner-Worker/notificationdata";
 
 
 const filterItems: { label: Filter; icon: ReactNode; style: string }[] = [
@@ -28,6 +28,13 @@ const typeDesign: Record<NotificationType, { icon: ReactNode; style: string }> =
   "System Alerts": { icon: <FiShield />, style: "bg-violet-50 text-violet-600" },
 };
 
+function notificationTime(notification: Notification) {
+  if (notification.time) return notification.time;
+  const value = notification.Date ?? notification.createdAt;
+  const date = value ? new Date(value) : null;
+  return date && !Number.isNaN(date.getTime()) ? date.toLocaleString() : "";
+}
+
 function SummaryCard({ label, value, note, icon, style }:
    { label: string; value: string; note: string; icon: ReactNode; style: string }) {
   return (
@@ -45,12 +52,15 @@ function SummaryCard({ label, value, note, icon, style }:
 }
 
 
-function PageButton({ children, label, active = false }:
-   { children: ReactNode; label: string; active?: boolean }) {
+function PageButton({ children, label, active = false, disabled = false, onClick }:
+   { children: ReactNode; label: string; active?: boolean; disabled?: boolean; onClick: () => void }) {
   return (
   <button type="button" 
   aria-label={label} 
-  className={`grid h-9 min-w-9 place-items-center rounded-lg border px-2 font-semibold ${active ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-slate-200 bg-white text-slate-500"}`}>
+   aria-current={active ? "page" : undefined}
+  disabled={disabled}
+  onClick={onClick}
+   className={`grid h-9 min-w-9 place-items-center rounded-lg border px-2 font-semibold disabled:cursor-not-allowed disabled:opacity-50 ${active ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-slate-200 bg-white text-slate-500"}`}>
     {children}
   </button>
   )
@@ -59,7 +69,7 @@ function PageButton({ children, label, active = false }:
 
 export default function LandownerNotifications() {
   const dispatch = useAppDispatch();
-  const { role, notifications, status, error } = useFetchNotifications();
+   const { role, notifications, status, error, retry } = useFetchNotifications();
   const [search, setSearch] = useState("");
   const { visibleNotifications, filter, setFilter, sort, setSort } = useVisibleNotifications(notifications, search);
   const [page, setPage] = useState(1);
@@ -72,12 +82,13 @@ export default function LandownerNotifications() {
   const pagedNotifications = visibleNotifications.slice(pageStart, pageStart + pageSize);
 
    if (!role) return <p className="p-6">Please sign in to view your notifications.</p>;
+   if (role !== "landowner") return <p className="p-6" role="alert">Only landowners can view this page.</p>;
   if (status === "idle" || status === "loading") return <p className="p-6" role="status">Loading notifications...</p>;
   if (status === "failed") return (
     <div className="p-6">
       <p role="alert">{error || "Unable to load notifications."}</p>
       <button type="button" 
-      onClick={() => dispatch(fetchUserNotification(role))} 
+      onClick={retry} 
       className="mt-3 rounded-lg bg-emerald-700 px-4 py-2 text-white">
         Try again
       </button>
@@ -96,12 +107,15 @@ export default function LandownerNotifications() {
   return (
     <div className="min-h-full bg-[#f7f9f8] px-4 py-7 text-slate-800 sm:px-7 lg:px-9">
       <div className="mx-auto max-w-[1500px]">
-        <header className="mb-6"><h1 className="text-3xl font-bold tracking-tight text-slate-950">Notifications</h1><p className="mt-1.5 text-sm text-slate-500">Stay updated with important announcements and updates</p></header>
+        <header className="mb-6">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-950">Notifications</h1>
+          <p className="mt-1.5 text-sm text-slate-500">Stay updated with important announcements and updates</p>
+        </header>
 
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <SummaryCard 
           label="Total Notifications" 
-          value="32"
+          value={String(notifications.length)}
            note="All time" 
           icon={<FiBell />} 
           style="bg-green-50 text-green-600" />
@@ -115,13 +129,13 @@ export default function LandownerNotifications() {
 
           <SummaryCard 
           label="Announcements" 
-          value="12" 
+           value={String(notificationCount("Announcements"))} 
           note="Company announcements" icon={<HiOutlineMegaphone />} 
           style="bg-amber-50 text-amber-500" />
 
           <SummaryCard 
           label="Alerts" 
-          value="3" 
+          value={String(notificationCount("System Alerts"))} 
           note="Important alerts" 
           icon={<FiInfo />}
            style="bg-violet-50 text-violet-600" />
@@ -136,14 +150,14 @@ export default function LandownerNotifications() {
                 {filterItems.map((item) => <button 
               key={item.label} 
               type="button"
-               onClick={() => setFilter(item.label)} 
+                onClick={() => { setFilter(item.label); setPage(1); }} 
               className={`flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left transition ${filter === item.label ? "bg-emerald-50" : "hover:bg-slate-50"}`}>
                 <span className={`grid h-8 w-8 place-items-center rounded-lg ${item.style}`}>{item.icon}</span>
               <span className={`flex-1 text-sm font-semibold ${filter === item.label ? "text-emerald-800" : "text-slate-700"}`}>
                 {item.label}
                 </span>
               <span className="rounded-full bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-500">
-                {item.label === "Unread" ? notifications.filter((entry) => entry.unread).length : item.count}
+                {notificationCount(item.label)}
                 </span>
               </button>)}
               </div>
@@ -176,7 +190,7 @@ export default function LandownerNotifications() {
             <section className="rounded-2xl border border-emerald-100 bg-gradient-to-b from-emerald-50/60 to-white p-6 text-center shadow-sm">
             <div className="relative mx-auto grid h-20 w-20 place-items-center rounded-full bg-emerald-50 text-5xl text-emerald-600">
               <FiBell />
-            <span className="absolute right-1 top-1 grid h-6 w-6 place-items-center rounded-full bg-emerald-700 text-xs font-bold text-white">1</span>
+            <span className="absolute right-1 top-1 grid h-6 w-6 place-items-center rounded-full bg-emerald-700 text-xs font-bold text-white">{notificationCount("Unread")}</span>
             </div>
             <h2 className="mt-4 font-bold text-slate-900">Never miss important updates!</h2>
             <p className="mt-2 text-xs leading-5 text-slate-500">Enable push notifications to stay updated in real-time.</p>
@@ -191,10 +205,20 @@ export default function LandownerNotifications() {
 
           <main className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
-              <h2 className="text-lg font-bold text-slate-900">All Notifications</h2>
+              <h2 className="text-lg font-bold text-slate-900">{filter}</h2>
+              <input
+                value={search}
+                onChange={(event) => { setSearch(event.target.value); setPage(1); }}
+                placeholder="Search notifications..."
+                aria-label="Search notifications"
+                className="h-10 rounded-lg border border-slate-200 px-3 text-sm outline-none focus:border-emerald-600"
+              />
               <label className="flex items-center gap-3 text-xs text-slate-500">
                 Sort by:
-                <select value={sort} onChange={(event) => setSort(event.target.value)} 
+                <select value={sort} onChange={(event) => {
+                  setSort(event.target.value === "Oldest First" ? "Oldest First" : "Newest First");
+                  setPage(1);
+                }}
                 className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700">
               <option>Newest First</option>
             <option>Oldest First</option>
@@ -202,13 +226,15 @@ export default function LandownerNotifications() {
             </label>
             </div>
             <div className="divide-y divide-slate-100 px-5">
-              {visibleNotifications.map((notification) => { 
-                const design = typeDesign[notification.type]; 
+              {pagedNotifications.map((notification) => {
+                const design = (notification.type && typeDesign[notification.type])
+                  || { icon: <FiBell />, style: "bg-slate-50 text-slate-600" };
                 return (
-                <article key={notification.id} 
+                <article key={notification._id} 
                 className={`flex items-center gap-4 py-5 transition ${notification.unread ? "bg-emerald-50/20" : ""}`}>
                   <button type="button" 
-                  onClick={() => setNotifications((items) => items.map((item) => item.id === notification.id ? { ...item, unread: false } : item))} 
+                  aria-label={`Mark ${notification.title} as read`}
+                  onClick={() => dispatch(updateNotification({ _id: notification._id, unread: false }))}
                   className={`grid h-14 w-14 shrink-0 place-items-center rounded-full text-2xl ${design.style}`}>
                 {design.icon}
                 </button>
@@ -221,7 +247,8 @@ export default function LandownerNotifications() {
               </div>
               <p className="mt-1 truncate text-xs text-slate-500 sm:text-sm">{notification.message}</p>
               </div>
-              <time className="hidden shrink-0 text-xs text-slate-500 sm:block">{notification.time}</time>
+              <time className="hidden shrink-0 text-xs text-slate-500 sm:block">{notificationTime(notification)}</time>
+
               {notification.unread && 
               <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-emerald-600" />}
               <button 
@@ -238,16 +265,15 @@ export default function LandownerNotifications() {
                 </div>}
             </div>
             <footer className="flex flex-col gap-3 border-t border-slate-200 px-5 py-4 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-              <p>Showing {visibleNotifications.length ? `1 to ${visibleNotifications.length}` : "0"} of 32 notifications</p>
-              <div className="flex gap-2">
-            <PageButton label="Previous">
+              <p>Showing {visibleNotifications.length ? `${pageStart + 1} to ${pageStart + pagedNotifications.length}` : "0"} of {visibleNotifications.length} notifications</p>
+              <div className="flex flex-wrap gap-2">
+            <PageButton label="Previous" disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)}>
               <FiChevronLeft />
             </PageButton>
-            <PageButton active label="Page 1">1</PageButton>
-            <PageButton label="Page 2">2</PageButton>
-            <PageButton label="Page 3">3</PageButton>
-            <PageButton label="Page 4">4</PageButton>
-            <PageButton label="Next">
+            {Array.from({ length: pageCount }, (_, index) => index + 1).map((pageNumber) => (
+              <PageButton key={pageNumber} active={currentPage === pageNumber} label={`Page ${pageNumber}`} onClick={() => setPage(pageNumber)}>{pageNumber}</PageButton>
+            ))}
+            <PageButton label="Next" disabled={currentPage === pageCount} onClick={() => setPage(currentPage + 1)}>
               <FiChevronRight />
             </PageButton>
             </div>
@@ -258,5 +284,4 @@ export default function LandownerNotifications() {
     </div>
   );
 }
-
 

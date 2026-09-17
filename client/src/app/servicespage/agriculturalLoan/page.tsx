@@ -1,5 +1,5 @@
+
 import type { Metadata } from "next";
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -18,12 +18,14 @@ import {
   LuShieldCheck,
   LuSprout,
   LuUsersRound,
+  LuClipboardCheck,
+  LuHandshake
 } from "react-icons/lu";
-
+/*
 export const metadata: Metadata = {
   title: "Agricultural Loans",
   description: "Explore agricultural credit, government schemes, eligibility requirements, and the steps to apply for farm finance.",
-};
+};*/
 
 const primaryButton = "inline-flex items-center justify-center gap-3 rounded-full bg-[#009849] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#08773e] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-green-700";
 const textLink = "inline-flex items-center gap-1.5 text-sm font-semibold text-[#078a47] hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-green-700";
@@ -110,11 +112,10 @@ const faqs = [
     answer: "Some schemes offer interest support, credit guarantees or other assistance, subject to their conditions. PM-KISAN provides income support to eligible farmer families. Follow the official scheme links above for current benefits and eligibility.",
   },
 ];
-type AgriculturalLoan = (typeof schemes )[number];
-type PageDialog = { type: "Agricultural loan"; agriculturalloan: AgriculturalLoan } | { type: "contact" };
+
 
 export default function AgriculturalLoansPage() {
-    const [activeDialog, setActiveDialog] = useState<PageDialog | null>(null);
+
   return (
     <main className="overflow-hidden bg-white text-[#153e38]">
       <section aria-labelledby="loans-heading" className="relative isolate overflow-hidden border-t-4 border-[#ddf0ed]">
@@ -291,22 +292,28 @@ export default function AgriculturalLoansPage() {
         </div>
       </section>
 
-       <footer className="bg-[#15261e] text-[#b6c5bb]">
-          <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-7 px-6 py-9 sm:px-10 lg:flex-row lg:gap-8 lg:px-16">
-            <Link href="/" aria-label="AgriStore home" className="flex shrink-0 items-center gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
-              <LuSprout className="h-10 w-10 text-[#e6eee0]" strokeWidth={1.5} aria-hidden="true" />
-              <span><span className="block text-xl font-semibold tracking-tight text-white">AgriStore</span><span className="mt-0.5 block text-xs">Your Land. Greater Value.</span></span>
+      <footer className="bg-[#063e34] text-white">
+        <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-12">
+          <div className="flex flex-col items-center justify-between gap-5 border-b border-white/10 py-5 sm:flex-row">
+            <Link href="/" className="inline-flex items-center gap-2 text-lg font-semibold">
+            <LuSprout className="h-7 w-7" aria-hidden="true" />
+            AgriIndia
             </Link>
-            <nav aria-label="Footer navigation" className="flex flex-wrap justify-center gap-x-7 gap-y-4 text-xs">
-              <Link href="/#about" className="transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">About Us</Link>
-              <a href="#storage-options" className="transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">Storage Services</a>
-              <a href="#landowner-benefits" className="transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">For Landowners</a>
-              <button type="button" onClick={() => setActiveDialog({ type: "contact" })} className="transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">Help</button>
-              <button type="button" onClick={() => setActiveDialog({ type: "contact" })} className="transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">Contact</button>
+            <nav aria-label="Footer navigation" className="flex flex-wrap justify-center gap-x-5 gap-y-3 text-sm text-[#d3e6dd]">
+              <Link href="/" className="hover:text-white hover:underline">Home</Link>
+              <Link href="/#about" className="hover:text-white hover:underline">About</Link>
+              <a href="#land-leasing" className="hover:text-white hover:underline">Agricultural Loan</a>
+              <a href="#guidelines" className="hover:text-white hover:underline">Policies</a>
             </nav>
-            <p className="flex items-center gap-4 text-xs leading-5 lg:border-l lg:border-white/20 lg:pl-7"><LuLeaf className="h-7 w-7 shrink-0 text-[#d6e4d0]" strokeWidth={1.5} aria-hidden="true" /><span>A stronger tomorrow,<br />starts with your land.</span></p>
+            <div className="flex gap-4 text-[#d3e6dd]" aria-label="Responsible agricultural partnerships">
+              <LuLeaf className="h-5 w-5" aria-hidden="true" />
+              <LuHandshake className="h-5 w-5" aria-hidden="true" />
+              <LuClipboardCheck className="h-5 w-5" aria-hidden="true" />
+              </div>
           </div>
-        </footer>
+          <p className="py-4 text-xs text-[#bdd3c9]">© 2026 AgriIndia. All rights reserved.</p>
+        </div>
+      </footer>
     </main>
   );
 }

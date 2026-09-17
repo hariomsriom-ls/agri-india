@@ -23,7 +23,11 @@ export default function LandownerEarnings() {
   };
 
   const cards = [
-   { label: "Total Earnings", value: "₹2,48,500", note: "All time earnings", color: "text-emerald-700", bg: "bg-lime-50", icon: GiWallet },]
+   { label: "Total Earnings", value: "₹2,48,500", note: "All time earnings", color: "text-emerald-700", bg: "bg-lime-50", icon: GiWallet },
+   { label: "Monthly Earnings", value: "₹2,48,500", note: "All time earnings", color: "text-emerald-700", bg: "bg-lime-50", icon: GiWallet },
+   { label: "Pending Payments", value: "₹2,48,500", note: "All time earnings", color: "text-emerald-700", bg: "bg-lime-50", icon: GiWallet },
+   { label: "Failed Payments", value: "₹2,48,500", note: "All time earnings", color: "text-emerald-700", bg: "bg-lime-50", icon: GiWallet },
+  ]
    
 
   if (!role) {

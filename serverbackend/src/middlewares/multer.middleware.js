@@ -45,3 +45,29 @@ export const profileImageUpload = multer({
     cb(null, true);
   },
 });
+
+const documentUpload = multer({
+  dest: ".uploads/documents",
+  limits: { fileSize: 10 * 1024 * 1024, files: 1 },
+  fileFilter: (_req, file, cb) => {
+    if (!["image/jpeg", "image/jpg", "image/png", "application/pdf"].includes(file.mimetype)) {
+      return cb(new ApiError(400, "Choose a PDF, JPG, or PNG document"));
+    }
+    cb(null, true);
+  },
+});
+
+const singleDocumentUpload = (field) => (req, res, next) => {
+  documentUpload.single(field)(req, res, (error) => {
+    if (error instanceof multer.MulterError) {
+      return next(new ApiError(
+        error.code === "LIMIT_FILE_SIZE" ? 413 : 400,
+        error.code === "LIMIT_FILE_SIZE" ? "Document must be 10 MB or smaller" : error.message
+      ));
+    }
+    next(error);
+  });
+};
+
+export const uploadDocumentFile = singleDocumentUpload("document");
+export const uploadLandDocumentFile = singleDocumentUpload("landDocuments");

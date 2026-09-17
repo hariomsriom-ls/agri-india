@@ -8,7 +8,8 @@ import { deleteReview, getReviews, postReviews } from "../../controllers/reviews
 import { getComplaints, postComplaints } from "../../controllers/complaint.controllers.js";
 import { getProjects } from "../../controllers/project.controllers.js";
 import {uploaduserProfileImage} from "../../services/uploadProfileImage.js"
-import { upload, profileImageUpload } from "../../middlewares/multer.middleware.js";
+import { upload, profileImageUpload, uploadDocumentFile } from "../../middlewares/multer.middleware.js";
+import { getWorkerDocuments, uploadDocument } from "../../controllers/documents.controller.js";
 
 const router = Router()
 
@@ -17,6 +18,8 @@ router.route("/login-worker").post(loginWorker)
 router.route("/logout-worker").post(logoutWorker)
 router.route("/change-password").post(changeCurrentPassword)
 router.route("/get-user-details").get(verifyJwt(worker), getUserDetails)
+router.route("/get-documents").get(verifyJwt(worker), getWorkerDocuments)
+router.route("/upload-document").post(verifyJwt(worker), uploadDocumentFile, uploadDocument)
 router.route("/get-payment-details").get( verifyJwt(worker), getPaymentDetails)
 router.route("/get-review-details").get( verifyJwt(worker), getReviews)
 router.route("/post-reviews").post( verifyJwt(worker), postReviews)

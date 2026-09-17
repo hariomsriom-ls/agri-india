@@ -7,10 +7,12 @@ import UserNotification from "@/features/landowner-Worker/notificationdata";
 import UserDocument from "@/features/landowner-Worker/documentsdata";
 import UserComplaint from "@/features/landowner-Worker/complaintsdata";
 import UserProject from "@/features/landowner-Worker/projectsdata";
+import UserLand from "@/features/landowner-Worker/landsdata";
 export const store = configureStore({
   reducer: {
     user: userReducer, auth: authReducer, payments: UserPaymentReducer, reviews: UserReviewReducer,
     notifications: UserNotification, documents: UserDocument, complaints: UserComplaint, projects: UserProject,
+    lands: UserLand,
 
   }
 })

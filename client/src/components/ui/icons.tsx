@@ -14,7 +14,8 @@ import { LuLandPlot, LuCalendarDays,LuChevronDown,LuChevronLeft,LuChevronRight,L
      LuBuilding2, LuCamera,LuFileClock,LuKeyRound,LuLanguages,LuLockKeyhole, LuMonitor, LuPalette,LuPhone,
      LuSave,LuUserRoundCog, LuBriefcaseBusiness,LuHourglass,  LuUserRoundX, LuDroplets, LuLeaf,  LuCalendar,
   LuCircleCheckBig,LuFilePlus2,LuGraduationCap,LuHeadphones, LuTractor,LuArrowUpDown,
-  LuShield,} 
+  LuShield, LuBadgeCheck, LuBanknote, LuCircleDollarSign, LuClipboardList, LuCreditCard, LuHeart, LuMinus,
+  LuShoppingBasket,LuShoppingCart,LuTruck,} 
      from "react-icons/lu";
 import { GiPayMoney,  GiPlantWatering, GiWallet, GiWheat} from "react-icons/gi";
 import { VscLayersActive,  VscOrganization } from "react-icons/vsc";
@@ -61,6 +62,6 @@ export {
   HiOutlineCurrencyRupee, FiAlertCircle,FiCheckCircle,FiChevronRight,FiCalendar,FiChevronLeft,FiFilter,FiInfo,FiSearch,
   FiFileText,FiPlusCircle, FiUser, GiWallet, FiDownload,FiMoreVertical,FiPhone,FiUploadCloud,FiX,FiXCircle,GiWheat,
    FiGrid, FiMapPin,FiBell,FiMail,HiOutlineMegaphone,  FiFile,FiSmile,FiStar, LuCalendar,
-  LuCircleCheckBig,LuFilePlus2,LuGraduationCap,LuHeadphones, LuTractor,LuArrowUpDown, LuShield,
-  FiTool,
+  LuCircleCheckBig,LuFilePlus2,LuGraduationCap,LuHeadphones, LuTractor,LuArrowUpDown, LuShield, LuBadgeCheck,
+  LuBanknote,LuCircleDollarSign,LuClipboardList,LuCreditCard,LuHeart,LuMinus,LuShoppingBasket,LuShoppingCart, LuTruck, FiTool,
 };

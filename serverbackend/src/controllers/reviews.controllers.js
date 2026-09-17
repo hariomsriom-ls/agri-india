@@ -60,32 +60,35 @@ export const deleteReview = asyncHandler(async (req, res) => {
 });
 
 export const postReviews = asyncHandler(async(req,res) => {
-    const {category, message, rating} = req.body;
-    
-    try {
-     const  userId = req.user?._id;
+    const { category, message, rating, suggestion = "", contact = false } = req.body ?? {};
+    const userId = req.user?._id;
     const role = req.user?.role;
-    if(!role || !userId){
-        throw new ApiError(400, "Unauthorized access")
+    if (!role || !userId) {
+        throw new ApiError(401, "Unauthorized access");
     }
-    const RegisterReview = await Review.create({
-    ReviewFrom: userId,
-    ReviewfromModel: role,
-    category: category,
-    rating: rating,
-    review: message,
-    createdAt: Date.now(),
-    })
-    if(!RegisterReview){
-      throw new ApiError(400, "Something went wrong while Registering the review")
+    if (typeof category !== "string" || !category.trim() ||
+        typeof message !== "string" || !message.trim()) {
+        throw new ApiError(400, "Category and review are required");
     }
-    const review = await Review.findByIdAndUpdate(
-      RegisterReview._id,
-      { status: "Submitted"},
-      { new: true, runValidators: true}
-    )
-    return res.status(200).json(200,{reviewData: review}, "Review has been successfully registered Thank You")
-    } catch (error) {
-        throw new ApiError(404, "Failed to fetch userComplaints", error); 
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+        throw new ApiError(400, "Rating must be a whole number from 1 to 5");
     }
+    if (typeof suggestion !== "string" || typeof contact !== "boolean") {
+        throw new ApiError(400, "Invalid suggestion or contact preference");
+    }
+
+    const review = await Review.create({
+        ReviewFrom: userId,
+        ReviewfromModel: role,
+        category: category.trim(),
+        rating,
+        review: message.trim(),
+        suggestion: suggestion.trim(),
+        contact,
+        status: "Submitted",
+    });
+
+    return res.status(201).json(
+        new ApiResponse(201, { reviewData: review }, "Review submitted successfully")
+    );
 });

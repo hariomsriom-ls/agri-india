@@ -9,14 +9,14 @@ const services = [
     { label: "Agricultural Loans", href: "/servicespage/agriculturalLoan" },
     { label: "Land Leasing", href: "/servicespage/landLeasing" },
     { label: "Warehouse Business", href: "/servicespage/warehouseStorage" },
-    { label: "Equipment Renting", href: "/services/equipmentRenting" },
-    { label: "Storage Products", href: "/services/storageServices" },
-    { label: "Agricultural Product Selling", href: "/services/agriculturalProductSelling" },
-    { label: "Rent a Service", href: "/services/servicesRenting" },
+    { label: "Equipment Renting", href: "/servicespage/equipmentRenting" },
+    { label: "Storage Products", href: "/servicespage/storageService" },
+    { label: "Agricultural Product Selling", href: "/servicespage/AgricultureProductSelling" },
+    { label: "Rent a Service", href: "/servicespage/serviceRenting" },
 ];
 
 export function Navbar() {
-    const [active, setActive] = useState("");
+    const [active, setActive] = useState("Home");
     const [servicesOpen, setServicesOpen] = useState(false);
     const servicesRef = useRef<HTMLDivElement>(null);
     const servicesButtonRef = useRef<HTMLButtonElement>(null);
@@ -36,10 +36,21 @@ export function Navbar() {
     }, [servicesOpen]);
 
     return(
-        <nav className = "relative z-50 bg-gray-100">
-            <div className = "max-w-7xl mx-auto flex rounded-lg justify-between bg-white">
-                <div className="flex-1 flex items-center justify-center bg-gray-150 hover:bg-black hover:text-white rounded-md">
-                    Myapp</div>
+        <nav aria-label="Main navigation" className="relative z-50 border-y border-[#e5eeeb] bg-gradient-to-r from-white via-[#f8fcfd] to-[#e6f4ff] text-[#26352d] shadow-[0_2px_10px_rgba(29,70,45,0.04)]">
+            <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-5 px-4 py-3 sm:px-6 lg:min-h-20 lg:flex-nowrap lg:gap-x-8 lg:px-8 lg:py-0">
+                <Link href="/" aria-label="AgriEquip home" className="flex shrink-0 items-center gap-2 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-green-700">
+                    <svg aria-hidden="true" viewBox="0 0 40 52" className="h-11 w-9 sm:h-12 sm:w-10" fill="none">
+                        <path d="M20 33C9 21 16 10 34 3C35 20 31 29 20 33Z" fill="#73ab41" />
+                        <path d="M20 33C18 23 24 13 34 3C32 19 28 28 20 33Z" fill="#428838" />
+                        <path d="M19 47C7 47 2 39 4 29C16 31 21 37 19 47Z" fill="#26743b" />
+                        <path d="M19 47C19 34 28 28 37 28C36 42 29 49 19 47Z" fill="#1c6435" />
+                        <path d="M19 47C18 36 22 25 28 15M19 46L10 36M20 45L30 35" stroke="#e5efd9" strokeWidth="1.3" strokeLinecap="round" />
+                    </svg>
+                    <span className="flex flex-col">
+                        <span className="text-[23px] leading-7 font-bold tracking-[-1px] text-[#111c16] sm:text-[26px]">Agri<span className="text-[#23773d]">India</span></span>
+                        <span className="mt-0.5 text-[9px] leading-3 tracking-[-0.1px] text-[#6b746f] sm:text-[10px]">Tools for a Better Tomorrow.</span>
+                    </span>
+                </Link>
                 <Menu>
                     <MenuItem
                     item ="Home"
@@ -53,7 +64,7 @@ export function Navbar() {
 
                     <div
                         ref={servicesRef}
-                        className="relative flex w-full items-center justify-center"
+                        className="relative flex shrink-0 items-center justify-center self-stretch"
                         onBlur={(event) => {
                             if (!event.currentTarget.contains(event.relatedTarget)) {
                                 setServicesOpen(false);
@@ -77,7 +88,7 @@ export function Navbar() {
                                 setServicesOpen((open) => !open);
                                 setActive("Services");
                             }}
-                            className={`flex items-center justify-center gap-2 rounded-lg px-4 py-1 text-black transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 ${servicesOpen ? "bg-green-50 text-green-700" : ""}`}
+                            className={`relative flex items-center justify-center gap-1 rounded-sm px-1 py-4 text-[11px] font-medium whitespace-nowrap transition-colors hover:text-[#23773d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700 sm:px-2 sm:text-xs lg:py-7 ${active === "Services" ? "text-[#23773d] after:absolute after:inset-x-1 after:bottom-1 after:h-0.5 after:rounded-full after:bg-[#4b8b5e] lg:after:bottom-4" : "text-[#34413a]"}`}
                         >
                             Services
                             <LuChevronDown aria-hidden="true" className={`h-4 w-4 shrink-0 transition-transform ${servicesOpen ? "rotate-180" : ""}`} />
@@ -116,14 +127,14 @@ export function Navbar() {
                     setActive={setActive}/>
                 </Menu>
 
-                <div className ="flex-2 flex justify-center py-2 gap-8">
+                <div className="flex shrink-0 items-center gap-2 sm:gap-3 lg:order-3">
                     <button onClick={() => router.push("/login")}
-                    className=" rounded-lg px-4 border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
+                    className="h-9 rounded-[5px] border border-[#55966a] bg-white/80 px-3 text-xs font-semibold text-[#267340] capitalize shadow-[0_0_0_1px_rgba(54,125,75,0.08)] transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700 sm:h-10 sm:px-6">
                         login
                     </button>
     
                     <button onClick={() => router.push("/registration")} 
-                    className=" rounded-lg px-4 border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
+                    className="h-9 rounded-[5px] border border-[#218244] bg-[#218244] px-3 text-xs font-semibold text-white capitalize shadow-sm transition-colors hover:border-[#196934] hover:bg-[#196934] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700 sm:h-10 sm:px-6">
                         sign up
                     </button>
                 </div>

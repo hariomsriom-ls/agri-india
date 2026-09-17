@@ -156,8 +156,22 @@ export default function WorkerDashboard() {
               <PanelTitle title="My Plots" onViewAll={() => showNotice("Showing all assigned plots.")} />
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[610px] text-left text-xs">
-                  <thead className="bg-slate-50 text-slate-600"><tr>{["Plot ID", "Location", "Area (Acre)", "Landowner", "Status"].map((heading) => <th key={heading} className="px-2 py-3 font-semibold">{heading}</th>)}</tr></thead>
-                  <tbody>{plots.map((plot) => <tr key={plot[0]} className="border-b border-slate-100 transition hover:bg-slate-50/70"><td className="px-2 py-2.5 font-semibold text-slate-700">{plot[0]}</td><td className="px-2 py-2.5">{plot[1]}</td><td className="px-2 py-2.5">{plot[2]}</td><td className="px-2 py-2.5">{plot[3]}</td><td className="px-2 py-2.5"><span className="rounded-md bg-emerald-100 px-3 py-1 font-semibold text-emerald-700">Active</span></td></tr>)}</tbody>
+                  <thead className="bg-slate-50 text-slate-600">
+                    <tr>
+                      {["Plot ID", "Location", "Area (Acre)", "Landowner", "Status"].map((heading) => <th key={heading} className="px-2 py-3 font-semibold">{heading}</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {plots.map((plot) => <tr key={plot[0]} className="border-b border-slate-100 transition hover:bg-slate-50/70">
+                    <td className="px-2 py-2.5 font-semibold text-slate-700">{plot[0]}</td>
+                    <td className="px-2 py-2.5">{plot[1]}</td>
+                    <td className="px-2 py-2.5">{plot[2]}</td>
+                    <td className="px-2 py-2.5">{plot[3]}</td>
+                    <td className="px-2 py-2.5">
+                      <span className="rounded-md bg-emerald-100 px-3 py-1 font-semibold text-emerald-700">Active</span>
+                    </td>
+                    </tr>)}
+                  </tbody>
                 </table>
               </div>
             </section>
@@ -165,15 +179,31 @@ export default function WorkerDashboard() {
             <section className="min-h-[310px] rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
               <PanelTitle title="Task Overview" onViewAll={() => showNotice("Showing your complete task list.")} />
               <div className="grid grid-cols-2 border-b border-slate-200 text-center text-xs">
-                <button type="button" onClick={() => setTaskTab("current")} className={`border-b-2 py-2 font-semibold transition ${taskTab === "current" ? "border-emerald-700 text-emerald-700" : "border-transparent text-slate-500"}`}>Current Tasks</button>
-                <button type="button" onClick={() => setTaskTab("completed")} className={`border-b-2 py-2 font-semibold transition ${taskTab === "completed" ? "border-emerald-700 text-emerald-700" : "border-transparent text-slate-500"}`}>Completed</button>
+                <button 
+                type="button" 
+                onClick={() => setTaskTab("current")} 
+                className={`border-b-2 py-2 font-semibold transition ${taskTab === "current" ? "border-emerald-700 text-emerald-700" : "border-transparent text-slate-500"}`}>
+                  Current Tasks
+                </button>
+                <button 
+                type="button" 
+                onClick={() => setTaskTab("completed")} 
+                className={`border-b-2 py-2 font-semibold transition ${taskTab === "completed" ? "border-emerald-700 text-emerald-700" : "border-transparent text-slate-500"}`}>
+                  Completed
+                </button>
               </div>
               <div className="divide-y divide-slate-100">
                 {tasks.map((task) => (
                   <div key={task.title} className="grid grid-cols-[26px_1fr_auto] items-center gap-2 py-3 text-xs">
                     <LuCircleCheck className={`text-xl ${taskTab === "completed" ? "fill-emerald-600 text-emerald-600" : "text-emerald-600"}`} />
-                    <div><p className="font-semibold text-slate-700">{task.title}</p><p className="mt-0.5 text-slate-500">{task.location}</p></div>
-                    <div className="text-right"><p className="text-slate-500">{taskTab === "completed" ? "Done" : "Due"}</p><p className={`mt-0.5 font-semibold ${taskTab === "completed" ? "text-emerald-600" : "text-red-500"}`}>{task.date}</p></div>
+                    <div>
+                      <p className="font-semibold text-slate-700">{task.title}</p>
+                      <p className="mt-0.5 text-slate-500">{task.location}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-slate-500">{taskTab === "completed" ? "Done" : "Due"}</p>
+                      <p className={`mt-0.5 font-semibold ${taskTab === "completed" ? "text-emerald-600" : "text-red-500"}`}>{task.date}</p>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -184,7 +214,11 @@ export default function WorkerDashboard() {
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[500px] text-left text-xs">
                   <thead className="bg-slate-50 text-slate-600"><tr>{["Date", "Plot ID", "Landowner", "Amount (₹)", "Status"].map((heading) => <th key={heading} className="px-2 py-2.5 font-semibold">{heading}</th>)}</tr></thead>
-                  <tbody>{payments.map((payment) => <tr key={`${payment[0]}-${payment[1]}`} className="border-b border-slate-100">{payment.map((value, index) => <td key={`${value}-${index}`} className={`px-2 py-2.5 ${index === 3 ? "font-semibold" : ""}`}>{value}</td>)}<td className="px-2 py-2.5"><span className="rounded-md bg-emerald-100 px-3 py-1 font-semibold text-emerald-700">Paid</span></td></tr>)}</tbody>
+                  <tbody>{payments.map((payment) => <tr key={`${payment[0]}-${payment[1]}`} className="border-b border-slate-100">{payment.map((value, index) => <td key={`${value}-${index}`} className={`px-2 py-2.5 ${index === 3 ? "font-semibold" : ""}`}>{value}</td>)}
+                  <td className="px-2 py-2.5">
+                    <span className="rounded-md bg-emerald-100 px-3 py-1 font-semibold text-emerald-700">Paid</span>
+                    </td></tr>)}
+                  </tbody>
                 </table>
               </div>
             </section>

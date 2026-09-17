@@ -1,28 +1,25 @@
 "use client";
 
-import { FormEvent, useMemo, useRef, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import {FiCheckCircle,FiChevronLeft,FiChevronRight,FiClock,FiEye,FiFile,FiFileText,FiInfo,FiList,
   FiMoreVertical,FiPaperclip,FiPlus,FiSearch,FiSend,FiSettings,FiTool,FiXCircle,
 } from "@/components/ui/icons";
+import { useFetchComplaint } from "@/services/fetchComplaints";
+import type { Complaint, ComplaintCategory, ComplaintStatus } from "@/features/landowner-Worker/complaintsdata";
+import api from "@/utils/services";
+import axios from "axios";
 
-type ComplaintStatus = "Pending" | "Resolved" | "Rejected";
-type ComplaintCategory = "Payment Issues" | "Document Issues" | "Management Issues" | "Technical Issues" | "Other Issues";
+const PAGE_SIZE = 5;
 
-interface Complaint {
-  id: string;
-  category: ComplaintCategory;
-  subject: string;
-  date: string;
-  status: ComplaintStatus;
+function complaintDate(complaint: Complaint) {
+  return complaint.Date || complaint.date || complaint.createdAt || "";
 }
 
-const complaints: Complaint[] = [
-  { id: "COMP-2024-0012", category: "Payment Issues", subject: "Payment not received for harvest work", date: "02 May 2024", status: "Pending" },
-  { id: "COMP-2024-0011", category: "Document Issues", subject: "Land lease document not uploaded", date: "30 Apr 2024", status: "Pending" },
-  { id: "COMP-2024-0010", category: "Management Issues", subject: "Worker not assigned for field work", date: "28 Apr 2024", status: "Resolved" },
-  { id: "COMP-2024-0009", category: "Payment Issues", subject: "Partial payment received", date: "25 Apr 2024", status: "Resolved" },
-  { id: "COMP-2024-0008", category: "Technical Issues", subject: "Unable to upload documents", date: "20 Apr 2024", status: "Rejected" },
-];
+function formatComplaintDate(complaint: Complaint) {
+  const date = new Date(complaintDate(complaint));
+  if (Number.isNaN(date.getTime())) return "Not provided";
+  return date.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric", timeZone: "Asia/Kolkata" });
+}
 
 const categoryStyles: Record<ComplaintCategory, string> = {
   "Payment Issues": "bg-emerald-50 text-emerald-700",
@@ -39,31 +36,80 @@ const statusStyles: Record<ComplaintStatus, string> = {
 };
 
 export default function LandownerRegisterComplaints() {
+  const { role, complaints, status, error, retry, totalComplaints, pendingComplaints, resolvedComplaints, rejectedComplaints } = useFetchComplaint("landowner");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
-  const [attachment, setAttachment] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
   const [statusFilter, setStatusFilter] = useState("All Status");
   const [submitted, setSubmitted] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const [sort, setSort] = useState("Newest First");
+  const [page, setPage] = useState(1);
 
   const visibleComplaints = useMemo(() => {
     const term = search.trim().toLowerCase();
     return complaints.filter((complaint) =>
-      (!term || [complaint.id, complaint.subject, complaint.category].some((value) => value.toLowerCase().includes(term))) &&
+      (!term || [complaint._id, complaint.message, complaint.category].some((value) => String(value ?? "").toLowerCase().includes(term))) &&
       (categoryFilter === "All Categories" || complaint.category === categoryFilter) &&
-      (statusFilter === "All Status" || complaint.status === statusFilter),
-    );
-  }, [categoryFilter, search, statusFilter]);
+      (statusFilter === "All Status" || complaint.status?.toLowerCase() === statusFilter.toLowerCase()),
+    ).sort((a, b) => {
+      const difference = (Date.parse(complaintDate(b)) || 0) - (Date.parse(complaintDate(a)) || 0);
+      return sort === "Oldest First" ? -difference : difference;
+    });
+  }, [complaints, categoryFilter, search, statusFilter, sort]);
 
-  function submitComplaint(event: FormEvent<HTMLFormElement>) {
+  const pages = Math.max(1, Math.ceil(visibleComplaints.length / PAGE_SIZE));
+  const currentPage = Math.min(page, pages);
+  const pageComplaints = visibleComplaints.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  async function submitComplaint(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!category || !description.trim()) return;
-    setSubmitted(true);
-    setCategory("");
-    setDescription("");
-    setAttachment(null);
+    if (isSubmitting) return;
+    setSubmitted(false);
+    setSubmitError(null);
+    if (!category || !description.trim()) {
+      setSubmitError("Please select a category and describe your complaint.");
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      await api.post("/landowner/post-complaints", {
+        category,
+        message: description.trim(),
+      }, { withCredentials: true });
+      setSubmitted(true);
+      setCategory("");
+      setDescription("");
+      setSearch("");
+      setCategoryFilter("All Categories");
+      setStatusFilter("All Status");
+      setSort("Newest First");
+      setPage(1);
+      retry();
+    } catch (error) {
+      setSubmitError(
+        axios.isAxiosError<{ message?: string }>(error)
+          ? error.response?.data?.message || "Failed to submit complaint. Please try again."
+          : "Failed to submit complaint. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  if (!role) {
+    return <p className="p-6 text-slate-600">User role not found. Please sign in to view your complaints.</p>;
+  }
+  if (role !== "landowner") {
+    return <p role="alert" className="p-6 text-red-600">Only landowners can view this page.</p>;
+  }
+  if (status === "idle" || status === "loading") {
+    return <p role="status" className="p-6 text-slate-600">Loading complaints...</p>;
+  }
+  if (status === "failed") {
+    return <div className="p-6"><p role="alert" className="text-red-600">{error ?? "Failed to fetch complaints."}</p><button type="button" onClick={retry} className="mt-3 rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800">Try again</button></div>;
   }
 
   return (
@@ -84,15 +130,16 @@ export default function LandownerRegisterComplaints() {
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_270px]">
           <main className="min-w-0">
             <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              <SummaryCard label="Total Complaints" value="12" note="All time" icon={<FiFileText />} style="bg-emerald-50 text-emerald-700" />
-              <SummaryCard label="Pending" value="5" note="Awaiting response" icon={<FiClock />} style="bg-amber-50 text-amber-600" />
-              <SummaryCard label="Resolved" value="6" note="Successfully resolved" icon={<FiCheckCircle />} style="bg-green-50 text-green-600" />
-              <SummaryCard label="Rejected" value="1" note="Not accepted" icon={<FiXCircle />} style="bg-red-50 text-red-500" />
+              <SummaryCard label="Total Complaints" value={String(totalComplaints)} note="All time" icon={<FiFileText />} style="bg-emerald-50 text-emerald-700" />
+              <SummaryCard label="Pending" value={String(pendingComplaints)} note="Awaiting response" icon={<FiClock />} style="bg-amber-50 text-amber-600" />
+              <SummaryCard label="Resolved" value={String(resolvedComplaints)} note="Successfully resolved" icon={<FiCheckCircle />} style="bg-green-50 text-green-600" />
+              <SummaryCard label="Rejected" value={String(rejectedComplaints)} note="Not accepted" icon={<FiXCircle />} style="bg-red-50 text-red-500" />
             </section>
 
-            <form onSubmit={submitComplaint} className="mt-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+            <form onSubmit={submitComplaint} aria-busy={isSubmitting} className="mt-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
               <h2 className="text-lg font-bold text-slate-900">Register New Complaint</h2>
               <p className="mt-1 text-sm text-slate-500">Choose a category and describe your issue</p>
+              <fieldset disabled={isSubmitting} className="min-w-0 disabled:opacity-60">
               <div className="mt-5 grid gap-4 lg:grid-cols-[300px_minmax(0,1fr)]">
                 <select value={category} onChange={(event) => setCategory(event.target.value)} required className="h-12 rounded-xl border border-slate-200 bg-white px-4 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100">
                   <option value="">Select Complaint Category</option>
@@ -103,32 +150,31 @@ export default function LandownerRegisterComplaints() {
                   <p className="mt-1 text-right text-xs text-slate-400">{description.length}/1000 characters</p>
                 </div>
               </div>
+              {submitError && <p role="alert" className="mt-3 text-sm text-red-600">{submitError}</p>}
               <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <input ref={fileRef} type="file" className="hidden" onChange={(event) => setAttachment(event.target.files?.[0] ?? null)} />
-                  <button type="button" onClick={() => fileRef.current?.click()} className="inline-flex h-10 items-center gap-2 rounded-lg border border-slate-200 px-4 text-sm font-semibold hover:bg-slate-50"><FiPaperclip />{attachment?.name ?? "Attach Documents (Optional)"}</button>
-                </div>
-                <button type="submit" className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-emerald-700 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800"><FiSend /> Submit Complaint</button>
+                <span className="inline-flex items-center gap-2 text-xs text-slate-400"><FiPaperclip />Attachments are not supported yet</span>
+                <button type="submit" disabled={isSubmitting} className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-emerald-700 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-50"><FiSend />{isSubmitting ? "Submitting..." : "Submit Complaint"}</button>
               </div>
+              </fieldset>
             </form>
 
             <section className="mt-5 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
               <div className="grid gap-3 border-b border-slate-200 p-4 lg:grid-cols-[minmax(220px,1fr)_180px_160px_160px]">
-                <label className="relative"><FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search complaints..." className="h-11 w-full rounded-xl border border-slate-200 pl-11 pr-4 text-sm outline-none focus:border-emerald-500" /></label>
-                <select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)} className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm"><option>All Categories</option>{Object.keys(categoryStyles).map((item) => <option key={item}>{item}</option>)}</select>
-                <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm"><option>All Status</option><option>Pending</option><option>Resolved</option><option>Rejected</option></select>
-                <select aria-label="Sort complaints" className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm"><option>Newest First</option><option>Oldest First</option></select>
+                <label className="relative"><FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" /><input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="Search complaints..." className="h-11 w-full rounded-xl border border-slate-200 pl-11 pr-4 text-sm outline-none focus:border-emerald-500" /></label>
+                <select value={categoryFilter} onChange={(event) => { setCategoryFilter(event.target.value); setPage(1); }} className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm"><option>All Categories</option>{Object.keys(categoryStyles).map((item) => <option key={item}>{item}</option>)}</select>
+                <select value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }} className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm"><option>All Status</option><option>Pending</option><option>Resolved</option><option>Rejected</option></select>
+                <select value={sort} onChange={(event) => { setSort(event.target.value); setPage(1); }} aria-label="Sort complaints" className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm"><option>Newest First</option><option>Oldest First</option></select>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[850px] text-left text-sm">
-                  <thead className="bg-slate-50 text-xs font-semibold text-slate-600"><tr><th className="px-5 py-4">Complaint ID</th><th className="px-5 py-4">Category</th><th className="px-5 py-4">Subject</th><th className="px-5 py-4">Date</th><th className="px-5 py-4">Status</th><th className="px-5 py-4">Actions</th></tr></thead>
+                  <thead className="bg-slate-50 text-xs font-semibold text-slate-600"><tr><th className="px-5 py-4">Complaint ID</th><th className="px-5 py-4">Category</th><th className="px-5 py-4">Complaint</th><th className="px-5 py-4">Date</th><th className="px-5 py-4">Status</th><th className="px-5 py-4">Actions</th></tr></thead>
                   <tbody className="divide-y divide-slate-100">
-                    {visibleComplaints.map((complaint) => <tr key={complaint.id} className="hover:bg-slate-50/70"><td className="whitespace-nowrap px-5 py-4 text-xs font-semibold">{complaint.id}</td><td className="px-5 py-4"><span className={`whitespace-nowrap rounded-md px-2.5 py-1 text-xs font-semibold ${categoryStyles[complaint.category]}`}>{complaint.category}</span></td><td className="px-5 py-4">{complaint.subject}</td><td className="whitespace-nowrap px-5 py-4 text-slate-600">{complaint.date}</td><td className="px-5 py-4"><span className={`rounded-md px-2.5 py-1 text-xs font-semibold ${statusStyles[complaint.status]}`}>{complaint.status}</span></td><td className="px-5 py-4"><div className="flex gap-2"><button type="button" aria-label={`View ${complaint.id}`} className="grid h-9 w-9 place-items-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50"><FiEye /></button><button type="button" aria-label={`More actions for ${complaint.id}`} className="grid h-9 w-9 place-items-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50"><FiMoreVertical /></button></div></td></tr>)}
-                    {!visibleComplaints.length && <tr><td colSpan={6} className="px-5 py-12 text-center text-slate-500">No complaints match your filters.</td></tr>}
+                    {pageComplaints.map((complaint) => <tr key={complaint._id} className="hover:bg-slate-50/70"><td className="whitespace-nowrap px-5 py-4 text-xs font-semibold">{complaint._id}</td><td className="px-5 py-4"><span className={`whitespace-nowrap rounded-md px-2.5 py-1 text-xs font-semibold ${categoryStyles[complaint.category] ?? "bg-slate-100 text-slate-600"}`}>{complaint.category}</span></td><td className="px-5 py-4">{complaint.message}</td><td className="whitespace-nowrap px-5 py-4 text-slate-600">{formatComplaintDate(complaint)}</td><td className="px-5 py-4"><span className={`rounded-md px-2.5 py-1 text-xs font-semibold ${statusStyles[complaint.status] ?? "bg-slate-100 text-slate-600"}`}>{complaint.status || "Not provided"}</span></td><td className="px-5 py-4"><div className="flex gap-2"><button type="button" aria-label={`View ${complaint._id}`} className="grid h-9 w-9 place-items-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50"><FiEye /></button><button type="button" aria-label={`More actions for ${complaint._id}`} className="grid h-9 w-9 place-items-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50"><FiMoreVertical /></button></div></td></tr>)}
+                    {!visibleComplaints.length && <tr><td colSpan={6} className="px-5 py-12 text-center text-slate-500">{complaints.length ? "No complaints match your filters." : "You have not registered any complaints yet."}</td></tr>}
                   </tbody>
                 </table>
               </div>
-              <footer className="flex flex-col gap-3 border-t border-slate-200 px-5 py-4 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between"><p>Showing {visibleComplaints.length ? `1 to ${visibleComplaints.length}` : "0"} of 12 complaints</p><div className="flex gap-2"><PageButton label="Previous"><FiChevronLeft /></PageButton><PageButton active label="Page 1">1</PageButton><PageButton label="Page 2">2</PageButton><PageButton label="Page 3">3</PageButton><PageButton label="Next"><FiChevronRight /></PageButton></div></footer>
+              <footer className="flex flex-col gap-3 border-t border-slate-200 px-5 py-4 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between"><p>Showing {visibleComplaints.length ? (currentPage - 1) * PAGE_SIZE + 1 : 0} to {Math.min(currentPage * PAGE_SIZE, visibleComplaints.length)} of {visibleComplaints.length} complaints</p><div className="flex items-center gap-2"><PageButton label="Previous" disabled={currentPage <= 1} onClick={() => setPage(currentPage - 1)}><FiChevronLeft /></PageButton><span aria-live="polite">Page {currentPage} of {pages}</span><PageButton label="Next" disabled={currentPage >= pages} onClick={() => setPage(currentPage + 1)}><FiChevronRight /></PageButton></div></footer>
             </section>
           </main>
 
@@ -161,6 +207,6 @@ function Category({ icon, title, text }: { icon: React.ReactNode; title: string;
   return <div className="flex items-start gap-3"><span className="mt-0.5 text-base text-violet-600">{icon}</span><div><h3 className="text-xs font-bold text-slate-800">{title}</h3><p className="mt-1 text-[10px] leading-4 text-slate-500">{text}</p></div></div>;
 }
 
-function PageButton({ children, label, active = false }: { children: React.ReactNode; label: string; active?: boolean }) {
-  return <button type="button" aria-label={label} className={`grid h-9 min-w-9 place-items-center rounded-lg border px-2 font-semibold ${active ? "border-emerald-600 bg-emerald-50 text-emerald-700" : "border-slate-200 bg-white text-slate-500"}`}>{children}</button>;
+function PageButton({ children, label, disabled, onClick }: { children: React.ReactNode; label: string; disabled?: boolean; onClick: () => void }) {
+  return <button type="button" aria-label={label} disabled={disabled} onClick={onClick} className="grid h-9 min-w-9 place-items-center rounded-lg border border-slate-200 bg-white px-2 font-semibold text-slate-500 disabled:cursor-not-allowed disabled:opacity-40">{children}</button>;
 }

@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, type FormEvent, type ReactNode, useEffect } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import {LuArrowLeft,LuCalendarClock,LuCheckCheck,LuChevronDown,LuCircleCheck,LuClipboardCheck,LuDownload,
   LuEllipsisVertical,LuFileSpreadsheet,LuFileText,LuImage,LuMapPinned,LuPaperclip,LuSearch,
   LuSend,LuSlidersHorizontal,LuSmile,LuUserRound,
 } from "@/components/ui/icons";
-import { socket } from "@/lib/socket";
   
 type ConversationFilter = "All" | "Unread" | "Priority";
 
@@ -249,13 +248,6 @@ function OutgoingMessage({ children, time }: { children: ReactNode; time: string
 }
 
 export default function AuthorityCommunications() {
-   useEffect(() => {
-    socket.connect();
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
   const router = useRouter();
   const [activeConversation, setActiveConversation] = useState("Ramesh Kumar");
   const [activeFilter, setActiveFilter] = useState<ConversationFilter>("All");

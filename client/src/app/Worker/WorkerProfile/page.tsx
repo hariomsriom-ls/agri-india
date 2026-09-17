@@ -1,27 +1,44 @@
 "use client";
-import { useState, type ChangeEvent } from "react";
+import { useState, type ChangeEvent, useRef, useEffect } from "react";
 import { ProfileCard,} from "@/components/cards/landowner/landowner-worker-profile"
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {GoShieldLock, CiEdit} from "@/components/ui/icons";
 import ProfileInput  from "@/components/ui/profileinput"
 import { ReviewField } from "@/components/ui/ReviewField";
 import Dropdown from "@/components/ui/Dropdown";
-import { updateUser } from "@/features/user";
+import { fetchUser, updateUser, uploadProfileImage } from "@/features/user";
 import { useLocationDropdowns } from "@/hooks/useLocationDropdowns";
 
 export default function WorkerProfile() {
 
-
- const storedUser = useAppSelector((state) => state.user.data);
-  const user = storedUser
-  if(!user) {return <p>User data not found in LandownerProfile page line no 10</p>;}
-  if(user.role !== "worker") {return <p>User is not a worker in LandownerProfile page line no 12</p>;}
-
+ const { data: storedUser, loading, error, imageUploading, imageError } = useAppSelector((state) => state.user);
+ const role = useAppSelector((state) => state.auth.role);
   const dispatch = useAppDispatch();
+  const user = storedUser;
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const [imageSaved, setImageSaved] = useState(false);
+  const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
   const [isEditing1, setisEditing1] = useState(false);
   const [isEditing2, setisEditing2] = useState(false);
   const [isMainEditing, setisMainEditing] = useState(false)
  const [formData, setFormData] = useState<Record<string, string>>({});
+
+   if (!role) return <p className="p-6 text-slate-600">Please sign in to view your profile.</p>;
+  if (role !== "worker" || (user && user.role !== "worker")) {
+    return <p role="alert" className="p-6 text-red-600">Only worker can view this profile.</p>;
+  }
+  if (!user) {
+    if (error){
+       return (
+       <div className="p-6">
+        <p role="alert" className="text-red-600">{error}</p>
+        <button type="button" onClick={() => dispatch(fetchUser("landowner"))} className="mt-3 rounded-lg bg-green-700 px-4 py-2 text-white">Try again</button>
+        </div>
+       );
+      }
+    return <p role="status" className="p-6 text-slate-600">Loading your profile...</p>;
+  }
+
    const locations = useLocationDropdowns({
      enabled: isEditing2 || isMainEditing,
      value: {
@@ -32,6 +49,23 @@ export default function WorkerProfile() {
      onChange: (changes) => setFormData((previous) => ({ ...previous, ...changes })),
    });
 
+useEffect(() => {
+      if (role === "worker" && !storedUser && !loading && !error) {
+        void dispatch(fetchUser("landowner"));
+      }
+    }, [dispatch, role, storedUser, loading, error]);
+
+async function handleProfileImageChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.currentTarget.files?.[0];
+    event.currentTarget.value = "";
+    if (!file || imageUploading || storedUser?.role !== "landowner") return;
+    setImageSaved(false);
+    const result = await dispatch(uploadProfileImage({ file, role: "landowner" }));
+    if (uploadProfileImage.fulfilled.match(result)) {
+      setFailedImageUrl(null);
+      setImageSaved(true);
+    }
+  }
 
 function handleChange(event: ChangeEvent<HTMLInputElement>) {
   const { name, value } = event.currentTarget;
@@ -76,9 +110,10 @@ const updatedData = {
   }
 }
 
-async function handleChangePassword(){
+function handleChangePassword(){
 
 }
+
   return (
     <>
     <div className="min-h-full bg-[#f7f9f8] px-4 py-6 text-slate-800 sm:px-7">
@@ -86,11 +121,31 @@ async function handleChangePassword(){
           {/* Profile Header */}
           <section className="mb-6 flex items-center justify-between rounded-xl border bg-white p-6 shadow-sm">
             <div className="flex items-center gap-5">
-              <img
-                src="/images/profile.jpg"
-                alt="profile"
-                className="h-24 w-24 rounded-full object-cover"
-              />
+               <div className="shrink-0 text-center">
+              <input ref={imageInputRef} 
+              type="file" accept="image/jpeg,image/png" 
+              className="hidden"
+              aria-label="Choose profile image" 
+              disabled={imageUploading || loading} 
+              onChange={handleProfileImageChange} />
+               <button type="button" onClick={() => imageInputRef.current?.click()} disabled={imageUploading || loading}
+                  aria-label="Upload profile image" aria-describedby="profile-image-help" aria-busy={imageUploading}
+                  className="group relative h-24 w-24 overflow-hidden rounded-full border-2 border-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 disabled:cursor-wait disabled:opacity-60">
+                  {user.profileImage && user.profileImage !== failedImageUrl ? (
+                
+                    <img src={user.profileImage} alt={`${user.fullName}'s profile`}
+                      onError={() => setFailedImageUrl(user.profileImage)} className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="flex h-full w-full items-center justify-center bg-green-100 text-3xl font-semibold text-green-800">
+                      {(user.fullName || user.userName || "U").charAt(0).toUpperCase()}
+                    </span>
+                  )}
+                  <span className="absolute inset-x-0 bottom-0 bg-black/60 py-1 text-xs font-medium text-white">
+                    {imageUploading ? "Uploading..." : "Change photo"}
+                  </span>
+                </button>
+                <p id="profile-image-help" className="mt-1 text-xs text-slate-500">JPG or PNG, up to 5 MB</p>
+                </div>
 
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">
@@ -124,6 +179,8 @@ async function handleChangePassword(){
               Edit Profile
             </button>
           </section>
+          {imageError && <p role="alert" className="mb-4 text-sm text-red-600">{imageError}</p>}
+          {imageSaved && !imageUploading && <p role="status" className="mb-4 text-sm text-green-700">Profile image updated successfully.</p>}
 
    {/* Information Grid */}
           <div className="grid grid-cols-2 gap-5">

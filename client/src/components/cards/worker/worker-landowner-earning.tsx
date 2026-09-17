@@ -54,12 +54,12 @@ const totals = Array<number>(12).fill(0);
     }, []);
   }, [monthly]);
 
-   const maximumMonthly = Math.max(...monthly, 1);
-  const maximumCumulative = Math.max(...cumulative, 1);
+  const maximum = Math.max(...monthly, ...cumulative, 1);
+  const ticks = Array.from({ length: 5 }, (_, index) => maximum * index / 4);
 
   const points = cumulative.map((value, index) => {
     const x = left + step * index +step / 2;
-    const y = top + plotHeight - (value / maximumCumulative) * plotHeight;
+    const y = top + plotHeight - (value / maximum) * plotHeight;
     return `${x},${y}`;
   }).join(" ");
 
@@ -76,8 +76,8 @@ const hasEarnings = monthly.some((value) => value > 0);
     <div className="mt-5 overflow-x-auto">
       <svg viewBox={`0 0 ${width} ${height}`} 
       className="h-[260px] min-w-[900px] w-full" role="img" aria-label="Monthly and cumulative earnings chart">
-        {cumulative.map((value) => {
-          const y = top + plotHeight - (value / maximumMonthly) * plotHeight;
+        {ticks.map((value) => {
+          const y = top + plotHeight - (value / maximum) * plotHeight;
           return (
           <g key={value}>
             <line x1={left} y1={y} 
@@ -90,7 +90,7 @@ const hasEarnings = monthly.some((value) => value > 0);
         })}
 
         {monthly.map((value, index) => {
-          const barHeight = (value / maximumMonthly) * plotHeight;
+          const barHeight = (value / maximum) * plotHeight;
           const x = left + step * index + step * 0.23;
           return (<g key={months[index]}>
             <rect x={x} y={top + plotHeight - barHeight} 
@@ -108,7 +108,7 @@ const hasEarnings = monthly.some((value) => value > 0);
         
         {cumulative.map((value, index) => {
           const x = left + step * index + step / 2;
-          const y = top + plotHeight - (value / maximumCumulative) * plotHeight;
+          const y = top + plotHeight - (value / maximum) * plotHeight;
           return (
           <g key={months[index]}>
             <circle cx={x} cy={y} r="4" fill="#08783f" stroke="white" strokeWidth="2" />

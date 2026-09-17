@@ -1,6 +1,8 @@
 import express from "express"
 import cors from "cors"
-import cookieparser from "cookie-parser"
+import http from "http";
+import cookieparser from "cookie-parser";
+import { initializeSocket } from "../src/socket/socket.js";
 
 const app = express()
 
@@ -10,6 +12,14 @@ app.use(cors({
     origin: process.env.CORS_ORIGIN,
     credentials: true,
 }))
+
+const server = http.createServer(app);
+
+initializeSocket(server);
+
+server.listen(process.env.PORT, () => {
+  console.log(`Server running on port ${process.env.PORT}`);
+});
 
 app.use(express.json({limit: "16kb"}))
 app.use(express.urlencoded({extended: true, limit: "16kb"}))
@@ -30,7 +40,7 @@ app.use("/api/v1/user/authority", authorityRouter)
 app.use("/api/v1/user/worker", workerRouter)
 app.use("/api/v1/address", addressRouter)
 
-// global error handling middleware
+
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || (err.name === "ValidationError" ? 400 : 500);
     const message = err.message || "Internal Server Error";

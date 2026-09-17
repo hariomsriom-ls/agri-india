@@ -1,17 +1,17 @@
 import mongoose, {Schema} from "mongoose";
 
 const documentsSchema = new Schema({
-   _id: String,
    name: {type: String, required: true},
    category: {type: String, required: true},
    uploadDate: {type: String, required: true},
     fileUrl: {type: String,required: true},
-    publicId: {type: String,required: true},
+    publicId: {type: String,},
     resourceType: String,
     format: String,
-    documentOf: {type: Schema.Types.ObjectId, refPath: "documentOfModel", required: true},
+    // Worker IDs are strings; landowner and authority IDs are ObjectIds.
+    documentOf: {type: Schema.Types.Mixed, refPath: "documentOfModel", required: true},
     documentOfModel: {type:  String, enum: ["landowner", "worker", "organizationauthority"]},
-    documentFrom: {type: Schema.Types.ObjectId, refPath: "documentOfModel", required: true},
+    documentFrom: {type: Schema.Types.Mixed, refPath: "documentFromModel",},
     documentFromModel: {type:  String, enum: ["landowner", "worker", "organizationauthority"]},
 
 

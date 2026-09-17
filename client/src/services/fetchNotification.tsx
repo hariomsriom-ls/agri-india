@@ -14,7 +14,13 @@ export function useFetchNotifications() {
     }
   }, [dispatch, role, status]);
 
-  return { role, notifications, status, error,
+  const retry = () => {
+    if (role && status !== "loading") {
+      void dispatch(fetchUserNotification(role));
+    }
+  };
+
+  return { role, notifications, status, error, retry,
     hasnotifications: status === "success" && notifications.length > 0,
   };
 }

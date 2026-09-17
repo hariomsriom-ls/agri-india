@@ -111,7 +111,7 @@ export default function Footer() {
 
               <div>
                 <h2 className="text-3xl font-bold">
-                  Agri<span className="text-green-400">Connect</span>
+                  Agri<span className="text-green-400">India</span>
                 </h2>
                 <p className="text-sm text-slate-300">
                   Farms Today. Brighter Tomorrows.
