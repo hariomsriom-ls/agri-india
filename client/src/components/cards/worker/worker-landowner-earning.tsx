@@ -1,6 +1,6 @@
 "use client";
 import{useMemo} from "react"
-import type { PaymentStatus } from "@/features/landowner-Worker/paymenthistory";
+import type { PaymentStatus } from "@/features/landowner-Worker-authority/paymenthistory";
 
 function MiniTrend({ color }: { color: string }) {
   return (<svg viewBox="0 0 70 42" className={`ml-auto hidden w-14 shrink-0 sm:block ${color}`} aria-hidden="true">

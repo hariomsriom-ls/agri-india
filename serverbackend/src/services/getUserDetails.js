@@ -14,7 +14,7 @@ export const getUserDetails = async (req, res, next) => {
   try {
 
       const userId = req.user?._id;
-    const role = req.user?.role;
+    const role = req.user?.role || req.user?.constructor?.modelName;
 
     if (!userId || !role) {throw new ApiError(401, "Unauthorized request");}
 
@@ -33,7 +33,7 @@ export const getUserDetails = async (req, res, next) => {
   });
   if (!user) {throw new ApiError(404, "User not found")}
     return res.status(200).json(
-       new ApiResponse(200,  {userData:user},"User details fetched successfully",)
+       new ApiResponse(200,  {userData: { ...user.toObject(), role }},"User details fetched successfully",)
      );
   } catch (error) {
     next(error);

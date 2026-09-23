@@ -6,7 +6,7 @@ import {FiCheckCircle,FiChevronLeft,FiChevronRight,FiClock,FiEye,FiFile,FiFileTe
 } from "@/components/ui/icons";
 import { SummaryCard, PageButton, QuickAction, Category } from "@/components/cards/worker/worker-pages-combination";
 import { useFetchComplaint } from "@/services/fetchComplaints";
-import { type ComplaintCategory, type ComplaintStatus } from "@/features/landowner-Worker/complaintsdata";
+import { type ComplaintCategory, type ComplaintStatus } from "@/features/landowner-Worker-authority/complaintsdata";
 import api from "@/utils/services";
 import axios from "axios";
 

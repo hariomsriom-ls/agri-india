@@ -5,7 +5,7 @@ import { FiGrid, FiList, FiMapPin, FiPlus, FiSearch, FiUsers,GiWheat, LuLandPlot
 import { useFetchLands } from "@/services/fetchLands";
 import api from "@/utils/services";
 import axios from "axios";
-import type { LandRecord } from "@/features/landowner-Worker/landsdata";
+import type { LandRecord } from "@/features/landowner-Worker-authority/landsdata";
 
 
 const statusStyles: Record<string, string> = {

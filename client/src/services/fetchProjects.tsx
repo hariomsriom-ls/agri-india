@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { fetchUserProjects, type ProjectUserRole } from "@/features/landowner-Worker/projectsdata";
+import { fetchUserProjects, type ProjectUserRole } from "@/features/landowner-Worker-authority/projectsdata";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
 export function useFetchProjects(requiredRole?: ProjectUserRole) {

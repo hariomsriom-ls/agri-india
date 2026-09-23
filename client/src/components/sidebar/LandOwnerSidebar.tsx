@@ -6,7 +6,7 @@ import { MdDashboardCustomize , LuLandPlot, FaRegUserCircle, MdOutlineAdd, GiPay
       GoReport } from "../ui/icons";
 import Card from "../ui/customizable-cards";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchUserPayments } from "@/features/landowner-Worker/paymenthistory";
+import { fetchUserPayments } from "@/features/landowner-Worker-authority/paymenthistory";
 
 
 export function LandOwnerSideBar() {

@@ -1,7 +1,7 @@
 "use client"
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchUserDocuments, type DocumentUserModel } from "@/features/landowner-Worker/documentsdata"
+import { fetchUserDocuments, type DocumentUserModel } from "@/features/landowner-Worker-authority/documentsdata"
 
 export function useFetchDocuments(requiredRole?: DocumentUserModel) {
   const dispatch = useAppDispatch();

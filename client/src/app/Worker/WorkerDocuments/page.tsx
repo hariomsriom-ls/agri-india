@@ -4,7 +4,7 @@ import { useMemo, useRef, useState, type FormEvent, type ReactNode } from "react
 import {LuArrowUpDown,LuChevronDown,LuChevronLeft,LuChevronRight,LuDownload,LuEllipsisVertical,LuEye,
   LuFileText,LuImage,LuPlus,LuSearch,LuShield,LuUpload,LuUserRound,LuX,
 } from "@/components/ui/icons";
-import { clearDocumentUploadError, uploadUserDocument, type UserDocument } from "@/features/landowner-Worker/documentsdata";
+import { clearDocumentUploadError, uploadUserDocument, type UserDocument } from "@/features/landowner-Worker-authority/documentsdata";
 import { useFetchDocuments } from "@/services/fetchDocuments";
 import { useAppDispatch } from "@/store/hooks";
 

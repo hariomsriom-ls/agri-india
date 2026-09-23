@@ -5,7 +5,7 @@ import {FiCheckCircle,FiChevronLeft,FiChevronRight,FiClock,FiEye,FiFile,FiFileTe
   FiMoreVertical,FiPaperclip,FiPlus,FiSearch,FiSend,FiSettings,FiTool,FiXCircle,
 } from "@/components/ui/icons";
 import { useFetchComplaint } from "@/services/fetchComplaints";
-import type { Complaint, ComplaintCategory, ComplaintStatus } from "@/features/landowner-Worker/complaintsdata";
+import type { Complaint, ComplaintCategory, ComplaintStatus } from "@/features/landowner-Worker-authority/complaintsdata";
 import api from "@/utils/services";
 import axios from "axios";
 

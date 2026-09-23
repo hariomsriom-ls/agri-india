@@ -12,6 +12,7 @@ import { getProjects } from "../../controllers/project.controllers.js";
 import {uploaduserProfileImage} from "../../services/uploadProfileImage.js"
 import { upload, profileImageUpload } from "../../middlewares/multer.middleware.js";
 import { getLandRecords, verifyLand } from "../../controllers/record.controller,js/landRecord.controller.js";
+import {profileUpdateUser} from "../../services/updateProfile.js"
 const router = Router()
 
 router.route("/register-authority").post(registerAuthority)
@@ -30,7 +31,16 @@ router.route("/get-projects").get(verifyJwt(authority), getProjects("authority")
 router.route("/post-Review").post(verifyJwt(authority), postReviews)
 router.route("/post-reviews").post(verifyJwt(authority), postReviews)
 router.route("/delete-Review/:reviewId").delete(verifyJwt(authority), deleteReview)
-router.route("/profile-image").patch(verifyJwt(authority),profileImageUpload.single("image"),uploaduserProfileImage);
+router.route("/profile-image").patch(verifyJwt(landowner), (req, res, next) => {
+    profileImageUpload.single("image")(req, res, (error) => {
+        if (error instanceof multer.MulterError) {
+            return next(new ApiError(error.code === "LIMIT_FILE_SIZE" ? 413 : 400,
+                error.code === "LIMIT_FILE_SIZE" ? "Image must be 5 MB or smaller" : error.message));
+        }
+        next(error);
+    });
+}, uploaduserProfileImage);
+router.route("/update-user-details").patch( verifyJwt(authority), profileUpdateUser)
 router.route("/get-land-records").get(verifyJwt(authority), getLandRecords)
 router.route("/verify-land-records/:landrecordId").patch(verifyJwt(authority), verifyLand)
 

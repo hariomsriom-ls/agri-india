@@ -7,7 +7,7 @@ import {FiCheckCircle,FiChevronLeft,FiChevronRight,FiClock,FiEye,FiMessageSquare
 import { PageButton, SummaryCard, StarRating } from "@/components/cards/worker/worker-pages-combination";
 import { useFetchReviews } from "@/services/fetchReviews";
 import { useVisibleReviews, type CategoryFilter, type StatusFilter } from "@/services/visibleReviews";
-import { type ReviewCategory, type ReviewStatus } from "@/features/landowner-Worker/reviewsdata";
+import { type ReviewCategory, type ReviewStatus } from "@/features/landowner-Worker-authority/reviewsdata";
 import api from "@/utils/services";
 import axios from "axios";
 

@@ -1,7 +1,7 @@
 "use client"
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchUserComplaint, type UserRole } from "@/features/landowner-Worker/complaintsdata"
+import { fetchUserComplaint, type UserRole } from "@/features/landowner-Worker-authority/complaintsdata"
 
 export function useFetchComplaint(requiredRole?: UserRole) {
   const dispatch = useAppDispatch();

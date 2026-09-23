@@ -16,7 +16,8 @@ export const uploaduserProfileImage = asyncHandler(async (req, res) => {
   let uploadedImage;
   try {
     const userId = req.user?._id;
-    const model = userModels[req.user?.role];
+    const role = req.user?.role || req.user?.constructor?.modelName;
+    const model = userModels[role];
     if (!userId) throw new ApiError(401, "Unauthorized request");
     if (!model) throw new ApiError(400, "Invalid user role");
     if (!req.file) throw new ApiError(400, "Please select a profile image");

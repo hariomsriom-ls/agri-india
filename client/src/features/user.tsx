@@ -84,6 +84,8 @@ export const fetchUser = createAsyncThunk(
       const storedUser = response.data.data.userData; 
       return {
   ...storedUser,
+  role,
+  ...(role === "authority" ? { authorityId: storedUser.authorityid ?? "", department: storedUser.Department ?? "" } : {}),
   contactNumber: String(
     storedUser.mobileNumber ?? storedUser.contactNumber ?? ""
   ),
@@ -106,7 +108,7 @@ export const fetchUser = createAsyncThunk(
   role: User["role"];
   updatedData: Partial<
     Pick<User, "fullName" | "userName" | "email" | "contactNumber" | "address">
-  >;
+  > & { department?: string };
 }; 
 
 export const updateUser = createAsyncThunk(
@@ -119,9 +121,10 @@ export const updateUser = createAsyncThunk(
      else {return rejectWithValue("Invalid user role");}
     try {
       const response = await api.patch(apiCallUrl, updatedData, {withCredentials: true,}); 
-      console.log(response);
       const storedUser = response.data.data.userData; 
-     return { ...storedUser, contactNumber: String(storedUser.mobileNumber ?? storedUser.contactNumber ?? ""),
+     return { ...storedUser, role,
+  ...(role === "authority" ? { authorityId: storedUser.authorityid ?? "", department: storedUser.Department ?? "" } : {}),
+  contactNumber: String(storedUser.mobileNumber ?? storedUser.contactNumber ?? ""),
   profileImage: storedUser.image ?? null,
   address: {
     city: storedUser.address?.city ?? "",
@@ -162,7 +165,7 @@ let apiUpdateUrl;
     else if (role === "authority") {apiUpdateUrl = "/authority/profile-image"; }
      else {return rejectWithValue("Invalid user role");}
     try {
-      const response = await api.patch<{ data: { profileImage: string };}>(apiUpdateUrl, imageData);
+      const response = await api.patch<{ data: { profileImage: string };}>(apiUpdateUrl, imageData, { withCredentials: true });
 
       return response.data.data.profileImage;
     } catch (error) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type {PaymentStatus,UserPayment} from "@/features/landowner-Worker/paymenthistory";
+import type {PaymentStatus,UserPayment} from "@/features/landowner-Worker-authority/paymenthistory";
 
 export type PaymentFilter = "All" | PaymentStatus;
 

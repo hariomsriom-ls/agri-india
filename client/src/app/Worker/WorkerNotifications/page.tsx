@@ -8,7 +8,7 @@ import { useFetchNotifications } from "@/services/fetchNotification";
 import { useVisibleNotifications } from "@/services/visiblenotification";
 import { useAppDispatch } from "@/store/hooks";
 import { fetchUserNotification, updateNotification,type Filter, type Notification, type NotificationType,
-} from "@/features/landowner-Worker/notificationdata";
+} from "@/features/landowner-Worker-authority/notificationdata";
 import { SummaryCard, PageButton } from "@/components/cards/worker/worker-pages-combination";
 
 

@@ -1,7 +1,7 @@
 "use client"
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchUserNotification } from "@/features/landowner-Worker/notificationdata"; 
+import { fetchUserNotification } from "@/features/landowner-Worker-authority/notificationdata"; 
 
 export function useFetchNotifications() {
   const dispatch = useAppDispatch();

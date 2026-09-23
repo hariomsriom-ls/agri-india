@@ -5,7 +5,7 @@ import {FiCheckCircle,FiChevronLeft,FiChevronRight,FiClock,FiDownload,FiEye,FiFi
   FiPhone,FiPlus,FiShield,FiUploadCloud,FiX,FiXCircle,
 } from "@/components/ui/icons";
 import { useFetchDocuments } from "@/services/fetchDocuments";
-import type { UserDocument } from "@/features/landowner-Worker/documentsdata";
+import type { UserDocument } from "@/features/landowner-Worker-authority/documentsdata";
 import api from "@/utils/services";
 import axios from "axios";
 

@@ -5,7 +5,7 @@ import {FiCheckCircle,FiChevronLeft,FiChevronRight,FiClock,FiEye,FiMessageSquare
   FiSearch,FiSend,FiSmile,FiStar,
 } from "@/components/ui/icons";
 import { useFetchReviews } from "@/services/fetchReviews";
-import type { Reviews, ReviewCategory, ReviewStatus } from "@/features/landowner-Worker/reviewsdata";
+import type { Reviews, ReviewCategory, ReviewStatus } from "@/features/landowner-Worker-authority/reviewsdata";
 
 const PAGE_SIZE = 5;
 

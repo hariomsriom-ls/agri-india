@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type {ReviewCategory,Reviews,ReviewStatus,} from "@/features/landowner-Worker/reviewsdata";
+import type {ReviewCategory,Reviews,ReviewStatus,} from "@/features/landowner-Worker-authority/reviewsdata";
 
 export type CategoryFilter = "All Categories" | ReviewCategory;
 export type StatusFilter = "All Status" | ReviewStatus;

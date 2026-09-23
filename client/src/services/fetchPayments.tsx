@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchUserPayments, type PaymentRole } from "@/features/landowner-Worker/paymenthistory";
+import { fetchUserPayments, type PaymentRole } from "@/features/landowner-Worker-authority/paymenthistory";
 
 export function useFetchPayments(requiredRole?: PaymentRole) {
   const dispatch = useAppDispatch();

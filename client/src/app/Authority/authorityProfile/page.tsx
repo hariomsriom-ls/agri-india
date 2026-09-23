@@ -7,8 +7,6 @@ import {LuBell,LuBuilding2,LuCamera,LuCircleCheck,LuFileClock,LuHistory,LuKeyRou
 } from "react-icons/lu";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchUser, updateUser, uploadProfileImage } from "@/features/user";
-import { useLocationDropdowns } from "@/hooks/useLocationDropdowns";
-import { address } from "framer-motion/client";
 
 type ProfileTab = "Personal Information" | "Security" | "Preferences" | "Activity Log";
 
@@ -20,8 +18,9 @@ const tabs: Array<{ label: ProfileTab; icon: ReactNode }> = [
   { label: "Activity Log", icon: <LuFileClock aria-hidden="true" /> },
 ];
 
-function Field({label,value,editing,onChange,type = "text",}: {
+function Field({label,name,value,editing,onChange,type = "text",}: {
   label: string;
+  name: string;
   value: string;
   editing: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -32,6 +31,7 @@ function Field({label,value,editing,onChange,type = "text",}: {
       <span className="mb-2 block text-[13px] font-semibold text-slate-500">{label}</span>
       <input
         type={type}
+        name={name}
         value={value}
         readOnly={!editing}
         onChange={onChange}
@@ -78,7 +78,6 @@ export default function AuthorityProfile() {
   const [editing, setEditing] = useState(false);
    const [formData, setFormData] = useState<Record<string, string>>({});
   const [saved, setSaved] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState("");
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [imageSaved, setImageSaved] = useState(false);
   const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
@@ -89,21 +88,18 @@ export default function AuthorityProfile() {
  const { data: storedUser, loading, error, imageUploading, imageError } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
    const role = useAppSelector((state) => state.auth.role);
-   const user = storedUser;
-
-     if(!user) {return <p>User data not found in authority page line no 32</p>;}
-  if(user.role !== "authority") {return <p>User is not a authority page line no 33</p>;}
+   const user = storedUser?.role === "authority" ? storedUser : null;
+   const avatarUrl = user?.profileImage && user.profileImage !== failedImageUrl ? user.profileImage : "";
 
   function cancelEditing() {
+    setFormData({});
     setEditing(false);
   } 
 
   function startEditing(){
+    setFormData({});
+    setSaved(false);
     setEditing(true);
-  }
-  function chooseAvatar(file: File | undefined) {
-    if (!file) return;
-    setAvatarUrl(URL.createObjectURL(file));
   }
 
  function handleChange( event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
@@ -112,29 +108,32 @@ export default function AuthorityProfile() {
   }
 
 useEffect(() => {
-      if (role === "authority" && !storedUser && !loading && !error) {
+      if (role === "authority" && storedUser?.role !== "authority" && !loading && !error) {
         void dispatch(fetchUser("authority"));
       }
     }, [dispatch, role, storedUser, loading, error]);
 
- async function handleSave(){
-    if (!storedUser) {alert("Please log in to save your profile."); 
+ async function handleSave(event: FormEvent<HTMLFormElement>){
+    event.preventDefault();
+    if (!editing || loading || imageUploading) return;
+    if (role !== "authority" || !user) {alert("Please log in to save your profile.");
       return;
     }
     const addressChanged = ["city", "district", "state", "pinCode"].some((field) => formData[field] !== undefined);
 const updatedData = {
-  fullName: formData.fullName ?? storedUser.fullName,
-  userName: formData.userName ?? storedUser.userName,
-  email: formData.email ?? storedUser.email,
-  contactNumber: formData.contactNumber ?? storedUser.contactNumber,
+  fullName: formData.fullName ?? user.fullName,
+  userName: user.userName,
+  email: formData.email ?? user.email,
+  contactNumber: formData.contactNumber ?? user.contactNumber,
+  department: formData.department ?? user.department,
 
   ...(addressChanged
     ? {
         address: {
-          city: formData.city ?? storedUser.address?.city ?? "",
-          district:formData.district ?? storedUser.address?.district ?? "",
-          state: formData.state ?? storedUser.address?.state ?? "",
-          pinCode:formData.pinCode ?? storedUser.address?.pinCode ?? "",
+          city: formData.city ?? user.address?.city ?? "",
+          district:formData.district ?? user.address?.district ?? "",
+          state: formData.state ?? user.address?.state ?? "",
+          pinCode:formData.pinCode ?? user.address?.pinCode ?? "",
         },
       }
     : {}),
@@ -143,12 +142,13 @@ const updatedData = {
     try {
     await dispatch(
       updateUser({
-        role: storedUser.role,
+        role: "authority",
         updatedData,
       })
     ).unwrap();
       setFormData({});
       setEditing(false);
+      setSaved(true);
         } catch (error) {
     alert( typeof error === "string"? error: "Failed to save your profile. Please try again.");
   }
@@ -157,13 +157,19 @@ const updatedData = {
 async function handleProfileImageChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.currentTarget.files?.[0];
     event.currentTarget.value = "";
-    if (!file || imageUploading || storedUser?.role !== "authority") return;
+    if (!file || loading || imageUploading || role !== "authority" || !user) return;
     setImageSaved(false);
-    const result = await dispatch(uploadProfileImage({ file, role: "landowner" }));
+    const result = await dispatch(uploadProfileImage({ file, role: "authority" }));
     if (uploadProfileImage.fulfilled.match(result)) {
       setFailedImageUrl(null);
       setImageSaved(true);
     }
+  }
+
+  if (role !== "authority") return <p className="p-6 text-slate-600">Sign in as an authority to view your profile.</p>;
+  if (!user) {
+    if (error) return <div className="p-6"><p role="alert" className="text-red-600">{error}</p><button type="button" onClick={() => dispatch(fetchUser("authority"))} className="mt-3 rounded-lg bg-emerald-700 px-4 py-2 text-white">Try again</button></div>;
+    return <p role="status" className="p-6 text-slate-600">Loading your profile...</p>;
   }
 
   return (
@@ -203,25 +209,28 @@ async function handleProfileImageChange(event: ChangeEvent<HTMLInputElement>) {
               <div className="flex flex-col items-center pt-1 text-center">
                 <div
                   className="relative flex h-[105px] w-[105px] items-center justify-center rounded-full bg-gradient-to-br from-emerald-600 to-emerald-800 bg-cover bg-center text-[31px] font-medium text-white shadow-md"
-                  style={avatarUrl ? { backgroundImage: `url(${avatarUrl})` } : undefined}
                 >
-                  {!avatarUrl && "AS"}
-                  <label className="absolute bottom-0 right-0 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-4 border-white bg-emerald-900 text-sm text-white shadow-md hover:bg-emerald-800" aria-label="Change profile picture">
+                  {avatarUrl ? <img src={avatarUrl} alt={`${user.fullName}'s profile`} onError={() => setFailedImageUrl(avatarUrl)} className="h-full w-full rounded-full object-cover" /> : (user.fullName || user.userName || "A").split(/\s+/).map((name) => name[0]).slice(0, 2).join("").toUpperCase()}
+                  <input ref={imageInputRef} type="file" accept="image/jpeg,image/png" className="hidden" aria-label="Choose profile image" disabled={imageUploading || loading} onChange={handleProfileImageChange} />
+                  <button type="button" onClick={() => imageInputRef.current?.click()} disabled={imageUploading || loading} aria-busy={imageUploading} className="absolute bottom-0 right-0 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border-4 border-white bg-emerald-900 text-sm text-white shadow-md hover:bg-emerald-800" aria-label="Change profile picture">
                     <LuCamera aria-hidden="true" />
-                  </label>
+                  </button>
                 </div>
+                {imageUploading && <p role="status" className="mt-2 text-xs text-slate-500">Uploading image...</p>}
+                {imageError && <p role="alert" className="mt-2 text-xs text-red-600">{imageError}</p>}
+                {imageSaved && !imageUploading && <p role="status" className="mt-2 text-xs text-emerald-700">Profile image updated successfully.</p>}
                 <h2 className="mt-4 text-[18px] font-bold text-slate-950">{user?.fullName}</h2>
                 <p className="mt-0.5 text-[12px] font-medium text-slate-500">{user?.role}</p>
               </div>
 
               <dl className="mt-5 overflow-hidden rounded-xl border border-slate-100 bg-white px-3 text-[12px] shadow-[0_3px_14px_rgba(15,23,42,0.025)]">
                 {[
-                  ["Authority ID", "AGRIIN1234"],
-                  ["Department", user?.email],
-                  ["District", `${user?.address.district}, Madhya Pradesh`],
+                  ["Authority ID", user.authorityId || user._id],
+                  ["Department", user.department],
+                  ["District", [user.address?.district, user.address?.state].filter(Boolean).join(", ")],
                   ["Email", user?.email],
                   ["Phone", user?.contactNumber],
-                  ["Joining Date", "12 Jan 2024"],
+                  ["Joining Date", user.createdAt ? new Date(user.createdAt).toLocaleDateString("en-IN") : "Not available"],
                 ].map(([label, value]) => (
                   <div key={label} className="grid grid-cols-[125px_minmax(0,1fr)] border-b border-slate-100 py-3 last:border-b-0">
                     <dt className="font-medium text-slate-500">{label}</dt>
@@ -242,20 +251,20 @@ async function handleProfileImageChange(event: ChangeEvent<HTMLInputElement>) {
                 {editing ? (
                   <>
                     <button type="button" 
-                    onClick={cancelEditing} 
+                    onClick={cancelEditing} disabled={loading}
                     className="inline-flex h-11 items-center gap-2 rounded-lg border border-slate-200 bg-white px-5 text-[12px] font-semibold text-slate-600 hover:bg-slate-50">
                       <LuX aria-hidden="true" />
                       Cancel
                     </button>
-                    <button type="submit" 
+                    <button type="submit" disabled={loading || imageUploading}
                     className="inline-flex h-11 items-center gap-2 rounded-lg bg-emerald-700 px-5 text-[12px] font-semibold text-white shadow-sm hover:bg-emerald-800">
                       <LuSave aria-hidden="true" />
-                      Save Changes
+                      {loading ? "Saving..." : "Save Changes"}
                     </button>
                   </>
                 ) : (
                   <button type="button" 
-                  onClick={startEditing} 
+                  onClick={startEditing} disabled={loading || imageUploading}
                   className="inline-flex h-11 items-center gap-2 rounded-lg bg-emerald-700 px-5 text-[13px] font-semibold text-white shadow-md shadow-emerald-900/15 hover:bg-emerald-800">
                     <LuPencil aria-hidden="true" />
                     Edit Profile
@@ -263,31 +272,35 @@ async function handleProfileImageChange(event: ChangeEvent<HTMLInputElement>) {
                 )}
               </div>
 
+              {error && <p role="alert" className="mb-4 text-xs text-red-600">{error}</p>}
               <div className="space-y-4">
-                <Field label="Full Name"
+                <Field label="Full Name" name="fullName"
                  value={formData.fullName ??user?.fullName?? ""}
-                  editing={editing}
+                  editing={editing && !loading}
                    onChange={handleChange} 
                    />
-                <Field label="Email Address" 
+                <Field label="Email Address" name="email"
                 value={formData.email ??user?.email?? ""} 
-                type="email" editing={editing} 
+                type="email" editing={editing && !loading}
                 onChange={handleChange} 
                 />
-                <Field label="Phone Number" 
+                <Field label="Phone Number" name="contactNumber"
                 value={formData.contactNumber ??user?.contactNumber?? ""} 
                 type="tel" 
-                editing={editing} 
+                editing={editing && !loading}
                 onChange={handleChange} />
 
                 <label className="block">
                   <span className="mb-2 block text-[13px] font-semibold text-slate-500">Department</span>
                   <select
-                    value={formData.department ??user?.email?? ""}
-                    disabled={!editing}
+                    name="department"
+                    value={formData.department ?? user.department ?? ""}
+                    disabled={!editing || loading}
                     onChange={handleChange}
                     className={`h-11 w-full rounded-lg border px-3 text-[13px] font-medium text-slate-700 outline-none transition ${editing ? "border-emerald-300 bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100" : "cursor-default border-slate-200 bg-white opacity-100 shadow-sm"}`}
                   >
+                    <option value="">Select department</option>
+                    {user.department && !["Department of Agriculture", "Department of Land Resources", "Department of Rural Development"].includes(user.department) && <option value={user.department}>{user.department}</option>}
                     <option>Department of Agriculture</option>
                     <option>Department of Land Resources</option>
                     <option>Department of Rural Development</option>
@@ -295,9 +308,9 @@ async function handleProfileImageChange(event: ChangeEvent<HTMLInputElement>) {
                 </label>
 
                 <Field 
-                label="District" 
+                label="District" name="district"
                 value={formData.district ??user?.address.district?? ""} 
-                editing={editing} 
+                editing={editing && !loading}
                 onChange={handleChange} />
               </div>
             </form>

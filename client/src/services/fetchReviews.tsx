@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchUserReview, type UserRole } from "@/features/landowner-Worker/reviewsdata";
+import { fetchUserReview, type UserRole } from "@/features/landowner-Worker-authority/reviewsdata";
 
 export function useFetchReviews(requiredRole?: UserRole) {
   const dispatch = useAppDispatch();

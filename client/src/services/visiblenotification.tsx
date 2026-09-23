@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Filter, Notification } from "@/features/landowner-Worker/notificationdata";
+import type { Filter, Notification } from "@/features/landowner-Worker-authority/notificationdata";
 
 export type NotificationSort = "Newest First" | "Oldest First";
 

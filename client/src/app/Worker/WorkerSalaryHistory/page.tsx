@@ -4,7 +4,7 @@ import { useState } from "react";
 import {FiCalendar,FiChevronDown,FiChevronLeft,FiChevronRight,FiFilter,FiInfo,
   FiSearch,GiWallet
 } from "@/components/ui/icons";
-import type { PaymentStatus } from "@/features/landowner-Worker/paymenthistory";
+import type { PaymentStatus } from "@/features/landowner-Worker-authority/paymenthistory";
 import { EarningsChart } from "@/components/cards/worker/worker-landowner-earning";
 import { useVisiblePayments, type PaymentFilter } from "@/services/visiblepayments";
 import { useFetchPayments } from "@/services/fetchPayments";

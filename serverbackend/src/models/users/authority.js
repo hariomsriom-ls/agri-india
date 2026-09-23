@@ -5,6 +5,8 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 const authoritySchema = new Schema({
+    role: { type: String, enum: ["authority"], default: "authority", immutable: true },
+    image: { type: String, default: null },
     authorityid:{type: String,required: true},
     fullName: {type: String,required: true,trim: true},
     address: {type: mongoose.Schema.Types.ObjectId,ref: "Address"},
@@ -16,10 +18,10 @@ const authoritySchema = new Schema({
     password: {type: String,required: [true,'password is required']},
     bankaccount: {type: Number, required: true },
     IFSCcode: {type: String,required: true},
-    landpayments: { type: Schema.Types.ObjectId,ref: "Payments",default: 0},
+    landpayments: { type: Schema.Types.ObjectId,ref: "Payments",default: null},
     landleaseagreements: {type: String,default: "NONE"},
     landleasePeriod:{type: Number,default: 0},
-    workersalaryPayments: {type: Schema.Types.ObjectId,ref: "Payments",default: 0},
+    workersalaryPayments: {type: Schema.Types.ObjectId,ref: "Payments",default: null},
     projectAssigned: [{ type: Schema.Types.ObjectId,ref: "project" }],
     refreshToken: {type: String
     }

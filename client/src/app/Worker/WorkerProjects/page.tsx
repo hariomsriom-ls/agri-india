@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { LuBriefcaseBusiness, LuCalendarDays, LuChevronLeft, LuChevronRight, LuCircleCheck, LuClock3, LuDownload, LuFileText, LuSearch } from "@/components/ui/icons";
-import type { UserProject } from "@/features/landowner-Worker/projectsdata";
+import type { UserProject } from "@/features/landowner-Worker-authority/projectsdata";
 import { useFetchProjects } from "@/services/fetchProjects";
 
 const tabs = ["All Projects", "Current Projects", "Completed Projects", "Upcoming Assignments", "Pending Projects"] as const;

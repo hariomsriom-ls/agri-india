@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchUserLand } from "@/features/landowner-Worker/landsdata";
+import { fetchUserLand } from "@/features/landowner-Worker-authority/landsdata";
 
 export function useFetchLands() {
   const dispatch = useAppDispatch();

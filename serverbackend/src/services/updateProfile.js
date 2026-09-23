@@ -16,7 +16,7 @@ const profileUpdateUser = asyncHandler(async(req, res) => {
 
      const User = req.user;
     const userId = User?._id;
-    const role = User?.role; 
+    const role = User?.role || User?.constructor?.modelName;
     if(!User){
         throw new ApiError(400, "User not found in profileUpdateUser backend")
     }
@@ -26,6 +26,12 @@ const profileUpdateUser = asyncHandler(async(req, res) => {
   throw new ApiError(400, "Invalid user role");
 }
 const updates = {};
+if (role === "authority" && req.body.department !== undefined) {
+  if (typeof req.body.department !== "string" || !req.body.department.trim()) {
+    throw new ApiError(400, "Department is required");
+  }
+  updates.Department = req.body.department.trim();
+}
    for (const field of [
   "fullName",
   "userName",
@@ -53,10 +59,10 @@ if (address !== undefined) {
     throw new ApiError(400, "Complete all address fields");
   }
 
-  const [districtRecord, stateRecord] = await Promise.all([
-    District.findOne({ name: address.district.trim() }),
-    State.findOne({ name: address.state.trim() }),
-  ]);
+  const stateRecord = await State.findOne({ name: address.state.trim() });
+  const districtRecord = stateRecord
+    ? await District.findOne({ name: address.district.trim(), state: stateRecord._id })
+    : null;
 
   if (!districtRecord || !stateRecord) {
     throw new ApiError(400, "District or state was not found");
@@ -100,7 +106,7 @@ const updateProfile = await model.findByIdAndUpdate(
   throw new ApiError(404, "User not found");
 }
     return res.status(200).json(
-        new ApiResponse(200, {userData:updateProfile}, "details added successfully")
+        new ApiResponse(200, {userData: { ...updateProfile.toObject(), role }}, "details added successfully")
     )
 
 })
