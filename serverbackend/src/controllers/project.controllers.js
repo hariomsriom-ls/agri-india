@@ -4,12 +4,11 @@ import { landRecord } from "../models/record/landrecord.js";
 import { ApiError, ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
-// The role comes from the route, after authentication against its user model.
+
 export const getProjects = (role) => asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   if (!userId) throw new ApiError(401, "Unauthorized request");
 
-  // Worker IDs are strings, while project assignments use ObjectId references.
   const userIds = [userId];
   if (typeof userId === "string" && mongoose.isObjectIdOrHexString(userId)) {
     userIds.push(new mongoose.Types.ObjectId(userId));

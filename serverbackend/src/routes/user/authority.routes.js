@@ -1,4 +1,6 @@
 import { Router } from "express";
+import multer from "multer";
+import { ApiError } from "../../utils/ApiResponse.js";
 import { verifyJwt } from "../../middlewares/auth.middleware.js";
 import { refreshAccessToken } from "../../controllers/user.controller/authority.controller.js";
 import { acceptWorker, loginorganizationAuthority, logoutorganizationAuthority, registerAuthority, rejectWorker, showPendingWorkerList } from "../../controllers/user.controller/authority.controller.js";
@@ -31,7 +33,7 @@ router.route("/get-projects").get(verifyJwt(authority), getProjects("authority")
 router.route("/post-Review").post(verifyJwt(authority), postReviews)
 router.route("/post-reviews").post(verifyJwt(authority), postReviews)
 router.route("/delete-Review/:reviewId").delete(verifyJwt(authority), deleteReview)
-router.route("/profile-image").patch(verifyJwt(landowner), (req, res, next) => {
+router.route("/profile-image").patch(verifyJwt(authority), (req, res, next) => {
     profileImageUpload.single("image")(req, res, (error) => {
         if (error instanceof multer.MulterError) {
             return next(new ApiError(error.code === "LIMIT_FILE_SIZE" ? 413 : 400,
