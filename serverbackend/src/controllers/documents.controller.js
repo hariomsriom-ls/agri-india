@@ -1,6 +1,9 @@
 import { Documents } from "../models/document.js";
+import { authority } from "../models/users/authority.js";
+import { worker } from "../models/users/workers.js";
+import { landRecord } from "../models/record/landrecord.js";
 import { ApiResponse, ApiError } from "../utils/ApiResponse.js";
-import { asyncHandler } from "../utils/asynchandler.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { v2 as cloudinary } from "cloudinary";
 import { unlink } from "node:fs/promises";
@@ -96,3 +99,48 @@ const getDocumentsForRole = (role) => asyncHandler(async (req, res) => {
 
 export const getLandownerDocuments = getDocumentsForRole("landowner");
 export const getWorkerDocuments = getDocumentsForRole("worker");
+
+
+export const getAuthorityDocuments = asyncHandler(async (req, res) => {
+    const userId = req.user?._id;
+    const role = (req.user?.role || req.user?.constructor?.modelName || "").toLowerCase();
+
+    if (!userId) throw new ApiError(401, "Unauthorized request");
+    if (role !== "authority") {
+        throw new ApiError(403, "Only authorities can access zone documents");
+    }
+
+    const authorityUser = await authority.findById(userId).select("workingZone");
+    if (!authorityUser) throw new ApiError(404, "Authority not found");
+    const workingZone = authorityUser.workingZone;
+
+    const [lands, workersInZone] = await Promise.all([
+        landRecord.find({ landCity: workingZone })
+            .select("landCity landLocation landDocuments landLeaseAgreements landowner"),
+        worker.find({ workingZone }).select("_id"),
+    ]);
+
+    const landownerIds = [...new Map(lands
+        .filter((land) => land.landowner)
+        .map((land) => [land.landowner.toString(), land.landowner])).values()];
+    const workerIds = workersInZone.map(({ _id }) => _id);
+
+    const [landownerDocuments, workerDocuments] = await Promise.all([
+        landownerIds.length
+            ? Documents.find({ documentOf: { $in: landownerIds }, documentOfModel: "landowner" })
+                .sort({ createdAt: -1 })
+            : [],
+        workerIds.length
+            ? Documents.find({ documentOf: { $in: workerIds }, documentOfModel: "worker" })
+                .sort({ createdAt: -1 })
+            : [],
+    ]);
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            { workingZone, landRecords: lands, landownerDocuments, workerDocuments },
+            "Zone documents fetched successfully"
+        )
+    );
+});
